@@ -3,6 +3,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -12,16 +14,17 @@
     font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
+    line-height: 1.6;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-sky-400 text-black px-6 py-3 rounded-full font-semibold hover:bg-sky-500 transition-colors duration-300 inline-flex items-center gap-2;
+    @apply bg-sky-400 text-black px-8 py-4 rounded-full font-bold hover:bg-sky-500 transition-all duration-300 inline-flex items-center gap-3 hover:scale-105 shadow-lg;
   }
   
   .btn-secondary {
-    @apply border border-white text-white px-6 py-3 rounded-full font-semibold hover:bg-white hover:text-black transition-colors duration-300;
+    @apply border-2 border-white text-white px-8 py-4 rounded-full font-bold hover:bg-white hover:text-black transition-all duration-300 hover:scale-105;
   }
   
   .section-padding {
@@ -33,7 +36,7 @@
   }
 }
 
-/* Scrolling animation */
+/* Enhanced Scrolling Animation */
 @keyframes scroll {
   0% {
     transform: translateX(0);
@@ -44,18 +47,18 @@
 }
 
 .animate-scroll {
-  animation: scroll 30s linear infinite;
+  animation: scroll 40s linear infinite;
 }
 
 .hover\:pause:hover {
   animation-play-state: paused;
 }
 
-/* Fade in animation */
+/* Enhanced Fade In Animation */
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(50px);
   }
   to {
     opacity: 1;
@@ -64,15 +67,136 @@
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.8s ease-out forwards;
+  animation: fadeInUp 1.2s ease-out forwards;
 }
 
-/* Video styling */
+/* Stagger Animation for Children */
+.animate-fade-in-up:nth-child(1) { animation-delay: 0.1s; }
+.animate-fade-in-up:nth-child(2) { animation-delay: 0.2s; }
+.animate-fade-in-up:nth-child(3) { animation-delay: 0.3s; }
+
+/* Bounce Animation */
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 2s infinite;
+}
+
+/* Pulse Animation */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Video Styling */
 video {
   object-fit: cover;
 }
 
-/* Ensure no margin/padding issues */
-* {
+/* Smooth Hover Transitions */
+.group:hover .group-hover\:scale-110 {
+  transform: scale(1.1);
+}
+
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+/* Sticky Positioning Helper */
+.lg\:sticky {
+  position: sticky;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #38bdf8;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0284c7;
+}
+
+/* Ensure Proper Box Sizing */
+*, *::before, *::after {
   box-sizing: border-box;
+}
+
+/* Hide Scrollbar for Horizontal Scroll */
+.overflow-hidden {
+  overflow: hidden;
+}
+
+/* Custom Focus States */
+input:focus, textarea:focus, select:focus {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
+}
+
+/* Loading Animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Gradient Text */
+.gradient-text {
+  background: linear-gradient(45deg, #38bdf8, #0284c7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Enhanced Shadow */
+.shadow-enhanced {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  .text-7xl {
+    font-size: 3rem;
+  }
+  
+  .text-6xl {
+    font-size: 2.5rem;
+  }
+  
+  .py-32 {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
 }
