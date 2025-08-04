@@ -1,0 +1,65 @@
+🚧 Developer Instructions for Droptechify Website – READ FULLY
+
+You are building a software development company's website called Droptechify, based exactly on the visual structure and style of https://conciergelite.fr.
+
+⚠️ Right now: I'm getting a white screen — please fix this first. Make sure video background and initial sample1 content loads properly.
+🔵 GENERAL REQUIREMENTS:
+
+    All design, layout, animation, spacing, transitions — must match my provided PNG samples.
+
+    Replace yellow color used in the samples with sky blue — that's Droptechify's brand color.
+
+    Do not invent anything with AI — all design, typography, button style, and animations must come from my samples only.
+
+    The website will be hosted on Netlify (free hosting) — ensure full frontend compatibility.
+
+✅ SAMPLE 1 – VIDEO HERO SECTION
+
+    Use the file named background.mp4 as the hero background video.
+
+    Buttons, text, layout must be identical to sample1.png.
+
+    No changes in animation, style, or structure.
+
+    Replace yellow buttons with sky blue.
+
+    Below this section, a scrolling ticker must appear that cycles through these services:
+
+    Services:
+
+        Website Development
+
+        WordPress Development
+
+        App Development
+
+        Video Editing
+
+        SaaS Software
+
+        Custom Software
+
+        Automations (Python)
+
+        This ticker should animate continuously and respond to mouse hover (pause, scroll backward, etc.).
+
+✅ SAMPLE 2 – "Why Choose Droptechify"
+
+    Use exact structure and layout from sample2.png.
+
+    Replace the big French title with:
+    Why Choose Droptechify
+    Use stylish typography (but same layout).
+
+    Add placeholder text about Droptechify below — I will edit it later.
+
+✅ SAMPLE 3 – SERVICES SHOWCASE
+
+    Visual design matches sample3.png.
+
+    Add 1–2 sample videos showing services like video editing.
+
+    Below those, add embedded visuals (images/videos) of projects or tasks.
+
+    Maintain scroll + content animation exactly as in reference.
+
