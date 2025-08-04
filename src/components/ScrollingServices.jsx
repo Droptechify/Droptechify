@@ -9,28 +9,28 @@ const ScrollingServices = () => {
     'Video Editing',
     'SaaS Software',
     'Custom Software',
-    'Python Automations',
-    'Website Development',
-    'WordPress Development',
-    'App Development',
-    'Video Editing',
-    'SaaS Software',
-    'Custom Software',
-    'Python Automations'
+    'Automations (Python)'
   ]
 
+  // Duplicate services for seamless scrolling
+  const duplicatedServices = [...services, ...services]
+
   return (
-    <section className="bg-sky-400 py-4 overflow-hidden">
-      <div className="flex items-center whitespace-nowrap animate-scroll hover:animate-none">
-        {services.map((service, index) => (
-          <span
-            key={index}
-            className="text-black font-semibold text-lg mx-8 flex items-center cursor-pointer hover:scale-110 transition-transform duration-300"
-          >
-            {service}
-            <span className="mx-8 text-2xl">•</span>
-          </span>
-        ))}
+    <section className="bg-sky-400 py-6 overflow-hidden">
+      <div className="flex items-center whitespace-nowrap">
+        <div className="flex animate-scroll hover:pause">
+          {duplicatedServices.map((service, index) => (
+            <div
+              key={index}
+              className="flex items-center cursor-pointer hover:scale-110 transition-transform duration-300"
+            >
+              <span className="text-black font-bold text-xl px-8">
+                {service}
+              </span>
+              <span className="text-black text-2xl">•</span>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   )

@@ -3,56 +3,48 @@ import React from 'react'
 
 const About = () => {
   return (
-    <section id="about" className="py-20 bg-gray-50">
+    <section className="py-20 bg-white">
       <div className="container-max section-padding">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-black mb-12">
-            Why Choose <span className="italic">DropTechify</span>?
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-8">
+            Why Choose Droptechify
           </h2>
-          
-          {/* Office Images */}
-          <div className="grid md:grid-cols-3 gap-6 mb-16">
-            <div className="rounded-2xl overflow-hidden shadow-lg">
-              <img src="/IMAGE.jpg" alt="Professional Office Space" className="w-full h-48 object-cover" />
-            </div>
-            <div className="rounded-2xl overflow-hidden shadow-lg">
-              <img src="/IMAGE2.jpg" alt="Team Collaboration" className="w-full h-48 object-cover" />
-            </div>
-            <div className="rounded-2xl overflow-hidden shadow-lg">
-              <img src="/IMAGE3.jpg" alt="Modern Workspace" className="w-full h-48 object-cover" />
-            </div>
+          <div className="max-w-4xl mx-auto">
+            <p className="text-lg md:text-xl text-gray-600 mb-6">
+              At Droptechify, we specialize in creating cutting-edge digital solutions that transform your business vision into reality. Our expert team combines innovation with reliability to deliver exceptional results.
+            </p>
+            <p className="text-lg text-gray-600 mb-6">
+              From custom web development to advanced automation systems, we build digital solutions that scale with your business and drive measurable growth.
+            </p>
+            <p className="text-lg text-gray-600">
+              Founded in 2025, we bring fresh perspectives and modern technologies to help you stay ahead in the digital landscape.
+            </p>
           </div>
         </div>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="bg-white p-8 rounded-2xl shadow-lg text-center">
-            <div className="w-16 h-16 bg-sky-400 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-black font-bold text-2xl">⏰</span>
+        
+        <div className="grid md:grid-cols-3 gap-8 mt-16">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-sky-400 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl font-bold text-black">1</span>
             </div>
-            <h3 className="text-xl font-bold mb-4">Save Time</h3>
-            <p className="text-gray-600 mb-6">
-              Don't waste time with day-to-day development tasks. We handle everything from planning to deployment, so you can focus on growing your business.
-            </p>
+            <h3 className="text-xl font-semibold mb-2">Expert Team</h3>
+            <p className="text-gray-600">Skilled developers and designers with years of experience</p>
           </div>
-
-          <div className="bg-white p-8 rounded-2xl shadow-lg text-center">
-            <div className="w-16 h-16 bg-sky-400 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-black font-bold text-2xl">€</span>
+          
+          <div className="text-center">
+            <div className="w-16 h-16 bg-sky-400 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl font-bold text-black">2</span>
             </div>
-            <h3 className="text-xl font-bold mb-4">Maximize Revenue</h3>
-            <p className="text-gray-600 mb-6">
-              Maximize your revenue with expert development: optimized solutions, scalable architecture, and improved performance for better ROI.
-            </p>
+            <h3 className="text-xl font-semibold mb-2">Modern Solutions</h3>
+            <p className="text-gray-600">Latest technologies and best practices for optimal results</p>
           </div>
-
-          <div className="bg-white p-8 rounded-2xl shadow-lg text-center">
-            <div className="w-16 h-16 bg-sky-400 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-black font-bold text-2xl">🚀</span>
+          
+          <div className="text-center">
+            <div className="w-16 h-16 bg-sky-400 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl font-bold text-black">3</span>
             </div>
-            <h3 className="text-xl font-bold mb-4">Scale Fast</h3>
-            <p className="text-gray-600 mb-6">
-              Build scalable solutions that grow with your business. Our architecture ensures your platform can handle increased traffic and features.
-            </p>
+            <h3 className="text-xl font-semibold mb-2">24/7 Support</h3>
+            <p className="text-gray-600">Continuous support and maintenance for your projects</p>
           </div>
         </div>
       </div>

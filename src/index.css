@@ -10,6 +10,8 @@
   
   body {
     font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
   }
 }
 
@@ -31,23 +33,22 @@
   }
 }
 
-/* Video overlay */
-.video-overlay {
-  background: linear-gradient(45deg, rgba(0,0,0,0.7), rgba(0,0,0,0.3));
-}
-
 /* Scrolling animation */
 @keyframes scroll {
   0% {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(-100%);
+    transform: translateX(-50%);
   }
 }
 
 .animate-scroll {
-  animation: scroll 20s linear infinite;
+  animation: scroll 30s linear infinite;
+}
+
+.hover\:pause:hover {
+  animation-play-state: paused;
 }
 
 /* Fade in animation */
@@ -63,5 +64,15 @@
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out forwards;
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+/* Video styling */
+video {
+  object-fit: cover;
+}
+
+/* Ensure no margin/padding issues */
+* {
+  box-sizing: border-box;
 }

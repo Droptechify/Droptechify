@@ -15,11 +15,12 @@ const Header = () => {
   }, [])
 
   const navItems = [
-    { name: 'SERVICES', href: '#services' },
-    { name: 'ABOUT US', href: '#about' },
-    { name: 'HOW IT WORKS', href: '#how-it-works' },
-    { name: 'F.A.Q', href: '#faq' },
-    { name: 'CONTACT', href: '#contact' }
+    { name: 'Home', href: '#home' },
+    { name: 'About', href: '#about' },
+    { name: 'Services', href: '#services' },
+    { name: 'Portfolio', href: '#portfolio' },
+    { name: 'FAQ', href: '#faq' },
+    { name: 'Contact', href: '#contact' }
   ]
 
   return (
@@ -29,12 +30,12 @@ const Header = () => {
       <div className="container-max section-padding">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <div className="flex items-center">
-            <span className={`text-2xl font-bold ${
-              isScrolled ? 'text-black' : 'text-white'
+          <div className="flex-shrink-0">
+            <h1 className={`text-2xl font-bold ${
+              isScrolled ? 'text-gray-900' : 'text-white'
             }`}>
-              <span className="text-sky-400">D</span>ropTechify
-            </span>
+              DropTechify
+            </h1>
           </div>
 
           {/* Desktop Navigation */}
@@ -72,21 +73,23 @@ const Header = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden bg-white border-t">
-            <div className="py-4 space-y-4">
+          <div className="lg:hidden bg-white border-t border-gray-200">
+            <div className="px-2 pt-2 pb-3 space-y-1">
               {navItems.map((item) => (
                 <a
                   key={item.name}
                   href={item.href}
-                  className="block text-gray-700 hover:text-sky-500 font-medium"
+                  className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-sky-500"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {item.name}
                 </a>
               ))}
-              <button className="bg-sky-400 hover:bg-sky-500 text-black px-6 py-3 rounded-full font-semibold transition-colors duration-300 w-full">
-                Contact
-              </button>
+              <div className="px-3 py-2">
+                <button className="w-full bg-sky-400 hover:bg-sky-500 text-black px-6 py-3 rounded-full font-semibold transition-colors duration-300">
+                  Contact
+                </button>
+              </div>
             </div>
           </div>
         )}
