@@ -25,7 +25,7 @@ const HowItWorks = () => {
   ]
 
   return (
-    <section className="py-20 bg-gray-50">
+    <section id="how-it-works" className="py-20 bg-gray-50">
       <div className="container-max section-padding">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-black mb-6">
@@ -39,11 +39,11 @@ const HowItWorks = () => {
         <div className="grid md:grid-cols-3 gap-8">
           {steps.map((step, index) => (
             <div key={index} className="text-center relative">
-              <div className="bg-primary text-black text-sm font-bold px-4 py-2 rounded-full inline-block mb-6">
+              <div className="bg-sky-400 text-black text-sm font-bold px-4 py-2 rounded-full inline-block mb-6">
                 {step.step}
               </div>
               
-              <div className="text-primary mb-6 flex justify-center">
+              <div className="text-sky-500 mb-6 flex justify-center">
                 {step.icon}
               </div>
               

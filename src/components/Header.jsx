@@ -16,10 +16,10 @@ const Header = () => {
 
   const navItems = [
     { name: 'SERVICES', href: '#services' },
-    { name: 'OUR SECTORS', href: '#about' },
+    { name: 'ABOUT US', href: '#about' },
+    { name: 'HOW IT WORKS', href: '#how-it-works' },
     { name: 'F.A.Q', href: '#faq' },
-    { name: 'BLOG', href: '#blog' },
-    { name: 'BECOME PARTNER', href: '#contact' }
+    { name: 'CONTACT', href: '#contact' }
   ]
 
   return (
@@ -33,7 +33,7 @@ const Header = () => {
             <span className={`text-2xl font-bold ${
               isScrolled ? 'text-black' : 'text-white'
             }`}>
-              <span className="text-blue-500">D</span>ropTechify
+              <span className="text-sky-400">D</span>ropTechify
             </span>
           </div>
 
@@ -45,8 +45,8 @@ const Header = () => {
                 href={item.href}
                 className={`text-sm font-medium transition-colors ${
                   isScrolled 
-                    ? 'text-gray-700 hover:text-black' 
-                    : 'text-white hover:text-primary'
+                    ? 'text-gray-700 hover:text-sky-500' 
+                    : 'text-white hover:text-sky-400'
                 }`}
               >
                 {item.name}
@@ -56,7 +56,9 @@ const Header = () => {
 
           {/* Contact Button */}
           <div className="hidden lg:block">
-            <button className="btn-primary">Contact</button>
+            <button className="bg-sky-400 hover:bg-sky-500 text-black px-6 py-3 rounded-full font-semibold transition-colors duration-300">
+              Contact
+            </button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -76,13 +78,15 @@ const Header = () => {
                 <a
                   key={item.name}
                   href={item.href}
-                  className="block text-gray-700 hover:text-black font-medium"
+                  className="block text-gray-700 hover:text-sky-500 font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {item.name}
                 </a>
               ))}
-              <button className="btn-primary w-full">Contact</button>
+              <button className="bg-sky-400 hover:bg-sky-500 text-black px-6 py-3 rounded-full font-semibold transition-colors duration-300 w-full">
+                Contact
+              </button>
             </div>
           </div>
         )}

@@ -14,7 +14,7 @@ const Hero = () => {
           loop
           playsInline
         >
-          <source src="/bg-video.mp4" type="video/mp4" />
+          <source src="/background.mp4" type="video/mp4" />
           <source src="/hero-video.mp4" type="video/mp4" />
         </video>
       </div>
@@ -31,7 +31,7 @@ const Hero = () => {
           <span className="relative">
             Brand
             <svg
-              className="absolute -bottom-2 left-0 w-full h-3 text-primary"
+              className="absolute -bottom-2 left-0 w-full h-3 text-sky-400"
               viewBox="0 0 300 12"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -51,7 +51,7 @@ const Hero = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up">
-          <button className="btn-primary text-lg px-8 py-4">
+          <button className="bg-sky-400 hover:bg-sky-500 text-black px-8 py-4 rounded-full font-semibold transition-colors duration-300 inline-flex items-center gap-2 text-lg">
             Get Started <ArrowRight size={20} />
           </button>
           <button className="btn-secondary text-lg px-8 py-4">
@@ -62,25 +62,25 @@ const Hero = () => {
         {/* Features */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 animate-fade-in-up">
           <div className="flex items-center justify-center gap-2 text-sm opacity-80">
-            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-sky-400 rounded-full flex items-center justify-center">
               <span className="text-black font-bold">✓</span>
             </div>
             <span>Quality Solutions</span>
           </div>
           <div className="flex items-center justify-center gap-2 text-sm opacity-80">
-            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-sky-400 rounded-full flex items-center justify-center">
               <span className="text-black font-bold">✓</span>
             </div>
             <span>Expert Development</span>
           </div>
           <div className="flex items-center justify-center gap-2 text-sm opacity-80">
-            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-sky-400 rounded-full flex items-center justify-center">
               <span className="text-black font-bold">✓</span>
             </div>
             <span>Fast Delivery</span>
           </div>
           <div className="flex items-center justify-center gap-2 text-sm opacity-80">
-            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-sky-400 rounded-full flex items-center justify-center">
               <span className="text-black font-bold">✓</span>
             </div>
             <span>24/7 Support</span>

@@ -8,12 +8,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#FDD835',
-        secondary: '#1A1A1A',
+        primary: '#38bdf8', // sky-400
+        secondary: '#1e293b', // slate-800
       },
       fontFamily: {
-        'sans': ['Inter', 'system-ui', 'sans-serif'],
-      }
+        sans: ['Inter', 'sans-serif'],
+      },
     },
   },
   plugins: [],

@@ -1,6 +1,6 @@
 
 import React from 'react'
-import { Code, Wordpress, Video, PenTool, Smartphone, ArrowRight } from 'lucide-react'
+import { Code, Wordpress, Video, PenTool, Smartphone, ArrowRight, Database, Bot } from 'lucide-react'
 
 const Services = () => {
   const services = [
@@ -17,22 +17,34 @@ const Services = () => {
       features: ['Custom Themes', 'Plugin Development', 'Site Migration', 'Maintenance']
     },
     {
+      icon: <Smartphone size={40} />,
+      title: 'App Development',
+      description: 'Native and cross-platform mobile applications with modern UI/UX design.',
+      features: ['iOS & Android', 'Cross-Platform', 'Modern UI/UX', 'API Integration']
+    },
+    {
       icon: <Video size={40} />,
       title: 'Video Editing',
       description: 'Professional video editing services for marketing, social media, and promotional content.',
       features: ['Professional Editing', 'Motion Graphics', 'Color Correction', 'Audio Enhancement']
     },
     {
-      icon: <PenTool size={40} />,
-      title: 'Guest Posting',
-      description: 'Strategic guest posting services to boost your SEO and build quality backlinks.',
-      features: ['Quality Backlinks', 'SEO Boost', 'Content Strategy', 'Authority Building']
+      icon: <Database size={40} />,
+      title: 'SaaS Software',
+      description: 'Complete SaaS solutions from concept to deployment with scalable architecture.',
+      features: ['Cloud Architecture', 'User Management', 'Payment Integration', 'Analytics']
     },
     {
-      icon: <Smartphone size={40} />,
-      title: 'App Development',
-      description: 'Native and cross-platform mobile applications with modern UI/UX design.',
-      features: ['iOS & Android', 'Cross-Platform', 'Modern UI/UX', 'API Integration']
+      icon: <Code size={40} />,
+      title: 'Custom Software',
+      description: 'Tailored software solutions designed specifically for your business needs.',
+      features: ['Custom Logic', 'Third-party Integration', 'Scalable Design', 'Maintenance']
+    },
+    {
+      icon: <Bot size={40} />,
+      title: 'Python Automations',
+      description: 'Automate repetitive tasks and workflows with custom Python scripts and solutions.',
+      features: ['Process Automation', 'Data Processing', 'API Integration', 'Scheduled Tasks']
     }
   ]
 
@@ -54,7 +66,7 @@ const Services = () => {
               key={index}
               className="bg-gray-50 p-8 rounded-2xl hover:shadow-xl transition-all duration-300 group"
             >
-              <div className="text-primary mb-6 group-hover:scale-110 transition-transform duration-300">
+              <div className="text-sky-500 mb-6 group-hover:scale-110 transition-transform duration-300">
                 {service.icon}
               </div>
               
@@ -65,13 +77,13 @@ const Services = () => {
               <ul className="space-y-2 mb-6">
                 {service.features.map((feature, idx) => (
                   <li key={idx} className="flex items-center text-sm text-gray-600">
-                    <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
+                    <span className="w-2 h-2 bg-sky-400 rounded-full mr-3"></span>
                     {feature}
                   </li>
                 ))}
               </ul>
               
-              <button className="text-primary font-semibold flex items-center gap-2 hover:gap-4 transition-all duration-300">
+              <button className="text-sky-500 font-semibold flex items-center gap-2 hover:gap-4 transition-all duration-300">
                 Learn More <ArrowRight size={16} />
               </button>
             </div>

@@ -7,14 +7,17 @@ const Footer = () => {
   const services = [
     'Website Development',
     'WordPress Development', 
+    'App Development',
     'Video Editing',
-    'Guest Posting',
-    'App Development'
+    'SaaS Software',
+    'Custom Software',
+    'Python Automations'
   ]
 
   const quickLinks = [
     'Services',
     'About Us',
+    'How It Works',
     'F.A.Q',
     'Privacy Policy',
     'Contact'
@@ -28,12 +31,12 @@ const Footer = () => {
           <div className="md:col-span-2">
             <div className="mb-6">
               <span className="text-3xl font-bold">
-                <span className="text-blue-500">D</span>ropTechify
+                <span className="text-sky-400">D</span>ropTechify
               </span>
             </div>
             <p className="text-gray-300 mb-6 max-w-md">
               We Build Digital Solutions That Build Your Brand. Expert software development 
-              company specializing in modern web and mobile solutions.
+              company specializing in modern web and mobile solutions. Founded in 2025.
             </p>
             <div className="text-sm text-gray-400">
               <p>Email: contact@droptechify.com</p>
@@ -47,7 +50,7 @@ const Footer = () => {
             <ul className="space-y-2">
               {services.map((service, index) => (
                 <li key={index}>
-                  <a href="#services" className="text-gray-300 hover:text-primary transition-colors">
+                  <a href="#services" className="text-gray-300 hover:text-sky-400 transition-colors">
                     {service}
                   </a>
                 </li>
@@ -62,8 +65,8 @@ const Footer = () => {
               {quickLinks.map((link, index) => (
                 <li key={index}>
                   <a 
-                    href={`#${link.toLowerCase().replace(' ', '')}`} 
-                    className="text-gray-300 hover:text-primary transition-colors"
+                    href={`#${link.toLowerCase().replace(' ', '-')}`} 
+                    className="text-gray-300 hover:text-sky-400 transition-colors"
                   >
                     {link}
                   </a>
@@ -77,13 +80,13 @@ const Footer = () => {
         <div className="border-t border-gray-700 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
-              © {currentYear} DropTechify - All rights reserved
+              © {currentYear} DropTechify - All rights reserved | Est. 2025
             </p>
             <div className="flex gap-6 mt-4 md:mt-0">
-              <a href="#privacy" className="text-gray-400 hover:text-primary text-sm transition-colors">
+              <a href="#privacy" className="text-gray-400 hover:text-sky-400 text-sm transition-colors">
                 Privacy Policy
               </a>
-              <a href="#terms" className="text-gray-400 hover:text-primary text-sm transition-colors">
+              <a href="#terms" className="text-gray-400 hover:text-sky-400 text-sm transition-colors">
                 Terms of Service
               </a>
             </div>
