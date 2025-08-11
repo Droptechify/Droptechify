@@ -4,16 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  /* DropTechify Brand Colors inspired by ConciergeLite */
-  --droptechify-yellow: #F5CA3B;
-  --droptechify-dark: #1A1A1A;
-  --droptechify-light: #FFFFFF;
-  --droptechify-gray: #F8F8F8;
-  --droptechify-text: #333333;
-  --droptechify-blue: #4A90E2;
-}
-
 * {
   margin: 0;
   padding: 0;
@@ -23,190 +13,333 @@
 body {
   font-family: 'Inter', sans-serif;
   line-height: 1.6;
-  color: var(--droptechify-text);
-  background: white;
+  color: #333;
+  overflow-x: hidden;
 }
 
 html {
   scroll-behavior: smooth;
 }
 
-/* ConciergeLite-inspired styles */
-.hero-dark {
-  background: linear-gradient(135deg, #1A1A1A 0%, #2D2D2D 100%);
-  color: white;
-}
-
-.yellow-accent {
-  color: var(--droptechify-yellow);
-}
-
-.yellow-bg {
-  background-color: var(--droptechify-yellow);
-}
-
-.yellow-underline {
-  position: relative;
-}
-
-.yellow-underline::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: linear-gradient(90deg, var(--droptechify-yellow) 0%, #FFE066 100%);
-  border-radius: 2px;
-}
-
-.text-shadow {
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.glass-effect {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* Marquee animation */
-@keyframes marquee {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
-}
-
-.marquee {
-  animation: marquee 20s linear infinite;
-}
-
-/* Hover effects */
-.hover-lift:hover {
-  transform: translateY(-5px);
-  transition: all 0.3s ease;
-}
-
-.hover-scale:hover {
-  transform: scale(1.05);
-  transition: all 0.3s ease;
-}
-
-/* Custom buttons */
-.btn-yellow {
-  background: var(--droptechify-yellow);
-  color: #1A1A1A;
-  font-weight: 600;
-  padding: 12px 24px;
-  border-radius: 50px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-yellow:hover {
-  background: #E6B532;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(245, 202, 59, 0.3);
-}
-
-.btn-outline {
-  background: transparent;
-  color: white;
-  border: 2px solid var(--droptechify-yellow);
-  padding: 12px 24px;
-  border-radius: 50px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-outline:hover {
-  background: var(--droptechify-yellow);
-  color: #1A1A1A;
-}
-
-/* Section spacing */
-.section-padding {
-  padding: 80px 0;
-}
-
+/* Container */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
 }
 
-/* Typography */
+.section-padding {
+  padding: 120px 0;
+}
+
+/* Typography - ConciergeLite Style */
 .heading-xl {
-  font-size: 3.5rem;
+  font-size: 4.5rem;
   font-weight: 800;
-  line-height: 1.2;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
 .heading-lg {
-  font-size: 2.5rem;
+  font-size: 3.5rem;
   font-weight: 700;
-  line-height: 1.3;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
 }
 
-.heading-md {
-  font-size: 2rem;
+.yellow-underline {
+  position: relative;
+  font-style: italic;
+  color: #F5CA3B;
+}
+
+.yellow-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #F5CA3B;
+  border-radius: 2px;
+}
+
+/* Header Styling - Dark like ConciergeLite */
+.header-dark {
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Buttons - ConciergeLite Style */
+.btn-yellow {
+  background: #F5CA3B;
+  color: #000;
+  padding: 16px 32px;
+  border-radius: 50px;
   font-weight: 600;
-  line-height: 1.4;
-}
-
-.text-lg {
-  font-size: 1.25rem;
-  line-height: 1.6;
-}
-
-/* Mobile responsiveness */
-@media (max-width: 768px) {
-  .heading-xl {
-    font-size: 2.5rem;
-  }
-  
-  .heading-lg {
-    font-size: 2rem;
-  }
-  
-  .heading-md {
-    font-size: 1.5rem;
-  }
-  
-  .section-padding {
-    padding: 60px 0;
-  }
-}
-
-/* Card styles */
-.card {
-  background: white;
-  border-radius: 16px;
-  padding: 30px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  text-decoration: none;
+  display: inline-block;
   transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
 }
 
-.card:hover {
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-  transform: translateY(-5px);
+.btn-yellow:hover {
+  background: #E6B632;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(245, 202, 59, 0.4);
 }
 
-/* Yellow icon backgrounds */
+.btn-outline {
+  background: transparent;
+  color: #fff;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  padding: 14px 30px;
+  border-radius: 50px;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.btn-outline:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Hero Section - Dark like ConciergeLite */
+.hero-dark {
+  background: #000;
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Icons - ConciergeLite Style */
 .icon-yellow {
-  width: 60px;
-  height: 60px;
-  background: var(--droptechify-yellow);
-  border-radius: 12px;
+  width: 80px;
+  height: 80px;
+  background: #F5CA3B;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
+  color: #000;
+  margin-bottom: 24px;
+  transition: all 0.3s ease;
 }
 
-.icon-yellow svg {
-  width: 28px;
-  height: 28px;
-  color: #1A1A1A;
+.icon-yellow:hover {
+  transform: scale(1.05);
+}
+
+/* Cards - ConciergeLite Style */
+.card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* Marquee Animation - ConciergeLite Style */
+.marquee-container {
+  overflow: hidden;
+  padding: 60px 0;
+  background: #f8f9fa;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+
+.marquee {
+  display: flex;
+  width: fit-content;
+  animation: marquee 40s linear infinite;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Step Numbers - ConciergeLite Style */
+.step-number {
+  width: 80px;
+  height: 80px;
+  background: #F5CA3B;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #000;
+  margin: 0 auto 20px;
+}
+
+/* Arrow Icons - ConciergeLite Style */
+.arrow-yellow {
+  color: #F5CA3B;
+  font-size: 3rem;
+  margin: 20px 0;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* FAQ Styling - ConciergeLite Style */
+.faq-button {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%;
+  text-align: left;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.faq-button:hover {
+  border-color: #F5CA3B;
+  box-shadow: 0 4px 12px rgba(245, 202, 59, 0.1);
+}
+
+.faq-icon {
+  width: 24px;
+  height: 24px;
+  background: #F5CA3B;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  font-weight: bold;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.faq-icon.open {
+  transform: rotate(45deg);
+}
+
+/* Service Grid Cards */
+.service-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+}
+
+.service-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+.service-image {
+  width: 120px;
+  height: 90px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-right: 20px;
+  flex-shrink: 0;
+}
+
+/* Sector Cards */
+.sector-card {
+  background: white;
+  border-radius: 20px;
+  padding: 32px;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.sector-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+}
+
+/* Footer - Dark */
+.footer-dark {
+  background: #1a1a1a;
+  color: white;
+}
+
+.footer-dark a:hover {
+  color: #F5CA3B;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .heading-xl {
+    font-size: 3rem;
+  }
+  
+  .heading-lg {
+    font-size: 2.5rem;
+  }
+  
+  .section-padding {
+    padding: 80px 0;
+  }
+  
+  .container {
+    padding: 0 16px;
+  }
+  
+  .card {
+    padding: 24px;
+  }
+  
+  .icon-yellow {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .step-number {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+  
+  .service-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .service-image {
+    margin-right: 0;
+    margin-bottom: 16px;
+  }
 }

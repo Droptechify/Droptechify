@@ -1,131 +1,70 @@
 function Sectors() {
+  const sectors = [
+    {
+      title: "Web Development",
+      image: "/attached_assets/Web-development-sector.png",
+      description: "Full-stack web development services",
+      link: "/web-development"
+    },
+    {
+      title: "Mobile Apps", 
+      image: "/attached_assets/Mobile-apps-sector.png",
+      description: "iOS and Android app development",
+      link: "/mobile-apps"
+    },
+    {
+      title: "E-commerce",
+      image: "/attached_assets/Ecommerce-sector.png", 
+      description: "Complete e-commerce solutions",
+      link: "/ecommerce"
+    },
+    {
+      title: "Digital Marketing",
+      image: "/attached_assets/Digital-marketing-sector.png",
+      description: "SEO, social media & advertising",
+      link: "/digital-marketing"
+    }
+  ];
+
   return (
     <section id="sectors" className="section-padding bg-gray-50">
       <div className="container">
         <div className="text-center mb-16">
-          <h2 className="heading-lg mb-6">
-            Nos <span className="yellow-underline italic">secteurs</span> d'expertise
-          </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Nous servons une grande variété de secteurs avec des solutions sur mesure 
-            pour répondre aux besoins spécifiques de chaque industrie.
+          <h2 className="heading-lg mb-4">Our sectors</h2>
+          <p className="text-gray-600 text-lg max-w-3xl mx-auto">
+            Our partners, located throughout the world, are available to carefully 
+            take care of your projects and your clients.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-8">
-          {/* Web Development */}
-          <div className="card group hover-lift">
-            <div className="icon-yellow">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-bold mb-4">Développement Web</h3>
-            <p className="text-gray-600 mb-4">
-              Sites vitrines, e-commerce, applications web sur mesure avec technologies modernes.
-            </p>
-            <div className="flex items-center text-yellow-600">
-              <span className="text-sm font-medium">En savoir plus</span>
-              <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </div>
-          </div>
-
-          {/* Mobile Apps */}
-          <div className="card group hover-lift">
-            <div className="icon-yellow">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a1 1 0 001-1V4a1 1 0 00-1-1H8a1 1 0 00-1 1v16a1 1 0 001 1z" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-bold mb-4">Applications Mobiles</h3>
-            <p className="text-gray-600 mb-4">
-              Apps iOS et Android natives et cross-platform avec React Native et Flutter.
-            </p>
-            <div className="flex items-center text-yellow-600">
-              <span className="text-sm font-medium">En savoir plus</span>
-              <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </div>
-          </div>
-
-          {/* Video Editing */}
-          <div className="card group hover-lift">
-            <div className="icon-yellow">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-bold mb-4">Montage Vidéo</h3>
-            <p className="text-gray-600 mb-4">
-              Création et montage de contenus vidéo professionnels pour marketing et communication.
-            </p>
-            <div className="flex items-center text-yellow-600">
-              <span className="text-sm font-medium">En savoir plus</span>
-              <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </div>
-          </div>
-
-          {/* WordPress */}
-          <div className="card group hover-lift">
-            <div className="icon-yellow">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM7 3H5a2 2 0 00-2 2v12a4 4 0 004 4h2a2 2 0 002-2V5a2 2 0 00-2-2z" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-bold mb-4">WordPress</h3>
-            <p className="text-gray-600 mb-4">
-              Développement de thèmes et plugins WordPress sur mesure pour tous vos besoins.
-            </p>
-            <div className="flex items-center text-yellow-600">
-              <span className="text-sm font-medium">En savoir plus</span>
-              <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </div>
-          </div>
-
-          {/* SEO & Marketing */}
-          <div className="card group hover-lift">
-            <div className="icon-yellow">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-bold mb-4">SEO & Marketing Digital</h3>
-            <p className="text-gray-600 mb-4">
-              Stratégies SEO, campagnes publicitaires et optimisation de la visibilité en ligne.
-            </p>
-            <div className="flex items-center text-yellow-600">
-              <span className="text-sm font-medium">En savoir plus</span>
-              <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </div>
-          </div>
-
-          {/* Guest Posting */}
-          <div className="card group hover-lift">
-            <div className="icon-yellow">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-              </svg>
-            </div>
-            <h3 className="text-xl font-bold mb-4">Guest Posting</h3>
-            <p className="text-gray-600 mb-4">
-              Création de contenu et publication d'articles invités sur des sites autorités.
-            </p>
-            <div className="flex items-center text-yellow-600">
-              <span className="text-sm font-medium">En savoir plus</span>
-              <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </div>
-          </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {sectors.map((sector, index) => (
+            <a 
+              key={index}
+              href={sector.link}
+              className="sector-card group"
+            >
+              <div className="w-16 h-16 bg-gray-200 rounded-xl mb-6 mx-auto overflow-hidden">
+                <img 
+                  src={sector.image} 
+                  alt={sector.title}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.parentElement.innerHTML = `
+                      <div class="w-full h-full bg-yellow-500 flex items-center justify-center">
+                        <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                        </svg>
+                      </div>
+                    `;
+                  }}
+                />
+              </div>
+              <h3 className="text-xl font-bold mb-2">{sector.title}</h3>
+              <p className="text-gray-600 text-sm">{sector.description}</p>
+            </a>
+          ))}
         </div>
       </div>
     </section>
