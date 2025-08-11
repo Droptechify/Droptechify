@@ -9,7 +9,7 @@ const ScrollingServices = () => {
     'Video Editing',
     'SaaS Software',
     'Custom Software',
-    'Automations (Python)'
+    'Python Automation'
   ]
 
   // Duplicate services for seamless scrolling

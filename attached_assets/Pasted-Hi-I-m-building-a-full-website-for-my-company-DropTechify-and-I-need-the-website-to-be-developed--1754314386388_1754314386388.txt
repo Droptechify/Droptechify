@@ -1,0 +1,77 @@
+Hi,
+
+I'm building a full website for my company DropTechify, and I need the website to be developed exactly like the design and structure shown in the sample website https://conciergelite.fr — including animations, layout, transitions, buttons, and scroll effects. Please do not use any AI-generated layout or make design decisions on your own. Just follow exactly the structure and style of the samples I have provided.
+✅ What’s already done:
+
+    The setup using Vite + React + Tailwind CSS is complete.
+
+    The background video and initial styling are in place.
+
+    Netlify will be used for free hosting.
+
+🔧 What needs to be done (clear points):
+
+    Use background video in Sample 1 (I’ll provide it). The design must be exactly the same with no changes.
+
+    Sample 2: Replace the foreign heading with:
+    → "Why Choose DropTechify" — keep the styling modern and professional.
+
+    Primary company color is sky blue. Use this for buttons and highlight areas instead of yellow from the sample.
+
+    Keep all other layout, style, fonts, animations, navbar, and footer exactly the same as in the samples.
+
+    Add our services section (like in Sample 3):
+
+        Website Development
+
+        WordPress Development
+
+        App Development
+
+        Video Editing
+
+        SaaS Software
+
+        Custom Software
+
+        Python Automation
+
+    In Sample 4 and others:
+
+        Make sure side-by-side text + image sections behave correctly.
+
+        When one scrolls out, the next section should appear just like in the sample.
+
+    Service section should include a scrolling effect, where services scroll horizontally (just like the running text in the sample), and allow hover/mouse interaction.
+
+    Animations must match the samples exactly — no random transitions.
+
+    Navbar: Add these services to the “Services” dropdown with icons/images.
+
+    Footer: Must be exactly the same in layout and style as the sample.
+
+    Company Info:
+
+        Name: DropTechify
+
+        Founded: 2025
+
+        Owner: Abdul Kabeer Mughal
+
+    Reviews/Testimonials section (like Sample 13):
+
+        Use running/repeat animation of reviews.
+
+        Reviews must be manageable from the admin panel.
+
+    Admin Panel (Basic Required):
+
+        Contact form handling
+
+        Add/edit portfolio projects (title, category, image, link)
+
+        Add/edit testimonials
+
+    FAQ section: You can use placeholder questions for now — I’ll update them later.
+
+📌 Please review all the samples provided, and make sure every section and page follows the exact same structure and behavior. The only thing different is colors and content (sky blue instead of yellow, and DropTechify-specific text). Nothing should be creatively changed.

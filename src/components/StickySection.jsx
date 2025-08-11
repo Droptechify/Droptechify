@@ -1,72 +1,96 @@
 
 import React from 'react'
-import { Clock, Target, Rocket } from 'lucide-react'
+import { Zap, Target, Shield, Clock, ArrowRight } from 'lucide-react'
 
 const StickySection = () => {
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-20 bg-gradient-to-br from-sky-400 via-sky-500 to-sky-600 text-white">
       <div className="container-max section-padding">
-        <div className="grid lg:grid-cols-2 gap-16 items-start">
-          {/* Sticky Left Content */}
-          <div className="lg:sticky lg:top-32">
-            <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-8 leading-tight">
-              Save <span className="text-sky-400">Time</span>
-              <br />
-              Scale <span className="text-sky-400">Growth</span>
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-8 leading-tight">
+              Ready to Transform Your Business?
             </h2>
-            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-              Our comprehensive digital solutions eliminate bottlenecks and streamline your operations, 
-              giving you more time to focus on what matters most – growing your business.
+            <p className="text-xl mb-8 opacity-90">
+              Join hundreds of satisfied clients who've accelerated their growth with our digital solutions.
             </p>
-            <div className="space-y-6">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-sky-400 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Clock className="text-black" size={24} />
+            
+            <div className="space-y-6 mb-8">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                  <Zap className="text-white" size={24} />
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Rapid Development</h3>
-                  <p className="text-gray-600">Get your projects delivered faster than ever</p>
-                </div>
+                <span className="text-lg">Lightning-fast development</span>
               </div>
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-sky-400 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Target className="text-black" size={24} />
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                  <Target className="text-white" size={24} />
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Targeted Solutions</h3>
-                  <p className="text-gray-600">Custom-built for your specific needs</p>
-                </div>
+                <span className="text-lg">Precision-focused solutions</span>
               </div>
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-sky-400 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Rocket className="text-black" size={24} />
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                  <Shield className="text-white" size={24} />
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Scalable Growth</h3>
-                  <p className="text-gray-600">Solutions that grow with your business</p>
-                </div>
+                <span className="text-lg">Enterprise-grade security</span>
               </div>
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                  <Clock className="text-white" size={24} />
+                </div>
+                <span className="text-lg">24/7 dedicated support</span>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4">
+              <a 
+                href="#contact"
+                className="bg-white text-sky-600 px-8 py-4 rounded-full font-bold transition-all duration-300 inline-flex items-center justify-center gap-3 text-lg hover:scale-105 shadow-xl hover:shadow-2xl"
+              >
+                Start Your Project <ArrowRight size={24} />
+              </a>
+              <a 
+                href="#portfolio"
+                className="border-2 border-white text-white px-8 py-4 rounded-full font-bold hover:bg-white hover:text-sky-600 transition-all duration-300 inline-flex items-center justify-center gap-3 text-lg hover:scale-105"
+              >
+                View Our Work
+              </a>
             </div>
           </div>
-
-          {/* Right Scrolling Content */}
-          <div className="space-y-8">
-            <div className="bg-white p-8 rounded-2xl shadow-lg">
-              <img src="/IMAGE.jpg" alt="Office workspace" className="w-full h-64 object-cover rounded-xl mb-6" />
-              <h3 className="text-2xl font-bold mb-4">Modern Workspace</h3>
-              <p className="text-gray-600">Our team works in cutting-edge environments to deliver the best results.</p>
-            </div>
-            
-            <div className="bg-white p-8 rounded-2xl shadow-lg">
-              <img src="/IMAGE2.jpg" alt="Team collaboration" className="w-full h-64 object-cover rounded-xl mb-6" />
-              <h3 className="text-2xl font-bold mb-4">Collaborative Excellence</h3>
-              <p className="text-gray-600">Every project benefits from our collective expertise and creativity.</p>
-            </div>
-            
-            <div className="bg-white p-8 rounded-2xl shadow-lg">
-              <img src="/IMAGE3.jpg" alt="Innovation process" className="w-full h-64 object-cover rounded-xl mb-6" />
-              <h3 className="text-2xl font-bold mb-4">Innovation Process</h3>
-              <p className="text-gray-600">We follow proven methodologies to ensure success in every project.</p>
+          
+          <div className="relative">
+            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-8 border border-white border-opacity-20">
+              <h3 className="text-2xl font-bold mb-6">Project Consultation</h3>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center py-3 border-b border-white border-opacity-20">
+                  <span>Free Initial Consultation</span>
+                  <span className="text-green-300">✓</span>
+                </div>
+                <div className="flex justify-between items-center py-3 border-b border-white border-opacity-20">
+                  <span>Custom Solution Design</span>
+                  <span className="text-green-300">✓</span>
+                </div>
+                <div className="flex justify-between items-center py-3 border-b border-white border-opacity-20">
+                  <span>Timeline & Budget Planning</span>
+                  <span className="text-green-300">✓</span>
+                </div>
+                <div className="flex justify-between items-center py-3">
+                  <span>24/7 Support Available</span>
+                  <span className="text-green-300">✓</span>
+                </div>
+              </div>
+              
+              <div className="mt-6 pt-6 border-t border-white border-opacity-20">
+                <p className="text-sm opacity-80 mb-4">
+                  Get started today with a free consultation call
+                </p>
+                <a 
+                  href="#contact"
+                  className="block w-full bg-white text-sky-600 px-6 py-3 rounded-full font-semibold text-center hover:bg-opacity-90 transition-all duration-300"
+                >
+                  Schedule Call
+                </a>
+              </div>
             </div>
           </div>
         </div>

@@ -1,97 +1,106 @@
-
-import React from 'react'
-import { Code, Wordpress, Video, PenTool, Smartphone, ArrowRight, Database, Bot } from 'lucide-react'
-
-const Services = () => {
-  const services = [
-    {
-      icon: <Code size={40} />,
-      title: 'Website Development',
-      description: 'Custom websites built with modern technologies, responsive design, and optimized performance.',
-      features: ['Responsive Design', 'SEO Optimized', 'Fast Loading', 'Modern Tech Stack']
-    },
-    {
-      icon: <Wordpress size={40} />,
-      title: 'WordPress Development',
-      description: 'Professional WordPress solutions with custom themes, plugins, and complete site management.',
-      features: ['Custom Themes', 'Plugin Development', 'Site Migration', 'Maintenance']
-    },
-    {
-      icon: <Smartphone size={40} />,
-      title: 'App Development',
-      description: 'Native and cross-platform mobile applications with modern UI/UX design.',
-      features: ['iOS & Android', 'Cross-Platform', 'Modern UI/UX', 'API Integration']
-    },
-    {
-      icon: <Video size={40} />,
-      title: 'Video Editing',
-      description: 'Professional video editing services for marketing, social media, and promotional content.',
-      features: ['Professional Editing', 'Motion Graphics', 'Color Correction', 'Audio Enhancement']
-    },
-    {
-      icon: <Database size={40} />,
-      title: 'SaaS Software',
-      description: 'Complete SaaS solutions from concept to deployment with scalable architecture.',
-      features: ['Cloud Architecture', 'User Management', 'Payment Integration', 'Analytics']
-    },
-    {
-      icon: <Code size={40} />,
-      title: 'Custom Software',
-      description: 'Tailored software solutions designed specifically for your business needs.',
-      features: ['Custom Logic', 'Third-party Integration', 'Scalable Design', 'Maintenance']
-    },
-    {
-      icon: <Bot size={40} />,
-      title: 'Python Automations',
-      description: 'Automate repetitive tasks and workflows with custom Python scripts and solutions.',
-      features: ['Process Automation', 'Data Processing', 'API Integration', 'Scheduled Tasks']
+function Services() {
+  const scrollToSection = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
     }
-  ]
+  };
 
   return (
-    <section id="services" className="py-20 bg-white">
-      <div className="container-max section-padding">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-black mb-6">
-            Our <span className="italic">Services</span>
-          </h2>
-          <p className="text-gray-600 text-lg max-w-3xl mx-auto">
-            We offer comprehensive digital solutions to help your business grow and succeed in the digital landscape.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service, index) => (
-            <div
-              key={index}
-              className="bg-gray-50 p-8 rounded-2xl hover:shadow-xl transition-all duration-300 group"
-            >
-              <div className="text-sky-500 mb-6 group-hover:scale-110 transition-transform duration-300">
-                {service.icon}
+    <section id="services" className="section-padding bg-gray-50">
+      <div className="container">
+        <div className="grid lg:grid-cols-2 gap-16">
+          {/* Left Column - Save Time */}
+          <div>
+            <div className="flex items-center mb-8">
+              <div className="icon-yellow mr-4">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
               </div>
-              
-              <h3 className="text-xl font-bold mb-4">{service.title}</h3>
-              
-              <p className="text-gray-600 mb-6">{service.description}</p>
-              
-              <ul className="space-y-2 mb-6">
-                {service.features.map((feature, idx) => (
-                  <li key={idx} className="flex items-center text-sm text-gray-600">
-                    <span className="w-2 h-2 bg-sky-400 rounded-full mr-3"></span>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-              
-              <button className="text-sky-500 font-semibold flex items-center gap-2 hover:gap-4 transition-all duration-300">
-                Learn More <ArrowRight size={16} />
+              <h2 className="heading-lg">On s'occupe<br />de tout</h2>
+            </div>
+
+            <div className="mb-8">
+              <h3 className="text-2xl font-bold mb-4">Gagnez du temps</h3>
+              <p className="text-gray-600 mb-6">
+                Ne perdez plus de temps avec la gestion quotidienne : développement, déploiement, 
+                maintenance, et relation client sont entièrement pris en charge.
+              </p>
+              <button 
+                onClick={() => scrollToSection('contact')}
+                className="btn-yellow"
+              >
+                Requesting a free audit →
               </button>
             </div>
-          ))}
+
+            {/* Arrow */}
+            <div className="flex justify-center">
+              <svg className="w-16 h-16 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M13.025 1l-2.847 2.828 6.176 6.176h-16.354v3.992h16.354l-6.176 6.176 2.847 2.828 10.975-11z"/>
+              </svg>
+            </div>
+          </div>
+
+          {/* Right Column - Services Grid */}
+          <div className="space-y-8">
+            {/* Communication Service */}
+            <div className="card flex items-center">
+              <div className="w-32 h-24 bg-gray-200 rounded-lg mr-6 overflow-hidden">
+                <img 
+                  src="/attached_assets/Programmer-amico_1754336602655.png" 
+                  alt="Communication"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1">
+                <h4 className="text-xl font-bold mb-2">Communication avec les clients</h4>
+                <p className="text-gray-600 text-sm mb-2">
+                  Réponses rapides et précises : projet, délais, et résolution immédiate 
+                  des problèmes rencontrés par vos clients.
+                </p>
+                <div className="flex items-center text-sm text-gray-500">
+                  <span className="mr-4">Communication</span>
+                  <div className="flex items-center">
+                    <span className="text-yellow-500">★ 5,0</span>
+                    <span className="ml-1">(Note Client)</span>
+                  </div>
+                </div>
+                <a href="#" className="text-yellow-600 text-sm hover:underline">En savoir plus →</a>
+              </div>
+            </div>
+
+            {/* Development Service */}
+            <div className="card flex items-center">
+              <div className="w-32 h-24 bg-gray-200 rounded-lg mr-6 overflow-hidden">
+                <img 
+                  src="/attached_assets/Developer activity-cuate_1754336602655.png" 
+                  alt="Development"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1">
+                <h4 className="text-xl font-bold mb-2">Développement et déploiement</h4>
+                <p className="text-gray-600 text-sm mb-2">
+                  Nos développeurs prennent en charge la création de vos projets, 
+                  assurant le développement et le déploiement à leur livraison.
+                </p>
+                <div className="flex items-center text-sm text-gray-500">
+                  <span className="mr-4">Développement</span>
+                  <div className="flex items-center">
+                    <span className="text-yellow-500">★ 5,0</span>
+                    <span className="ml-1">(Note Client)</span>
+                  </div>
+                </div>
+                <a href="#" className="text-yellow-600 text-sm hover:underline">En savoir plus →</a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
 
-export default Services
+export default Services;

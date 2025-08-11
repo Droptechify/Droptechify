@@ -1,148 +1,108 @@
-
 import React, { useState } from 'react'
-import { Plus, Edit, Trash2, Save, X } from 'lucide-react'
+import { Settings, Users, FileText, Image, MessageSquare, BarChart, Plus, Edit, Trash2 } from 'lucide-react'
 
 const Admin = () => {
-  const [activeTab, setActiveTab] = useState('portfolio')
-  const [isEditing, setIsEditing] = useState(false)
-  const [editingItem, setEditingItem] = useState(null)
-
-  // Mock data - in real app this would come from API
-  const [portfolioItems, setPortfolioItems] = useState([
-    { id: 1, title: "E-Commerce Platform", category: "Website Development", image: "/IMAGE.jpg", description: "Full-featured e-commerce solution" }
-  ])
-
-  const [reviews, setReviews] = useState([
-    { id: 1, name: "Sarah Johnson", company: "TechStart Inc.", rating: 5, text: "DropTechify transformed our digital presence completely." }
-  ])
-
-  const [faqs, setFaqs] = useState([
-    { id: 1, question: "What services does DropTechify offer?", answer: "We offer comprehensive digital services..." }
+  const [activeTab, setActiveTab] = useState('dashboard')
+  const [projects, setProjects] = useState([
+    { id: 1, title: 'E-commerce Platform', status: 'Completed', client: 'Tech Corp' },
+    { id: 2, title: 'Mobile App', status: 'In Progress', client: 'StartupXYZ' },
+    { id: 3, title: 'Video Campaign', status: 'Planning', client: 'MediaCo' }
   ])
 
   const [contacts, setContacts] = useState([
-    { id: 1, name: "John Doe", email: "john@example.com", service: "Website Development", message: "Need a new website", date: "2025-01-01" }
+    { id: 1, name: 'John Doe', email: 'john@example.com', service: 'Website Development', message: 'Need a new website for my business', date: '2025-01-15', phone: '+92 300 1234567' },
+    { id: 2, name: 'Jane Smith', email: 'jane@example.com', service: 'App Development', message: 'Looking for mobile app development', date: '2025-01-14', phone: '+92 301 7654321' }
   ])
 
   const tabs = [
-    { id: 'portfolio', name: 'Portfolio' },
-    { id: 'reviews', name: 'Reviews' },
-    { id: 'faqs', name: 'FAQs' },
-    { id: 'contacts', name: 'Contacts' }
+    { id: 'dashboard', name: 'Dashboard', icon: <BarChart size={20} /> },
+    { id: 'projects', name: 'Projects', icon: <FileText size={20} /> },
+    { id: 'contacts', name: 'Contacts', icon: <MessageSquare size={20} /> },
+    { id: 'media', name: 'Media', icon: <Image size={20} /> },
+    { id: 'users', name: 'Users', icon: <Users size={20} /> },
+    { id: 'settings', name: 'Settings', icon: <Settings size={20} /> }
   ]
 
-  const handleEdit = (item) => {
-    setEditingItem(item)
-    setIsEditing(true)
-  }
-
   const handleDelete = (id, type) => {
-    if (window.confirm('Are you sure you want to delete this item?')) {
-      switch (type) {
-        case 'portfolio':
-          setPortfolioItems(portfolioItems.filter(item => item.id !== id))
-          break
-        case 'reviews':
-          setReviews(reviews.filter(item => item.id !== id))
-          break
-        case 'faqs':
-          setFaqs(faqs.filter(item => item.id !== id))
-          break
-        case 'contacts':
-          setContacts(contacts.filter(item => item.id !== id))
-          break
-      }
+    if (type === 'projects') {
+      setProjects(projects.filter(project => project.id !== id))
+    } else if (type === 'contacts') {
+      setContacts(contacts.filter(contact => contact.id !== id))
     }
   }
 
-  const renderPortfolio = () => (
+  const renderDashboard = () => (
+    <div className="space-y-6">
+      <h3 className="text-2xl font-bold">Dashboard Overview</h3>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h4 className="text-lg font-semibold text-gray-700">Total Projects</h4>
+          <p className="text-3xl font-bold text-sky-400">{projects.length}</p>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h4 className="text-lg font-semibold text-gray-700">Active Projects</h4>
+          <p className="text-3xl font-bold text-green-500">{projects.filter(p => p.status === 'In Progress').length}</p>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h4 className="text-lg font-semibold text-gray-700">Contact Messages</h4>
+          <p className="text-3xl font-bold text-blue-500">{contacts.length}</p>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h4 className="text-lg font-semibold text-gray-700">Completed Projects</h4>
+          <p className="text-3xl font-bold text-purple-500">{projects.filter(p => p.status === 'Completed').length}</p>
+        </div>
+      </div>
+
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        <h4 className="text-lg font-semibold mb-4">Recent Activity</h4>
+        <div className="space-y-3">
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <span className="text-gray-600">New project "E-commerce Platform" completed</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+            <span className="text-gray-600">Contact message received from John Doe</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+            <span className="text-gray-600">Mobile App project status updated</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+
+  const renderProjects = () => (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-2xl font-bold">Portfolio Management</h3>
-        <button className="bg-sky-400 text-black px-4 py-2 rounded-lg flex items-center gap-2">
+        <h3 className="text-2xl font-bold">Projects</h3>
+        <button className="bg-sky-400 hover:bg-sky-500 text-black px-4 py-2 rounded-lg font-semibold inline-flex items-center gap-2">
           <Plus size={20} /> Add Project
         </button>
       </div>
-      
-      <div className="grid gap-6">
-        {portfolioItems.map((item) => (
-          <div key={item.id} className="bg-white p-6 rounded-lg shadow-md flex justify-between items-center">
-            <div className="flex items-center gap-4">
-              <img src={item.image} alt={item.title} className="w-16 h-16 object-cover rounded" />
-              <div>
-                <h4 className="font-semibold">{item.title}</h4>
-                <p className="text-gray-600">{item.category}</p>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <button onClick={() => handleEdit(item)} className="text-blue-500 hover:text-blue-700">
-                <Edit size={20} />
-              </button>
-              <button onClick={() => handleDelete(item.id, 'portfolio')} className="text-red-500 hover:text-red-700">
-                <Trash2 size={20} />
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
 
-  const renderReviews = () => (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h3 className="text-2xl font-bold">Reviews Management</h3>
-        <button className="bg-sky-400 text-black px-4 py-2 rounded-lg flex items-center gap-2">
-          <Plus size={20} /> Add Review
-        </button>
-      </div>
-      
       <div className="grid gap-6">
-        {reviews.map((review) => (
-          <div key={review.id} className="bg-white p-6 rounded-lg shadow-md">
+        {projects.map((project) => (
+          <div key={project.id} className="bg-white p-6 rounded-lg shadow-md">
             <div className="flex justify-between items-start">
               <div>
-                <h4 className="font-semibold">{review.name}</h4>
-                <p className="text-gray-600">{review.company}</p>
-                <p className="mt-2">{review.text}</p>
+                <h4 className="text-xl font-semibold">{project.title}</h4>
+                <p className="text-gray-600">Client: {project.client}</p>
+                <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium mt-2 ${
+                  project.status === 'Completed' ? 'bg-green-100 text-green-800' :
+                  project.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
+                  'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {project.status}
+                </span>
               </div>
               <div className="flex gap-2">
-                <button onClick={() => handleEdit(review)} className="text-blue-500 hover:text-blue-700">
+                <button className="text-blue-500 hover:text-blue-700">
                   <Edit size={20} />
                 </button>
-                <button onClick={() => handleDelete(review.id, 'reviews')} className="text-red-500 hover:text-red-700">
-                  <Trash2 size={20} />
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-
-  const renderFAQs = () => (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h3 className="text-2xl font-bold">FAQ Management</h3>
-        <button className="bg-sky-400 text-black px-4 py-2 rounded-lg flex items-center gap-2">
-          <Plus size={20} /> Add FAQ
-        </button>
-      </div>
-      
-      <div className="grid gap-6">
-        {faqs.map((faq) => (
-          <div key={faq.id} className="bg-white p-6 rounded-lg shadow-md">
-            <div className="flex justify-between items-start">
-              <div>
-                <h4 className="font-semibold">{faq.question}</h4>
-                <p className="text-gray-600 mt-2">{faq.answer}</p>
-              </div>
-              <div className="flex gap-2">
-                <button onClick={() => handleEdit(faq)} className="text-blue-500 hover:text-blue-700">
-                  <Edit size={20} />
-                </button>
-                <button onClick={() => handleDelete(faq.id, 'faqs')} className="text-red-500 hover:text-red-700">
+                <button onClick={() => handleDelete(project.id, 'projects')} className="text-red-500 hover:text-red-700">
                   <Trash2 size={20} />
                 </button>
               </div>
@@ -156,7 +116,7 @@ const Admin = () => {
   const renderContacts = () => (
     <div className="space-y-6">
       <h3 className="text-2xl font-bold">Contact Submissions</h3>
-      
+
       <div className="grid gap-6">
         {contacts.map((contact) => (
           <div key={contact.id} className="bg-white p-6 rounded-lg shadow-md">
@@ -164,6 +124,7 @@ const Admin = () => {
               <div>
                 <h4 className="font-semibold">{contact.name}</h4>
                 <p className="text-gray-600">{contact.email}</p>
+                {contact.phone && <p className="text-gray-600">{contact.phone}</p>}
                 <p className="text-sm text-gray-500">Service: {contact.service}</p>
                 <p className="mt-2">{contact.message}</p>
                 <p className="text-xs text-gray-400 mt-2">Received: {contact.date}</p>
@@ -190,30 +151,76 @@ const Admin = () => {
         </div>
       </div>
 
-      <div className="container-max section-padding py-8">
-        {/* Tabs */}
-        <div className="flex space-x-8 border-b border-gray-200 mb-8">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                activeTab === tab.id
-                  ? 'border-sky-500 text-sky-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              {tab.name}
-            </button>
-          ))}
-        </div>
+      <div className="container-max section-padding">
+        <div className="py-8">
+          <div className="grid lg:grid-cols-4 gap-8">
+            {/* Sidebar */}
+            <div className="lg:col-span-1">
+              <nav className="space-y-2">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-colors ${
+                      activeTab === tab.id
+                        ? 'bg-sky-400 text-black font-semibold'
+                        : 'text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    {tab.icon}
+                    {tab.name}
+                  </button>
+                ))}
+              </nav>
+            </div>
 
-        {/* Content */}
-        <div>
-          {activeTab === 'portfolio' && renderPortfolio()}
-          {activeTab === 'reviews' && renderReviews()}
-          {activeTab === 'faqs' && renderFAQs()}
-          {activeTab === 'contacts' && renderContacts()}
+            {/* Content */}
+            <div className="lg:col-span-3">
+              {activeTab === 'dashboard' && renderDashboard()}
+              {activeTab === 'projects' && renderProjects()}
+              {activeTab === 'contacts' && renderContacts()}
+
+              {activeTab === 'media' && (
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Media Library</h2>
+                  <div className="bg-white p-6 rounded-lg shadow">
+                    <p className="text-gray-600">Media management functionality coming soon...</p>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'users' && (
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">User Management</h2>
+                  <div className="bg-white p-6 rounded-lg shadow">
+                    <p className="text-gray-600">User management functionality coming soon...</p>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'settings' && (
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Settings</h2>
+                  <div className="bg-white p-6 rounded-lg shadow">
+                    <h3 className="text-lg font-semibold mb-4">Site Configuration</h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Site Title</label>
+                        <input type="text" defaultValue="Droptechify" className="w-full px-3 py-2 border border-gray-300 rounded-md" />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Site Description</label>
+                        <textarea defaultValue="We Build Digital Solutions That Build Your Brand" rows={3} className="w-full px-3 py-2 border border-gray-300 rounded-md"></textarea>
+                      </div>
+                      <button className="bg-sky-400 hover:bg-sky-500 text-black px-4 py-2 rounded-lg font-semibold">
+                        Save Settings
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

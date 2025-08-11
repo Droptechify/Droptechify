@@ -1,69 +1,94 @@
-
-import React from 'react'
-import { MessageSquare, Settings, BarChart3 } from 'lucide-react'
-
-const HowItWorks = () => {
-  const steps = [
-    {
-      step: 'STEP 1',
-      icon: <MessageSquare size={40} />,
-      title: 'Initial Consultation',
-      description: 'We discuss your project requirements, goals, and timeline to create the perfect solution for your needs.'
-    },
-    {
-      step: 'STEP 2',
-      icon: <Settings size={40} />,
-      title: 'Development & Design',
-      description: 'Our expert team develops your project using cutting-edge technologies and best practices.'
-    },
-    {
-      step: 'STEP 3',
-      icon: <BarChart3 size={40} />,
-      title: 'Launch & Support',
-      description: 'We launch your project and provide ongoing support to ensure optimal performance and growth.'
-    }
-  ]
-
+function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-20 bg-gray-50">
-      <div className="container-max section-padding">
+    <section id="how-it-works" className="section-padding bg-white">
+      <div className="container">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-black mb-6">
-            How <span className="italic">Does it work?</span>
+          <h2 className="heading-lg mb-6">
+            Comment <span className="yellow-underline italic">ça marche</span> ?
           </h2>
-          <p className="text-gray-600 text-lg max-w-3xl mx-auto">
-            We simplify each step, from initial consultation to final delivery, to ensure maximum efficiency and complete peace of mind.
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            Nous simplifions chaque étape, de la consultation initiale à l'analyse des performances, 
+            pour vous garantir un résultat maximal et une tranquillité d'esprit totale.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {steps.map((step, index) => (
-            <div key={index} className="text-center relative">
-              <div className="bg-sky-400 text-black text-sm font-bold px-4 py-2 rounded-full inline-block mb-6">
-                {step.step}
+        <div className="grid lg:grid-cols-3 gap-12">
+          {/* Step 1 */}
+          <div className="text-center">
+            <div className="mb-6">
+              <div className="w-20 h-20 bg-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold text-black">
+                1
               </div>
-              
-              <div className="text-sky-500 mb-6 flex justify-center">
-                {step.icon}
-              </div>
-              
-              <h3 className="text-xl font-bold mb-4">{step.title}</h3>
-              
-              <p className="text-gray-600">{step.description}</p>
-              
-              {index < steps.length - 1 && (
-                <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2">
-                  <div className="w-8 h-0.5 bg-gray-300 relative">
-                    <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-0 h-0 border-l-4 border-l-gray-300 border-t-2 border-b-2 border-t-transparent border-b-transparent"></div>
-                  </div>
-                </div>
-              )}
+              <h3 className="text-xl font-bold mb-4">étape 1</h3>
             </div>
-          ))}
+            <h4 className="text-lg font-semibold mb-4">Consultation initiale</h4>
+            <p className="text-gray-600">
+              Rendez-vous en ligne pour analyser vos besoins, définir le cahier des charges 
+              et établir un devis personnalisé.
+            </p>
+            
+            {/* Arrow */}
+            <div className="flex justify-center mt-8 lg:hidden">
+              <svg className="w-8 h-8 text-yellow-500 rotate-90" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M13.025 1l-2.847 2.828 6.176 6.176h-16.354v3.992h16.354l-6.176 6.176 2.847 2.828 10.975-11z"/>
+              </svg>
+            </div>
+          </div>
+
+          {/* Step 2 */}
+          <div className="text-center">
+            <div className="mb-6">
+              <div className="w-20 h-20 bg-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold text-black">
+                2
+              </div>
+              <h3 className="text-xl font-bold mb-4">étape 2</h3>
+            </div>
+            <h4 className="text-lg font-semibold mb-4">Développement intégral</h4>
+            <p className="text-gray-600">
+              Nous développons chaque aspect de votre projet pour que vous profitiez 
+              pleinement de votre solution digitale.
+            </p>
+            
+            {/* Arrow */}
+            <div className="flex justify-center mt-8 lg:hidden">
+              <svg className="w-8 h-8 text-yellow-500 rotate-90" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M13.025 1l-2.847 2.828 6.176 6.176h-16.354v3.992h16.354l-6.176 6.176 2.847 2.828 10.975-11z"/>
+              </svg>
+            </div>
+          </div>
+
+          {/* Step 3 */}
+          <div className="text-center">
+            <div className="mb-6">
+              <div className="w-20 h-20 bg-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold text-black">
+                3
+              </div>
+              <h3 className="text-xl font-bold mb-4">étape 3</h3>
+            </div>
+            <h4 className="text-lg font-semibold mb-4">Analyse des performances</h4>
+            <p className="text-gray-600">
+              Recevez un rapport mensuel avec les métriques clés, taux de conversion 
+              et autres indicateurs de performance.
+            </p>
+          </div>
+        </div>
+
+        {/* Desktop Arrows */}
+        <div className="hidden lg:flex justify-center items-center mt-16 relative">
+          <div className="absolute left-1/4 top-1/2 transform -translate-y-1/2">
+            <svg className="w-12 h-8 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M13.025 1l-2.847 2.828 6.176 6.176h-16.354v3.992h16.354l-6.176 6.176 2.847 2.828 10.975-11z"/>
+            </svg>
+          </div>
+          <div className="absolute right-1/4 top-1/2 transform -translate-y-1/2">
+            <svg className="w-12 h-8 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M13.025 1l-2.847 2.828 6.176 6.176h-16.354v3.992h16.354l-6.176 6.176 2.847 2.828 10.975-11z"/>
+            </svg>
+          </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
 
-export default HowItWorks
+export default HowItWorks;
