@@ -1,200 +1,138 @@
-function Services() {
-  const scrollToSection = (id) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
 
+import React from 'react';
+import { ArrowRight, Code, Smartphone, Video, Cog, Globe, Database, Zap, Palette } from 'lucide-react';
+
+function Services({ onPageChange }) {
   const services = [
     {
-      title: "Communication with clients",
-      description: "Fast and accurate responses: project requirements, technical details, and immediate resolution of problems encountered by your clients.",
-      category: "Communication",
-      rating: "★ 5.0",
-      note: "(Client satisfaction rating)",
-      image: "/attached_assets/Communication-illustration.png",
-      link: "#communication"
+      title: 'Website Development',
+      description: 'Custom websites built with modern technologies, responsive design, and optimized performance for your business needs.',
+      icon: <Globe size={32} />,
+      features: ['Responsive Design', 'SEO Optimized', 'Fast Loading', 'Modern UI/UX']
     },
     {
-      title: "Development & Deployment",
-      description: "Our developers handle the development of your projects, ensuring delivery of functional solutions and deployment to production environments.",
-      category: "Development",
-      rating: "★ 5.0",
-      note: "(Quality rating)",
-      image: "/attached_assets/Development-illustration.png",
-      link: "#development"
+      title: 'WordPress Development', 
+      description: 'Professional WordPress solutions including custom themes, plugins, and e-commerce functionality.',
+      icon: <Code size={32} />,
+      features: ['Custom Themes', 'Plugin Development', 'WooCommerce', 'Security']
     },
     {
-      title: "Maintenance",
-      description: "Handling bugs and incidents: security vulnerabilities, server issues, and other technical problems quickly resolved.",
-      category: "Support",
-      rating: "★ 4.9",
-      note: "(Response time rating)",
-      image: "/attached_assets/Maintenance-illustration.png",
-      link: "#maintenance"
+      title: 'Website SEO',
+      description: 'Complete SEO optimization to improve your search rankings and drive organic traffic to your website.',
+      icon: <Zap size={32} />,
+      features: ['Keyword Research', 'On-Page SEO', 'Technical SEO', 'Analytics']
     },
     {
-      title: "Testing & Quality Control",
-      description: "Complete project testing and quality control after each update to ensure flawless delivery to your clients.",
-      category: "Quality",
-      rating: "★ 4.9",
-      note: "(Quality rating)",
-      image: "/attached_assets/Testing-illustration.png",
-      link: "#testing"
+      title: 'Python Automation',
+      description: 'Automated workflows and scripts to streamline your business processes and increase efficiency.',
+      icon: <Cog size={32} />,
+      features: ['Web Scraping', 'Data Processing', 'API Integration', 'Workflow Automation']
     },
     {
-      title: "Optimized Project Creation",
-      description: "We take care of every detail: compelling proposals, engaging descriptions and attractive presentations to maximize conversions.",
-      category: "Precision",
-      rating: "★ 4.7",
-      note: "(Conversion rating)",
-      image: "/attached_assets/Project-creation-illustration.png",
-      link: "#project-creation"
+      title: 'Custom Software',
+      description: 'Tailored software solutions designed specifically for your unique business requirements and workflows.',
+      icon: <Database size={32} />,
+      features: ['Custom Development', 'System Integration', 'Database Design', 'API Development']
     },
     {
-      title: "Business Growth Strategy",
-      description: "Business optimization on multiple platforms and other channels to improve the visibility of your services.",
-      category: "Growth",
-      rating: "★ 4.8",
-      note: "(Growth rating)",
-      image: "/attached_assets/Growth-illustration.png",
-      link: "#growth"
+      title: 'App Development',
+      description: 'Native and cross-platform mobile applications for iOS and Android with seamless user experience.',
+      icon: <Smartphone size={32} />,
+      features: ['iOS Development', 'Android Development', 'Cross-Platform', 'UI/UX Design']
     },
     {
-      title: "Dynamic Price & Timeline Management",
-      description: "Price adjustment according to supply and demand to maximize profitability, with fine management of project timelines.",
-      category: "Value-price",
-      rating: "★ 4.7",
-      note: "(ROI rating)",
-      image: "/attached_assets/Price-management-illustration.png",
-      link: "#price-management"
+      title: 'SaaS Software Development',
+      description: 'Scalable Software-as-a-Service platforms with subscription management and multi-tenant architecture.',
+      icon: <Palette size={32} />,
+      features: ['Multi-Tenant', 'Subscription Management', 'Cloud Architecture', 'Scalability']
+    },
+    {
+      title: 'Video Editing Services',
+      description: 'Professional video editing for marketing content, tutorials, and promotional videos with high quality output.',
+      icon: <Video size={32} />,
+      features: ['Motion Graphics', 'Color Correction', 'Sound Design', 'Professional Editing']
     }
   ];
 
+  const handleLearnMore = (service) => {
+    if (onPageChange) {
+      onPageChange('contact');
+    }
+  };
+
   return (
-    <section id="services" className="section-padding bg-gray-50">
-      <div className="container">
-        <div className="text-center mb-16">
-          <h2 className="heading-lg mb-8">We take care of everything</h2>
-          
-          {/* Two Column Layout */}
-          <div className="grid lg:grid-cols-2 gap-16">
-            {/* Left Column - Save Time */}
-            <div>
-              <h3 className="text-3xl font-bold mb-6">Save time</h3>
-              <p className="text-gray-600 text-lg mb-8 leading-relaxed">
-                Don't waste time on daily management: development, deployment, maintenance, 
-                and client relationships are completely taken care of.
-              </p>
-              <button 
-                onClick={() => scrollToSection('contact')}
-                className="btn-yellow mb-8"
-              >
-                Request a free audit
-              </button>
-              
-              {/* Arrow */}
-              <div className="flex justify-center">
-                <svg className="arrow-yellow w-12 h-8" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M13.025 1l-2.847 2.828 6.176 6.176h-16.354v3.992h16.354l-6.176 6.176 2.847 2.828 10.975-11z"/>
-                </svg>
-              </div>
-            </div>
-            
-            {/* Right Column - First 4 Services */}
-            <div className="space-y-6">
-              {services.slice(0, 4).map((service, index) => (
-                <div key={index} className="service-card">
-                  <div className="service-image bg-gray-100">
-                    <img 
-                      src={service.image} 
-                      alt={service.title}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                      }}
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="text-xl font-bold mb-2">{service.title}</h4>
-                    <p className="text-gray-600 text-sm mb-3">{service.description}</p>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <span className="text-sm font-medium">{service.category}</span>
-                        <div className="text-yellow-500 font-bold">{service.rating}</div>
-                        <div className="text-xs text-gray-500">{service.note}</div>
-                      </div>
-                      <a 
-                        href={service.link}
-                        className="text-yellow-500 hover:text-yellow-600 font-medium text-sm"
-                      >
-                        Learn more
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+    <section className="py-20 bg-gradient-to-br from-gray-50 to-white">
+      <div className="container mx-auto px-6">
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-16 animate-fade-in">
+            <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+              Our <span className="text-sky-400">Services</span>
+            </h2>
+            <div className="w-20 h-1 bg-sky-400 mx-auto mb-6"></div>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              We provide comprehensive digital solutions to help your business grow and succeed in the digital world.
+            </p>
           </div>
 
-          {/* Bottom Section - Make Money */}
-          <div className="grid lg:grid-cols-2 gap-16 mt-20">
-            {/* Left Column - Remaining Services */}
-            <div className="space-y-6">
-              {services.slice(4).map((service, index) => (
-                <div key={index + 4} className="service-card">
-                  <div className="service-image bg-gray-100">
-                    <img 
-                      src={service.image} 
-                      alt={service.title}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                      }}
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="text-xl font-bold mb-2">{service.title}</h4>
-                    <p className="text-gray-600 text-sm mb-3">{service.description}</p>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <span className="text-sm font-medium">{service.category}</span>
-                        <div className="text-yellow-500 font-bold">{service.rating}</div>
-                        <div className="text-xs text-gray-500">{service.note}</div>
-                      </div>
-                      <a 
-                        href={service.link}
-                        className="text-yellow-500 hover:text-yellow-600 font-medium text-sm"
-                      >
-                        Learn more
-                      </a>
-                    </div>
-                  </div>
+          {/* Services Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {services.map((service, index) => (
+              <div 
+                key={index} 
+                className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 animate-slide-up border border-gray-100"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                {/* Icon */}
+                <div className="w-16 h-16 bg-gradient-to-br from-sky-400 to-sky-500 rounded-2xl flex items-center justify-center mb-6 text-white group-hover:scale-110 transition-transform duration-300">
+                  {service.icon}
                 </div>
-              ))}
-            </div>
-            
-            {/* Right Column - Make Money */}
-            <div className="text-right">
-              <h3 className="text-3xl font-bold mb-6">Make money</h3>
-              <p className="text-gray-600 text-lg mb-8 leading-relaxed">
-                Maximize your revenue through expert management: optimized projects, 
-                prices adjusted according to demand, and improved visibility for more clients.
+
+                {/* Title */}
+                <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-sky-500 transition-colors duration-300">
+                  {service.title}
+                </h3>
+
+                {/* Description */}
+                <p className="text-gray-600 mb-6 line-clamp-3">
+                  {service.description}
+                </p>
+
+                {/* Features */}
+                <div className="space-y-2 mb-8">
+                  {service.features.map((feature, i) => (
+                    <div key={i} className="flex items-center text-sm text-gray-500">
+                      <div className="w-1.5 h-1.5 bg-sky-400 rounded-full mr-3"></div>
+                      {feature}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Button */}
+                <button 
+                  onClick={() => handleLearnMore(service)}
+                  className="w-full bg-sky-400 hover:bg-sky-500 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center group-hover:shadow-lg"
+                >
+                  Contact for Discussion
+                  <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA Section */}
+          <div className="text-center mt-16 animate-fade-in">
+            <div className="bg-gradient-to-r from-sky-400 to-sky-500 rounded-2xl p-8 text-white">
+              <h3 className="text-3xl font-bold mb-4">Ready to Get Started?</h3>
+              <p className="text-sky-100 mb-6 text-lg">
+                Let's discuss your project and create something amazing together.
               </p>
               <button 
-                onClick={() => scrollToSection('contact')}
-                className="btn-yellow mb-8"
+                onClick={() => onPageChange && onPageChange('contact')}
+                className="bg-white text-sky-500 px-8 py-4 rounded-xl font-bold hover:bg-gray-100 transition-all duration-300 hover:scale-105 shadow-lg"
               >
-                Request a free audit
+                Start Your Project
               </button>
-              
-              {/* Arrow */}
-              <div className="flex justify-center">
-                <svg className="arrow-yellow w-12 h-8 rotate-180" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M13.025 1l-2.847 2.828 6.176 6.176h-16.354v3.992h16.354l-6.176 6.176 2.847 2.828 10.975-11z"/>
-                </svg>
-              </div>
             </div>
           </div>
         </div>

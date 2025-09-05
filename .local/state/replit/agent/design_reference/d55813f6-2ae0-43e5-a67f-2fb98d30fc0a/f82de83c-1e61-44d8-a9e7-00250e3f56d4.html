@@ -1,0 +1,752 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DropTechify - Smart Digital Solutions for Modern Brands</title>
+    <meta name="description" content="Professional software development company specializing in website development, WordPress, video editing, guest posting, and app development. Transform your digital presence with our expert solutions.">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    primary: '#38bdf8',
+                    secondary: '#1e293b',
+                },
+                fontFamily: {
+                    sans: ['Inter', 'sans-serif'],
+                },
+            }
+        }
+    };
+    </script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="font-sans bg-slate-50 text-gray-900">
+
+    <!-- @COMPONENT: NavigationHeader -->
+    <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-sm z-50 border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-gradient-to-br from-primary to-sky-600 rounded-lg flex items-center justify-center">
+                        <i data-lucide="code-2" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <span class="text-2xl font-bold text-secondary">DropTechify</span>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="text-gray-700 hover:text-primary font-medium transition-colors">Home</a>
+                    <a href="#services" class="text-gray-700 hover:text-primary font-medium transition-colors">Services</a>
+                    <a href="#about" class="text-gray-700 hover:text-primary font-medium transition-colors">About</a>
+                    <a href="#portfolio" class="text-gray-700 hover:text-primary font-medium transition-colors">Portfolio</a>
+                    <a href="#contact" class="text-gray-700 hover:text-primary font-medium transition-colors">Contact</a>
+                    <button data-event="click:openQuoteModal" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-sky-500 transition-colors font-medium">Get Quote</button>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2" data-event="click:toggleMobileMenu">
+                    <i data-lucide="menu" class="w-6 h-6 text-gray-700"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="md:hidden bg-white border-t border-gray-100 hidden" data-bind="mobileMenuOpen">
+            <div class="px-4 py-2 space-y-2">
+                <a href="#home" class="block py-2 text-gray-700 hover:text-primary">Home</a>
+                <a href="#services" class="block py-2 text-gray-700 hover:text-primary">Services</a>
+                <a href="#about" class="block py-2 text-gray-700 hover:text-primary">About</a>
+                <a href="#portfolio" class="block py-2 text-gray-700 hover:text-primary">Portfolio</a>
+                <a href="#contact" class="block py-2 text-gray-700 hover:text-primary">Contact</a>
+                <button class="w-full mt-2 bg-primary text-white py-2 rounded-lg hover:bg-sky-500 transition-colors">Get Quote</button>
+            </div>
+        </div>
+    </nav>
+    <!-- @END_COMPONENT: NavigationHeader -->
+
+    <!-- @COMPONENT: HeroSection -->
+    <section id="home" class="pt-20 bg-gradient-to-br from-slate-50 via-blue-50 to-sky-100 min-h-screen flex items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-8">
+                    <div class="space-y-4">
+                        <h1 class="text-5xl lg:text-6xl font-bold text-secondary leading-tight">
+                            Smart Digital 
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-sky-600">
+                                Solutions
+                            </span>
+                            for Modern Brands
+                        </h1>
+                        <p class="text-xl text-gray-600 leading-relaxed">
+                            Transform your business with cutting-edge web development, innovative apps, and comprehensive digital marketing solutions. We build the future, one line of code at a time.
+                        </p>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button data-event="click:scrollToServices" class="bg-primary text-white px-8 py-4 rounded-lg hover:bg-sky-500 transition-all duration-300 transform hover:scale-105 font-semibold text-lg shadow-lg">
+                            Explore Services
+                        </button>
+                        <button data-event="click:scrollToPortfolio" class="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-lg hover:border-primary hover:text-primary transition-all duration-300 font-semibold text-lg">
+                            View Portfolio
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center space-x-6 pt-4">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-primary">50+</div>
+                            <div class="text-sm text-gray-600">Projects Delivered</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-primary">25+</div>
+                            <div class="text-sm text-gray-600">Happy Clients</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-primary">3+</div>
+                            <div class="text-sm text-gray-600">Years Experience</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="relative">
+                    <!-- Modern tech workspace with multiple monitors and coding environment -->
+                    <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" alt="Modern development workspace" class="rounded-2xl shadow-2xl w-full">
+                    
+                    <!-- Floating elements for visual appeal -->
+                    <div class="absolute -top-6 -right-6 w-20 h-20 bg-gradient-to-br from-primary to-sky-600 rounded-2xl flex items-center justify-center shadow-xl">
+                        <i data-lucide="zap" class="w-10 h-10 text-white"></i>
+                    </div>
+                    <div class="absolute -bottom-6 -left-6 w-16 h-16 bg-gradient-to-br from-sky-400 to-blue-500 rounded-xl flex items-center justify-center shadow-lg">
+                        <i data-lucide="rocket" class="w-8 h-8 text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: HeroSection -->
+
+    <!-- @COMPONENT: ServicesSection -->
+    <section id="services" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-secondary mb-4">Our Expertise</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    We offer comprehensive digital solutions tailored to elevate your business presence and drive growth through innovative technology.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Website Development -->
+                <div class="bg-gradient-to-br from-blue-50 to-sky-50 rounded-xl p-8 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-gradient-to-br from-primary to-sky-600 rounded-xl flex items-center justify-center mb-6">
+                        <i data-lucide="globe" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-secondary mb-4">Website Development</h3>
+                    <p class="text-gray-600 mb-6">
+                        Custom websites built with modern technologies. Responsive, fast, and SEO-optimized solutions that convert visitors into customers.
+                    </p>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-primary mr-2"></i>React & Next.js</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-primary mr-2"></i>Responsive Design</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-primary mr-2"></i>SEO Optimization</li>
+                    </ul>
+                </div>
+                
+                <!-- WordPress Development -->
+                <div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-8 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center mb-6">
+                        <i data-lucide="layout-template" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-secondary mb-4">WordPress Development</h3>
+                    <p class="text-gray-600 mb-6">
+                        Professional WordPress sites with custom themes, plugins, and full CMS capabilities for easy content management.
+                    </p>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-primary mr-2"></i>Custom Themes</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-primary mr-2"></i>Plugin Development</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-primary mr-2"></i>E-commerce Integration</li>
+                    </ul>
+                </div>
+                
+                <!-- Video Editing -->
+                <div class="bg-gradient-to-br from-red-50 to-pink-50 rounded-xl p-8 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-pink-600 rounded-xl flex items-center justify-center mb-6">
+                        <i data-lucide="video" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-secondary mb-4">Video Editing</h3>
+                    <p class="text-gray-600 mb-6">
+                        Professional video editing services for marketing, social media, and corporate content that engages your audience.
+                    </p>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-primary mr-2"></i>Motion Graphics</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-primary mr-2"></i>Color Grading</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-primary mr-2"></i>Audio Enhancement</li>
+                    </ul>
+                </div>
+                
+                <!-- Guest Posting -->
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-8 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mb-6">
+                        <i data-lucide="pen-tool" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-secondary mb-4">Guest Posting</h3>
+                    <p class="text-gray-600 mb-6">
+                        Strategic content marketing through high-quality guest posts on authoritative websites to boost your online presence.
+                    </p>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-primary mr-2"></i>High DA Sites</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-primary mr-2"></i>Quality Content</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-primary mr-2"></i>SEO Benefits</li>
+                    </ul>
+                </div>
+                
+                <!-- App Development -->
+                <div class="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-8 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl flex items-center justify-center mb-6">
+                        <i data-lucide="smartphone" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-secondary mb-4">App Development</h3>
+                    <p class="text-gray-600 mb-6">
+                        Native and cross-platform mobile applications designed for performance, usability, and scalability.
+                    </p>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-primary mr-2"></i>iOS & Android</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-primary mr-2"></i>React Native</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-primary mr-2"></i>App Store Deployment</li>
+                    </ul>
+                </div>
+                
+                <!-- Digital Marketing -->
+                <div class="bg-gradient-to-br from-cyan-50 to-teal-50 rounded-xl p-8 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-gradient-to-br from-cyan-500 to-teal-600 rounded-xl flex items-center justify-center mb-6">
+                        <i data-lucide="trending-up" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-secondary mb-4">Digital Marketing</h3>
+                    <p class="text-gray-600 mb-6">
+                        Comprehensive digital marketing strategies including SEO, social media, and PPC campaigns that drive results.
+                    </p>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-primary mr-2"></i>SEO Strategy</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-primary mr-2"></i>Social Media</li>
+                        <li class="flex items-center"><i data-lucide="check" class="w-4 h-4 text-primary mr-2"></i>PPC Campaigns</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: ServicesSection -->
+
+    <!-- @COMPONENT: AboutSection -->
+    <section id="about" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-8">
+                    <div>
+                        <h2 class="text-4xl font-bold text-secondary mb-6">About DropTechify</h2>
+                        <p class="text-lg text-gray-600 leading-relaxed mb-6">
+                            We are a passionate team of developers, designers, and digital strategists dedicated to helping businesses thrive in the digital landscape. Since our founding, we've been committed to delivering innovative solutions that drive real results.
+                        </p>
+                        <p class="text-lg text-gray-600 leading-relaxed">
+                            Our expertise spans across modern web technologies, mobile app development, and comprehensive digital marketing strategies. We believe in building long-term partnerships with our clients and growing together.
+                        </p>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-xl shadow-sm">
+                            <div class="text-3xl font-bold text-primary mb-2">100%</div>
+                            <div class="text-gray-600">Client Satisfaction</div>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl shadow-sm">
+                            <div class="text-3xl font-bold text-primary mb-2">24/7</div>
+                            <div class="text-gray-600">Support Available</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button data-event="click:scrollToContact" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-sky-500 transition-colors font-semibold">
+                            Start Your Project
+                        </button>
+                        <button data-event="click:downloadBrochure" class="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:border-primary hover:text-primary transition-colors font-semibold">
+                            Download Brochure
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="relative">
+                    <!-- Team collaboration in modern office environment -->
+                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" alt="Team collaboration" class="rounded-2xl shadow-xl w-full">
+                    
+                    <div class="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent rounded-2xl"></div>
+                    
+                    <!-- Floating testimonial card -->
+                    <div class="absolute -bottom-8 -right-8 bg-white p-6 rounded-xl shadow-2xl max-w-xs">
+                        <div class="flex items-center mb-3">
+                            <div class="flex text-yellow-400">
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600" data-mock="true">"Exceptional service and quality work. Highly recommended!"</p>
+                        <p class="text-xs text-gray-500 mt-2" data-mock="true">- Sarah Johnson, CEO</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: AboutSection -->
+
+    <!-- @COMPONENT: PortfolioSection -->
+    <section id="portfolio" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-secondary mb-4">Our Portfolio</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Explore our latest projects and see how we've helped businesses transform their digital presence.
+                </p>
+            </div>
+            
+            <!-- Portfolio Filter -->
+            <div class="flex flex-wrap justify-center gap-4 mb-12">
+                <button data-event="click:filterPortfolio" data-filter="all" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-sky-500 transition-colors">All</button>
+                <button data-event="click:filterPortfolio" data-filter="websites" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">Websites</button>
+                <button data-event="click:filterPortfolio" data-filter="apps" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">Apps</button>
+                <button data-event="click:filterPortfolio" data-filter="marketing" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">Marketing</button>
+            </div>
+            
+            <!-- Portfolio Grid -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- @MAP: portfolioItems.map(item => ( -->
+                
+                <!-- E-commerce Website -->
+                <div class="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300">
+                    <!-- E-commerce website showcase with modern design -->
+                    <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400" alt="E-commerce website project" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-6 group-hover:translate-y-0 transition-transform duration-300">
+                        <h3 class="text-xl font-bold mb-2" data-mock="true">E-commerce Platform</h3>
+                        <p class="text-sm opacity-90" data-mock="true">Modern online store with advanced features</p>
+                        <div class="mt-3">
+                            <span class="inline-block bg-primary/20 text-primary px-2 py-1 rounded text-xs font-medium">Website</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mobile App -->
+                <div class="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300">
+                    <!-- Mobile app interface design mockup -->
+                    <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400" alt="Mobile app development project" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-6 group-hover:translate-y-0 transition-transform duration-300">
+                        <h3 class="text-xl font-bold mb-2" data-mock="true">Fitness Tracking App</h3>
+                        <p class="text-sm opacity-90" data-mock="true">Cross-platform mobile application</p>
+                        <div class="mt-3">
+                            <span class="inline-block bg-orange-500/20 text-orange-400 px-2 py-1 rounded text-xs font-medium">App</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Corporate Website -->
+                <div class="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300">
+                    <!-- Corporate website with professional design -->
+                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400" alt="Corporate website project" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-6 group-hover:translate-y-0 transition-transform duration-300">
+                        <h3 class="text-xl font-bold mb-2" data-mock="true">Corporate Website</h3>
+                        <p class="text-sm opacity-90" data-mock="true">Professional business presence</p>
+                        <div class="mt-3">
+                            <span class="inline-block bg-primary/20 text-primary px-2 py-1 rounded text-xs font-medium">Website</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SaaS Platform -->
+                <div class="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300">
+                    <!-- SaaS dashboard interface -->
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400" alt="SaaS platform development" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-6 group-hover:translate-y-0 transition-transform duration-300">
+                        <h3 class="text-xl font-bold mb-2" data-mock="true">SaaS Dashboard</h3>
+                        <p class="text-sm opacity-90" data-mock="true">Analytics and management platform</p>
+                        <div class="mt-3">
+                            <span class="inline-block bg-purple-500/20 text-purple-400 px-2 py-1 rounded text-xs font-medium">SaaS</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Restaurant Website -->
+                <div class="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300">
+                    <!-- Restaurant website with food photography -->
+                    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400" alt="Restaurant website project" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-6 group-hover:translate-y-0 transition-transform duration-300">
+                        <h3 class="text-xl font-bold mb-2" data-mock="true">Restaurant Website</h3>
+                        <p class="text-sm opacity-90" data-mock="true">Online ordering and reservation system</p>
+                        <div class="mt-3">
+                            <span class="inline-block bg-green-500/20 text-green-400 px-2 py-1 rounded text-xs font-medium">Website</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Marketing Campaign -->
+                <div class="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300">
+                    <!-- Digital marketing analytics and growth -->
+                    <img src="https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400" alt="Digital marketing campaign" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-6 group-hover:translate-y-0 transition-transform duration-300">
+                        <h3 class="text-xl font-bold mb-2" data-mock="true">Marketing Campaign</h3>
+                        <p class="text-sm opacity-90" data-mock="true">200% growth in 6 months</p>
+                        <div class="mt-3">
+                            <span class="inline-block bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded text-xs font-medium">Marketing</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- @END_MAP )) -->
+            </div>
+            
+            <div class="text-center mt-12">
+                <button data-event="click:loadMorePortfolio" class="bg-primary text-white px-8 py-3 rounded-lg hover:bg-sky-500 transition-colors font-semibold">
+                    Load More Projects
+                </button>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: PortfolioSection -->
+
+    <!-- @COMPONENT: ContactSection -->
+    <section id="contact" class="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-secondary mb-4">Let's Start Your Project</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Ready to transform your business with cutting-edge digital solutions? Get in touch with our team of experts.
+                </p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-12">
+                <!-- Contact Form -->
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <h3 class="text-2xl font-bold text-secondary mb-6">Send us a Message</h3>
+                    <form data-event="submit:handleContactForm" class="space-y-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="firstName" class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                                <input type="text" id="firstName" name="firstName" data-bind="form.firstName" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-colors" placeholder="John" data-mock="true">
+                            </div>
+                            <div>
+                                <label for="lastName" class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                                <input type="text" id="lastName" name="lastName" data-bind="form.lastName" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-colors" placeholder="Doe" data-mock="true">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                            <input type="email" id="email" name="email" data-bind="form.email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-colors" placeholder="john@example.com" data-mock="true">
+                        </div>
+                        
+                        <div>
+                            <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" data-bind="form.phone" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-colors" placeholder="+1 (555) 000-0000" data-mock="true">
+                        </div>
+                        
+                        <div>
+                            <label for="service" class="block text-sm font-medium text-gray-700 mb-2">Service Interested In</label>
+                            <select id="service" name="service" data-bind="form.service" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-colors">
+                                <option value="">Select a service</option>
+                                <option value="website">Website Development</option>
+                                <option value="wordpress">WordPress Development</option>
+                                <option value="app">App Development</option>
+                                <option value="video">Video Editing</option>
+                                <option value="marketing">Digital Marketing</option>
+                                <option value="guest-posting">Guest Posting</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label for="budget" class="block text-sm font-medium text-gray-700 mb-2">Project Budget</label>
+                            <select id="budget" name="budget" data-bind="form.budget" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-colors">
+                                <option value="">Select budget range</option>
+                                <option value="under-5k">Under $5,000</option>
+                                <option value="5k-10k">$5,000 - $10,000</option>
+                                <option value="10k-25k">$10,000 - $25,000</option>
+                                <option value="25k-50k">$25,000 - $50,000</option>
+                                <option value="over-50k">Over $50,000</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label for="message" class="block text-sm font-medium text-gray-700 mb-2">Project Details</label>
+                            <textarea id="message" name="message" rows="4" data-bind="form.message" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-colors resize-none" placeholder="Tell us about your project requirements..." data-mock="true"></textarea>
+                        </div>
+                        
+                        <button type="submit" data-implementation="Should validate form and send email" class="w-full bg-primary text-white py-4 rounded-lg hover:bg-sky-500 transition-colors font-semibold text-lg shadow-lg">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Contact Information -->
+                <div class="space-y-8">
+                    <div class="bg-white rounded-2xl shadow-xl p-8">
+                        <h3 class="text-2xl font-bold text-secondary mb-6">Get in Touch</h3>
+                        
+                        <div class="space-y-6">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="mail" class="w-6 h-6 text-primary"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-gray-900">Email Address</div>
+                                    <div class="text-gray-600">info@droptechify.com</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="phone" class="w-6 h-6 text-primary"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-gray-900">Phone Number</div>
+                                    <div class="text-gray-600">+1 (555) 123-4567</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="map-pin" class="w-6 h-6 text-primary"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-gray-900">Office Location</div>
+                                    <div class="text-gray-600">123 Tech Street, Digital City, TC 12345</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                                    <i data-lucide="clock" class="w-6 h-6 text-primary"></i>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-gray-900">Business Hours</div>
+                                    <div class="text-gray-600">Mon - Fri: 9AM - 6PM</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8 pt-8 border-t border-gray-200">
+                            <h4 class="font-semibold text-gray-900 mb-4">Follow Us</h4>
+                            <div class="flex space-x-4">
+                                <a href="#" class="w-10 h-10 bg-primary text-white rounded-lg flex items-center justify-center hover:bg-sky-500 transition-colors">
+                                    <i data-lucide="twitter" class="w-5 h-5"></i>
+                                </a>
+                                <a href="#" class="w-10 h-10 bg-primary text-white rounded-lg flex items-center justify-center hover:bg-sky-500 transition-colors">
+                                    <i data-lucide="linkedin" class="w-5 h-5"></i>
+                                </a>
+                                <a href="#" class="w-10 h-10 bg-primary text-white rounded-lg flex items-center justify-center hover:bg-sky-500 transition-colors">
+                                    <i data-lucide="facebook" class="w-5 h-5"></i>
+                                </a>
+                                <a href="#" class="w-10 h-10 bg-primary text-white rounded-lg flex items-center justify-center hover:bg-sky-500 transition-colors">
+                                    <i data-lucide="instagram" class="w-5 h-5"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Quote Card -->
+                    <div class="bg-gradient-to-br from-primary to-sky-600 rounded-2xl p-8 text-white">
+                        <h3 class="text-2xl font-bold mb-4">Quick Quote</h3>
+                        <p class="mb-6 opacity-90">Need a fast estimate? Fill out our quick quote form and get a response within 24 hours.</p>
+                        <button data-event="click:openQuickQuote" class="bg-white text-primary px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors font-semibold">
+                            Get Quick Quote
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: ContactSection -->
+
+    <!-- @COMPONENT: Footer -->
+    <footer class="bg-secondary text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Company Info -->
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-gradient-to-br from-primary to-sky-600 rounded-lg flex items-center justify-center">
+                            <i data-lucide="code-2" class="w-5 h-5 text-white"></i>
+                        </div>
+                        <span class="text-xl font-bold">DropTechify</span>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed">
+                        Smart digital solutions for modern brands. We help businesses thrive in the digital landscape with cutting-edge technology and innovative strategies.
+                    </p>
+                    <div class="flex space-x-3">
+                        <a href="#" class="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-primary transition-colors">
+                            <i data-lucide="twitter" class="w-4 h-4"></i>
+                        </a>
+                        <a href="#" class="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-primary transition-colors">
+                            <i data-lucide="linkedin" class="w-4 h-4"></i>
+                        </a>
+                        <a href="#" class="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-primary transition-colors">
+                            <i data-lucide="facebook" class="w-4 h-4"></i>
+                        </a>
+                        <a href="#" class="w-8 h-8 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-primary transition-colors">
+                            <i data-lucide="instagram" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Services -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Services</h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="#" class="hover:text-primary transition-colors">Website Development</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">WordPress Development</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">App Development</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Video Editing</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Guest Posting</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Digital Marketing</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Company</h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="#about" class="hover:text-primary transition-colors">About Us</a></li>
+                        <li><a href="#portfolio" class="hover:text-primary transition-colors">Portfolio</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Blog</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Careers</a></li>
+                        <li><a href="#contact" class="hover:text-primary transition-colors">Contact</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Get in Touch</h3>
+                    <div class="space-y-3 text-gray-300">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="mail" class="w-4 h-4 text-primary"></i>
+                            <span>info@droptechify.com</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="phone" class="w-4 h-4 text-primary"></i>
+                            <span>+1 (555) 123-4567</span>
+                        </div>
+                        <div class="flex items-start space-x-2">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-primary mt-0.5"></i>
+                            <span>123 Tech Street<br>Digital City, TC 12345</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm">
+                    © 2024 DropTechify. All rights reserved.
+                </p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="text-gray-400 hover:text-primary text-sm transition-colors">Terms of Service</a>
+                    <a href="#" class="text-gray-400 hover:text-primary text-sm transition-colors">Privacy Policy</a>
+                    <a href="#" class="text-gray-400 hover:text-primary text-sm transition-colors">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- @END_COMPONENT: Footer -->
+
+    <script>
+        (function() {
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+            
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+            
+            // Mobile menu toggle
+            const mobileMenuButton = document.querySelector('[data-event="click:toggleMobileMenu"]');
+            const mobileMenu = document.querySelector('[data-bind="mobileMenuOpen"]');
+            
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+            
+            // Portfolio filter functionality
+            const filterButtons = document.querySelectorAll('[data-event="click:filterPortfolio"]');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Update active button
+                    filterButtons.forEach(btn => {
+                        btn.classList.remove('bg-primary', 'text-white');
+                        btn.classList.add('bg-gray-200', 'text-gray-700');
+                    });
+                    
+                    this.classList.remove('bg-gray-200', 'text-gray-700');
+                    this.classList.add('bg-primary', 'text-white');
+                    
+                    // TODO: Implement portfolio filtering logic
+                    console.log('Filter by:', this.dataset.filter);
+                });
+            });
+            
+            // Form validation and submission
+            const contactForm = document.querySelector('[data-event="submit:handleContactForm"]');
+            
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // TODO: Implement form validation
+                    // TODO: Handle form submission (integrate with backend/email service)
+                    
+                    console.log('Contact form submitted');
+                    alert('Thank you for your message! We\'ll get back to you soon.');
+                });
+            }
+            
+            // Navbar background on scroll
+            window.addEventListener('scroll', function() {
+                const nav = document.querySelector('nav');
+                if (window.scrollY > 100) {
+                    nav.classList.add('bg-white/98');
+                    nav.classList.remove('bg-white/95');
+                } else {
+                    nav.classList.add('bg-white/95');
+                    nav.classList.remove('bg-white/98');
+                }
+            });
+            
+        })();
+    </script>
+</body>
+</html>
