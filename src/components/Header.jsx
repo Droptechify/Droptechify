@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Globe, Code, Smartphone, Video, Cog, Database, Zap, Palette } from 'lucide-react';
-import "./Header.css";
+import "./header.css";
 
 function Header({ currentPage, onPageChange }) {
   const [isServicesOpen, setIsServicesOpen] = useState(false);
