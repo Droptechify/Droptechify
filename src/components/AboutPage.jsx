@@ -2,8 +2,8 @@
 function AboutPage() {
   const stats = [
     { number: '500+', label: 'Projects Completed' },
-    { number: '100+', label: 'Happy Clients' },
-    { number: '5+', label: 'Years Experience' },
+    { number: '500+', label: 'Happy Clients' },
+    { number: '20+', label: 'Years Experience' },
     { number: '24/7', label: 'Support Available' }
   ];
 
