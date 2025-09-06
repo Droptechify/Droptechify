@@ -29,10 +29,10 @@ function HomePage({ onPageChange }) {
               <div className="block md:hidden mobile-image-text-layout">
                 <div className="mb-8">
                   <img 
-                    src="/attached_assets/Developer activity-rafiki_1754317120912.png" 
-                    alt="SaaS Development" 
-                    className="w-full h-64 object-contain mx-auto rounded-xl"
-                  />
+                      src="/attached_assets/developer-activity.png" 
+                        alt="SaaS Development" 
+                        className="w-full h-64 object-contain mx-auto rounded-xl"
+                        />
                 </div>
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900 mb-4">
