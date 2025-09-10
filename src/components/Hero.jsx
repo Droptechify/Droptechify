@@ -67,7 +67,7 @@ function Hero({ onPageChange }) {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 sm:px-6">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 pt-20 md:pt-0">
         <div className="max-w-4xl animate-fade-in">
           <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight animate-slide-up">
             DropTechify - Your Digital
