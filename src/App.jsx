@@ -43,6 +43,16 @@ function App() {
     }
   };
 
+  // Check session authentication for admin
+  useEffect(() => {
+    const isAuthenticated = sessionStorage.getItem('admin_authenticated');
+    if ((currentPage === 'admin' || currentPage === 'admin-login') && !isAuthenticated) {
+      setIsAdminAuthenticated(false);
+      setCurrentPage('admin-login');
+    }
+  }, [currentPage]);
+
+
   const renderPage = () => {
     switch (currentPage) {
       case 'home':
