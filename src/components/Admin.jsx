@@ -10,6 +10,12 @@ const Admin = () => {
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState('connected');
+  const [adminCredentials, setAdminCredentials] = useState({
+    username: '',
+    password: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
 
 
   // Website content state
@@ -69,10 +75,18 @@ const Admin = () => {
 
   // Load data from Firebase
   useEffect(() => {
+    // Check session authentication
+    const isAuthenticated = sessionStorage.getItem('admin_authenticated');
+    if (!isAuthenticated) {
+      window.location.reload(); // Force re-authentication
+      return;
+    }
+
     loadProjects();
     loadContacts();
     loadWebsiteContent();
     loadSocialLinks();
+    loadAdminCredentials();
   }, []);
 
   const loadProjects = async () => {
@@ -136,6 +150,71 @@ const Admin = () => {
     } catch (error) {
       console.error('Error loading social links:', error);
       alert('Failed to load social links. Please check your connection and try again.');
+    }
+  };
+
+  const loadAdminCredentials = async () => {
+    try {
+      const adminDocRef = doc(db, 'admin', 'credentials');
+      const adminDoc = await getDoc(adminDocRef);
+      if (adminDoc.exists()) {
+        const data = adminDoc.data();
+        setAdminCredentials(prev => ({
+          ...prev,
+          username: data.username || ''
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading admin credentials:', error);
+    }
+  };
+
+  const updateAdminCredentials = async () => {
+    if (!adminCredentials.newPassword || !adminCredentials.confirmPassword) {
+      alert('Please fill in both password fields');
+      return;
+    }
+
+    if (adminCredentials.newPassword !== adminCredentials.confirmPassword) {
+      alert('New passwords do not match');
+      return;
+    }
+
+    if (adminCredentials.newPassword.length < 8) {
+      alert('Password must be at least 8 characters long');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const adminDocRef = doc(db, 'admin', 'credentials');
+      
+      await updateDoc(adminDocRef, {
+        username: adminCredentials.username,
+        password: adminCredentials.newPassword,
+        lastUpdated: new Date().toISOString(),
+        updatedBy: 'admin'
+      });
+
+      setAdminCredentials(prev => ({
+        ...prev,
+        password: '',
+        newPassword: '',
+        confirmPassword: ''
+      }));
+
+      alert('Admin credentials updated successfully! Please login again with new credentials.');
+      
+      // Clear session and redirect to login
+      sessionStorage.removeItem('admin_authenticated');
+      sessionStorage.removeItem('admin_login_time');
+      window.location.reload();
+      
+    } catch (error) {
+      console.error('Error updating admin credentials:', error);
+      alert('Failed to update credentials. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -1001,36 +1080,66 @@ const Admin = () => {
                   <div className="space-y-6">
                     <div>
                       <h3 className="text-lg font-semibold mb-3">Admin Credentials</h3>
+                      <p className="text-sm text-gray-600 mb-4">Update your admin login credentials. You will need to login again after changing.</p>
+                      
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">Admin Username/Email</label>
                           <input 
                             type="text" 
-                            id="admin-username"
+                            value={adminCredentials.username}
+                            onChange={(e) => setAdminCredentials({...adminCredentials, username: e.target.value})}
                             className="w-full p-3 border border-gray-300 rounded-lg" 
-                            defaultValue={JSON.parse(localStorage.getItem('admin_credentials') || '{"username":"admin@droptechify.com"}').username}
+                            placeholder="admin@droptechify.com"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Admin Password</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
                           <input 
                             type="password" 
-                            id="admin-password"
+                            value={adminCredentials.password}
+                            onChange={(e) => setAdminCredentials({...adminCredentials, password: e.target.value})}
                             className="w-full p-3 border border-gray-300 rounded-lg" 
-                            defaultValue={JSON.parse(localStorage.getItem('admin_credentials') || '{"password":"DropTech2024@Secure!"}').password}
+                            placeholder="Enter current password"
                           />
                         </div>
                       </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                          <input 
+                            type="password" 
+                            value={adminCredentials.newPassword}
+                            onChange={(e) => setAdminCredentials({...adminCredentials, newPassword: e.target.value})}
+                            className="w-full p-3 border border-gray-300 rounded-lg" 
+                            placeholder="Enter new password"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
+                          <input 
+                            type="password" 
+                            value={adminCredentials.confirmPassword}
+                            onChange={(e) => setAdminCredentials({...adminCredentials, confirmPassword: e.target.value})}
+                            className="w-full p-3 border border-gray-300 rounded-lg" 
+                            placeholder="Confirm new password"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="mt-4 p-4 bg-yellow-50 rounded-lg">
+                        <p className="text-sm text-yellow-800">
+                          <strong>Security Notice:</strong> Passwords are securely stored in Firestore. Make sure to use a strong password.
+                        </p>
+                      </div>
+                      
                       <button 
-                        onClick={() => {
-                          const username = document.getElementById('admin-username').value;
-                          const password = document.getElementById('admin-password').value;
-                          localStorage.setItem('admin_credentials', JSON.stringify({username, password}));
-                          alert('Admin credentials updated successfully!');
-                        }}
-                        className="mt-4 bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-semibold"
+                        onClick={updateAdminCredentials}
+                        disabled={loading}
+                        className="mt-4 bg-red-500 hover:bg-red-600 disabled:bg-gray-400 text-white px-6 py-3 rounded-lg font-semibold"
                       >
-                        Update Admin Credentials
+                        {loading ? 'Updating...' : 'Update Admin Credentials'}
                       </button>
                     </div>
                   </div>
