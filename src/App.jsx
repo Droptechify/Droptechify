@@ -46,11 +46,12 @@ function App() {
   // Check session authentication for admin
   useEffect(() => {
     const isAuthenticated = sessionStorage.getItem('admin_authenticated');
-    if ((currentPage === 'admin' || currentPage === 'admin-login') && !isAuthenticated) {
+    // Only redirect to login if we're not already authenticated in state and sessionStorage is also empty
+    if ((currentPage === 'admin' || currentPage === 'admin-login') && !isAuthenticated && !isAdminAuthenticated) {
       setIsAdminAuthenticated(false);
       setCurrentPage('admin-login');
     }
-  }, [currentPage]);
+  }, [currentPage, isAdminAuthenticated]);
 
 
   const renderPage = () => {
@@ -109,11 +110,24 @@ function App() {
       const adminParam = urlParams.get('admin');
       const isAdminPath = window.location.pathname.includes('admin');
       const isAdminHash = window.location.hash === '#admin';
+      const sessionAuth = sessionStorage.getItem('admin_authenticated');
 
       if (adminParam === 'true' || isAdminPath || isAdminHash) {
-        // Always require login for admin access
-        setCurrentPage('admin-login');
-        setIsAdminAuthenticated(false);
+        // Check if already authenticated before forcing login
+        if (!sessionAuth && !isAdminAuthenticated) {
+          setCurrentPage('admin-login');
+          setIsAdminAuthenticated(false);
+        } else if (sessionAuth && !isAdminAuthenticated) {
+          // Restore authentication state from sessionStorage
+          setIsAdminAuthenticated(true);
+          setCurrentPage('admin');
+        }
+        // Clear the admin param to prevent redirect loops
+        if (adminParam === 'true') {
+          const newUrl = new URL(window.location);
+          newUrl.searchParams.delete('admin');
+          window.history.replaceState(null, '', newUrl.pathname + newUrl.hash);
+        }
       } else if (window.location.pathname.includes('admin-login') || window.location.hash === '#admin-login') {
         setCurrentPage('admin-login');
       }
