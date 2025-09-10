@@ -9,6 +9,8 @@ const Admin = () => {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState('connected');
+
 
   // Website content state
   const [websiteContent, setWebsiteContent] = useState({
@@ -75,6 +77,7 @@ const Admin = () => {
 
   const loadProjects = async () => {
     try {
+      setLoading(true);
       const querySnapshot = await getDocs(collection(db, 'projects'));
       const projectsData = [];
       querySnapshot.forEach((doc) => {
@@ -84,11 +87,16 @@ const Admin = () => {
       updateStats(projectsData, contacts);
     } catch (error) {
       console.error('Error loading projects:', error);
+      // Show user-friendly error message
+      alert('Failed to load projects. Please check your internet connection and try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
   const loadContacts = async () => {
     try {
+      setLoading(true);
       const querySnapshot = await getDocs(collection(db, 'contacts'));
       const contactsData = [];
       querySnapshot.forEach((doc) => {
@@ -98,6 +106,10 @@ const Admin = () => {
       updateStats(projects, contactsData);
     } catch (error) {
       console.error('Error loading contacts:', error);
+      // Show user-friendly error message
+      alert('Failed to load contacts. Please check your internet connection and try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -110,6 +122,7 @@ const Admin = () => {
       }
     } catch (error) {
       console.error('Error loading website content:', error);
+      alert('Failed to load website content. Please check your connection and try again.');
     }
   };
 
@@ -122,6 +135,7 @@ const Admin = () => {
       }
     } catch (error) {
       console.error('Error loading social links:', error);
+      alert('Failed to load social links. Please check your connection and try again.');
     }
   };
 
@@ -190,6 +204,7 @@ const Admin = () => {
         loadProjects();
       } catch (error) {
         console.error('Error deleting project:', error);
+        alert('Failed to delete project. Please check your connection and try again.');
       }
     }
   };
@@ -201,6 +216,7 @@ const Admin = () => {
         loadContacts();
       } catch (error) {
         console.error('Error deleting contact:', error);
+        alert('Failed to delete contact. Please check your connection and try again.');
       }
     }
   };
