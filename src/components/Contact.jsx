@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Send, CheckCircle } from 'lucide-react';
 import { db } from '../firebase';
@@ -45,7 +44,9 @@ function Contact() {
           date: new Date().toISOString(),
           timestamp: new Date()
         });
+        console.log('Contact submitted via Firebase');
       } catch (firebaseError) {
+        console.error('Firebase submission failed:', firebaseError);
         // Fallback to API endpoint
         const response = await fetch('/api/contact', {
           method: 'POST',
@@ -54,10 +55,11 @@ function Contact() {
           },
           body: JSON.stringify(formData)
         });
-        
+
         if (!response.ok) {
-          throw new Error('API request failed');
+          throw new Error(`API request failed with status: ${response.status}`);
         }
+        console.log('Contact submitted via API fallback');
       }
 
       setIsSubmitted(true);
