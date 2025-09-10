@@ -1,44 +1,104 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Lock, User, Eye, EyeOff } from 'lucide-react';
+import { db } from '../firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 const AdminLogin = ({ onLogin }) => {
   const [credentials, setCredentials] = useState({ username: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [initializing, setInitializing] = useState(true);
 
-  // Get admin credentials from localStorage or use defaults
-  const getAdminCredentials = () => {
-    const stored = localStorage.getItem('admin_credentials');
-    if (stored) {
-      return JSON.parse(stored);
+  // Initialize default admin credentials in Firestore if they don't exist
+  useEffect(() => {
+    initializeAdminCredentials();
+  }, []);
+
+  const initializeAdminCredentials = async () => {
+    try {
+      setInitializing(true);
+      const adminDocRef = doc(db, 'admin', 'credentials');
+      const adminDoc = await getDoc(adminDocRef);
+
+      if (!adminDoc.exists()) {
+        // Create default admin credentials
+        const defaultCredentials = {
+          username: 'admin@droptechify.com',
+          password: 'DropTech2024@Secure!',
+          createdAt: new Date().toISOString(),
+          lastUpdated: new Date().toISOString()
+        };
+
+        await setDoc(adminDocRef, defaultCredentials);
+        console.log('Default admin credentials created');
+      }
+    } catch (error) {
+      console.error('Error initializing admin credentials:', error);
+      setError('Failed to initialize admin system. Please try again.');
+    } finally {
+      setInitializing(false);
     }
-    return {
-      username: 'admin@droptechify.com',
-      password: 'DropTech2024@Secure!'
-    };
   };
 
-  const ADMIN_CREDENTIALS = getAdminCredentials();
+  const verifyCredentials = async (username, password) => {
+    try {
+      const adminDocRef = doc(db, 'admin', 'credentials');
+      const adminDoc = await getDoc(adminDocRef);
+
+      if (adminDoc.exists()) {
+        const storedCredentials = adminDoc.data();
+        return storedCredentials.username === username && storedCredentials.password === password;
+      }
+      return false;
+    } catch (error) {
+      console.error('Error verifying credentials:', error);
+      throw new Error('Authentication failed. Please check your connection.');
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      const isValid = await verifyCredentials(credentials.username, credentials.password);
 
-    if (credentials.username === ADMIN_CREDENTIALS.username &&
-        credentials.password === ADMIN_CREDENTIALS.password) {
-      onLogin(true);
-    } else {
-      setError('Invalid username or password');
+      if (isValid) {
+        // Store session info
+        sessionStorage.setItem('admin_authenticated', 'true');
+        sessionStorage.setItem('admin_login_time', new Date().toISOString());
+        onLogin(true);
+      } else {
+        setError('Invalid username or password');
+        onLogin(false);
+      }
+    } catch (error) {
+      setError(error.message);
       onLogin(false);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
+
+  if (initializing) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-sky-500 flex items-center justify-center p-4 sm:p-6">
+        <div className="w-full max-w-md mx-auto">
+          <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+            <div className="p-8 text-center">
+              <div className="w-16 h-16 bg-sky-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+              </div>
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">Initializing Admin System</h2>
+              <p className="text-gray-600">Please wait...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-sky-500 flex items-center justify-center p-4 sm:p-6">
@@ -120,7 +180,8 @@ const AdminLogin = ({ onLogin }) => {
             </form>
 
             <div className="mt-8 text-center text-sm text-gray-500">
-              <p className="text-gray-400">Contact your administrator for login credentials</p>
+              <p className="text-gray-400">Secure authentication via Firestore</p>
+              <p className="text-xs text-gray-300 mt-1">Default: admin@droptechify.com</p>
             </div>
           </div>
         </div>
