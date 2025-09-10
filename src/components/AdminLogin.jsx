@@ -69,7 +69,11 @@ const AdminLogin = ({ onLogin }) => {
         // Store session info
         sessionStorage.setItem('admin_authenticated', 'true');
         sessionStorage.setItem('admin_login_time', new Date().toISOString());
-        onLogin(true);
+        
+        // Small delay to ensure sessionStorage is set before redirect
+        setTimeout(() => {
+          onLogin(true);
+        }, 100);
       } else {
         setError('Invalid username or password');
         onLogin(false);
