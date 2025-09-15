@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { Settings, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, Save, Type, Eye, Calendar, DollarSign, TrendingUp, Lock, User } from 'lucide-react';
+import { Settings, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, Save, Type, Eye, Calendar, DollarSign, TrendingUp, Lock, User, Bell, UserCheck, BarChart3, PieChart, Activity } from 'lucide-react';
 import { db } from '../firebase';
-import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc, setDoc, getDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc, setDoc, getDoc, onSnapshot } from 'firebase/firestore';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -10,6 +10,8 @@ const Admin = () => {
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   // Website content state
   const [websiteContent, setWebsiteContent] = useState({
@@ -28,12 +30,25 @@ const Admin = () => {
   });
 
   const [socialLinks, setSocialLinks] = useState({
-    facebook: '',
-    twitter: '',
-    instagram: '',
+    facebook: 'https://facebook.com/droptechify',
+    twitter: 'https://twitter.com/droptechify',
+    instagram: 'https://instagram.com/droptechify',
     linkedin: 'https://linkedin.com/company/droptechify',
-    clutch: '',
-    upwork: ''
+    clutch: 'https://clutch.co/profile/droptechify',
+    upwork: 'https://upwork.com/agencies/droptechify',
+    github: 'https://github.com/droptechify',
+    youtube: 'https://youtube.com/@droptechify'
+  });
+
+  const [iconVisibility, setIconVisibility] = useState({
+    facebook: true,
+    twitter: true,
+    instagram: true,
+    linkedin: true,
+    clutch: true,
+    upwork: true,
+    github: true,
+    youtube: true
   });
 
   const [contactInfo, setContactInfo] = useState({
@@ -63,6 +78,8 @@ const Admin = () => {
     confirmPassword: '',
     adminEmail: 'admin@droptechify.com',
     adminName: 'DropTechify Admin',
+    currentUsername: 'admin',
+    newUsername: '',
     twoFactorEnabled: false,
     emailNotifications: true,
     systemNotifications: true
@@ -94,8 +111,15 @@ const Admin = () => {
     imageFile: null
   });
 
+  const [analyticsData, setAnalyticsData] = useState({
+    monthlyVisits: [420, 580, 890, 1230, 1560, 1890, 2100, 2400, 2800, 3200, 3600, 4000],
+    projectsCompleted: [2, 4, 3, 6, 8, 5, 7, 9, 6, 8, 10, 12],
+    revenueData: [1200, 1800, 2400, 3200, 2800, 3600, 4200, 4800, 5200, 5800, 6200, 6800]
+  });
+
   const tabs = [
     { id: 'overview', name: 'Overview', icon: <BarChart size={20} /> },
+    { id: 'analytics', name: 'Analytics', icon: <BarChart3 size={20} /> },
     { id: 'content', name: 'Website Content', icon: <Type size={20} /> },
     { id: 'social', name: 'Social Media', icon: <Users size={20} /> },
     { id: 'images', name: 'Image Gallery', icon: <Eye size={20} /> },
@@ -103,20 +127,85 @@ const Admin = () => {
     { id: 'case-studies', name: 'Case Studies', icon: <Eye size={20} /> },
     { id: 'contacts', name: 'Contacts', icon: <MessageSquare size={20} /> },
     { id: 'services', name: 'Services Content', icon: <Settings size={20} /> },
+    { id: 'notifications', name: 'Notifications', icon: <Bell size={20} /> },
     { id: 'settings', name: 'Settings', icon: <Settings size={20} /> }
   ];
 
-  // Load data from Firebase
+  // Load data from Firebase with proper error handling
   useEffect(() => {
-    loadContacts();
-    loadWebsiteContent();
-    loadSocialLinks();
-    loadContactInfo();
-    loadCaseStudies();
+    initializeData();
+    setupRealtimeListeners();
   }, []);
+
+  const initializeData = async () => {
+    try {
+      await Promise.all([
+        loadContacts(),
+        loadWebsiteContent(),
+        loadSocialLinks(),
+        loadContactInfo(),
+        loadCaseStudies(),
+        loadNotifications()
+      ]);
+    } catch (error) {
+      console.error('Error initializing data:', error);
+      showNotification('Some features may not work due to connection issues', 'warning');
+    }
+  };
+
+  const setupRealtimeListeners = () => {
+    if (!db) return;
+
+    try {
+      // Listen for new contacts in real-time
+      const unsubscribe = onSnapshot(collection(db, 'contacts'), (snapshot) => {
+        const contactsData = [];
+        snapshot.forEach((doc) => {
+          contactsData.push({ id: doc.id, ...doc.data() });
+        });
+        setContacts(contactsData);
+        updateStats(contactsData);
+        
+        // Check for new contacts and create notifications
+        if (contactsData.length > contacts.length) {
+          const newContact = contactsData[contactsData.length - 1];
+          showNotification(`New contact from ${newContact.name}`, 'info');
+        }
+      });
+
+      return () => unsubscribe();
+    } catch (error) {
+      console.error('Error setting up realtime listeners:', error);
+    }
+  };
+
+  const showNotification = (message, type = 'info') => {
+    const notification = {
+      id: Date.now(),
+      message,
+      type,
+      timestamp: new Date().toISOString(),
+      read: false
+    };
+    
+    setNotifications(prev => [notification, ...prev.slice(0, 49)]); // Keep last 50 notifications
+    
+    // Auto-hide notification after 5 seconds
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(n => n.id !== notification.id));
+    }, 5000);
+  };
 
   const loadContacts = async () => {
     try {
+      if (!db) {
+        console.log('Firebase not available, using local storage');
+        const localContacts = JSON.parse(localStorage.getItem('contacts') || '[]');
+        setContacts(localContacts);
+        updateStats(localContacts);
+        return;
+      }
+
       const querySnapshot = await getDocs(collection(db, 'contacts'));
       const contactsData = [];
       querySnapshot.forEach((doc) => {
@@ -126,11 +215,20 @@ const Admin = () => {
       updateStats(contactsData);
     } catch (error) {
       console.error('Error loading contacts:', error);
+      showNotification('Failed to load contacts', 'error');
     }
   };
 
   const loadWebsiteContent = async () => {
     try {
+      if (!db) {
+        const localContent = JSON.parse(localStorage.getItem('websiteContent') || '{}');
+        if (Object.keys(localContent).length > 0) {
+          setWebsiteContent(prev => ({ ...prev, ...localContent }));
+        }
+        return;
+      }
+
       const docRef = doc(db, 'websiteContent', 'main');
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
@@ -138,40 +236,68 @@ const Admin = () => {
       }
     } catch (error) {
       console.error('Error loading website content:', error);
+      showNotification('Failed to load website content', 'error');
     }
   };
 
   const loadSocialLinks = async () => {
     try {
+      if (!db) {
+        const localSocialLinks = JSON.parse(localStorage.getItem('socialLinks') || '{}');
+        if (Object.keys(localSocialLinks).length > 0) {
+          setSocialLinks(prev => ({ ...prev, ...localSocialLinks }));
+        }
+        const localIconVisibility = JSON.parse(localStorage.getItem('iconVisibility') || '{}');
+        if (Object.keys(localIconVisibility).length > 0) {
+          setIconVisibility(prev => ({ ...prev, ...localIconVisibility }));
+        }
+        return;
+      }
+
       const docRef = doc(db, 'socialLinks', 'main');
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         setSocialLinks(docSnap.data());
       }
-    } catch (error) {
-      console.log('Firebase not available, loading from localStorage');
-      // Fallback to localStorage
-      const localSocialLinks = localStorage.getItem('socialLinks');
-      if (localSocialLinks) {
-        setSocialLinks(JSON.parse(localSocialLinks));
+
+      const iconDocRef = doc(db, 'iconVisibility', 'main');
+      const iconDocSnap = await getDoc(iconDocRef);
+      if (iconDocSnap.exists()) {
+        setIconVisibility(iconDocSnap.data());
       }
+    } catch (error) {
+      console.error('Error loading social links:', error);
+      showNotification('Failed to load social links', 'error');
     }
   };
 
   const loadContactInfo = async () => {
     try {
+      if (!db) {
+        const localContactInfo = JSON.parse(localStorage.getItem('contactInfo') || '{}');
+        if (Object.keys(localContactInfo).length > 0) {
+          setContactInfo(prev => ({ ...prev, ...localContactInfo }));
+        }
+        return;
+      }
+
       const docRef = doc(db, 'contactInfo', 'main');
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         setContactInfo(docSnap.data());
       }
     } catch (error) {
-      console.log('Firebase not available, loading from localStorage');
-      // Fallback to localStorage
-      const localContactInfo = localStorage.getItem('contactInfo');
-      if (localContactInfo) {
-        setContactInfo(JSON.parse(localContactInfo));
-      }
+      console.error('Error loading contact info:', error);
+      showNotification('Failed to load contact info', 'error');
+    }
+  };
+
+  const loadNotifications = async () => {
+    try {
+      const localNotifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+      setNotifications(localNotifications);
+    } catch (error) {
+      console.error('Error loading notifications:', error);
     }
   };
 
@@ -179,22 +305,21 @@ const Admin = () => {
     try {
       setLoading(true);
       
-      // Try to save to Firebase first
-      try {
+      if (db) {
         await setDoc(doc(db, 'socialLinks', 'main'), socialLinks);
-        alert('Social media links updated successfully!');
-      } catch (dbError) {
-        console.log('Firebase not available, saving locally');
-        // Fallback to localStorage
+        await setDoc(doc(db, 'iconVisibility', 'main'), iconVisibility);
+        showNotification('Social media links and visibility updated successfully!', 'success');
+      } else {
         localStorage.setItem('socialLinks', JSON.stringify(socialLinks));
-        alert('Social media links saved locally! (Firebase not available)');
+        localStorage.setItem('iconVisibility', JSON.stringify(iconVisibility));
+        showNotification('Social media links and visibility saved locally!', 'success');
       }
       
     } catch (error) {
       console.error('Error saving social links:', error);
-      // Final fallback
       localStorage.setItem('socialLinks', JSON.stringify(socialLinks));
-      alert('Social links saved locally as fallback!');
+      localStorage.setItem('iconVisibility', JSON.stringify(iconVisibility));
+      showNotification('Error saving settings. Saved locally as backup.', 'warning');
     } finally {
       setLoading(false);
     }
@@ -204,20 +329,18 @@ const Admin = () => {
     try {
       setLoading(true);
       
-      // Try to save to Firebase first
-      try {
+      if (db) {
         await setDoc(doc(db, 'contactInfo', 'main'), contactInfo);
-        alert('Contact information updated successfully!');
-      } catch (dbError) {
-        console.log('Firebase not available, saving locally');
+        showNotification('Contact information updated successfully!', 'success');
+      } else {
         localStorage.setItem('contactInfo', JSON.stringify(contactInfo));
-        alert('Contact information saved locally! (Firebase not available)');
+        showNotification('Contact information saved locally!', 'success');
       }
       
     } catch (error) {
       console.error('Error saving contact info:', error);
       localStorage.setItem('contactInfo', JSON.stringify(contactInfo));
-      alert('Contact information saved locally as fallback!');
+      showNotification('Error saving contact info. Saved locally as backup.', 'warning');
     } finally {
       setLoading(false);
     }
@@ -226,22 +349,29 @@ const Admin = () => {
   const saveWebsiteContent = async () => {
     try {
       setLoading(true);
-      await setDoc(doc(db, 'websiteContent', 'main'), websiteContent);
+      
+      if (db) {
+        await setDoc(doc(db, 'websiteContent', 'main'), websiteContent);
+        showNotification('Website content updated successfully!', 'success');
+      } else {
+        localStorage.setItem('websiteContent', JSON.stringify(websiteContent));
+        showNotification('Website content saved locally!', 'success');
+      }
+      
       setEditMode(false);
-      alert('Website content updated successfully!');
     } catch (error) {
       console.error('Error saving website content:', error);
-      alert('Error saving content. Please try again.');
+      localStorage.setItem('websiteContent', JSON.stringify(websiteContent));
+      showNotification('Error saving content. Saved locally as backup.', 'warning');
     } finally {
       setLoading(false);
     }
   };
 
   const updateStats = (contactsData) => {
-    // Static project data with fixed revenue
-    const staticProjectCount = 15; 
-    const staticCompletedCount = 12;
-    const staticActiveCount = 3;
+    const staticProjectCount = 25; 
+    const staticCompletedCount = 20;
+    const staticActiveCount = 5;
 
     setStats({
       totalProjects: staticProjectCount,
@@ -249,28 +379,36 @@ const Admin = () => {
       totalContacts: contactsData.length,
       completedProjects: staticCompletedCount,
       revenue: '$5,000',
-      growth: '+25%',
-      websiteViews: contactsData.length > 0 ? (contactsData.length * 50).toString() : '150',
-      clickRate: '3.2%',
+      growth: '+35%',
+      websiteViews: contactsData.length > 0 ? (contactsData.length * 50).toString() : '250',
+      clickRate: '4.2%',
       conversionRate: contactsData.length > 0 ? 
-        `${Math.round((staticProjectCount / Math.max(contactsData.length, 1)) * 100)}%` : '8%'
+        `${Math.round((staticProjectCount / Math.max(contactsData.length, 1)) * 100)}%` : '12%'
     });
   };
 
   const deleteContact = async (id) => {
     if (confirm('Are you sure you want to delete this contact?')) {
       try {
-        await deleteDoc(doc(db, 'contacts', id));
+        if (db) {
+          await deleteDoc(doc(db, 'contacts', id));
+        } else {
+          const localContacts = contacts.filter(c => c.id !== id);
+          setContacts(localContacts);
+          localStorage.setItem('contacts', JSON.stringify(localContacts));
+        }
+        showNotification('Contact deleted successfully', 'success');
         loadContacts();
       } catch (error) {
         console.error('Error deleting contact:', error);
+        showNotification('Error deleting contact', 'error');
       }
     }
   };
 
   const handleImageUpload = async () => {
     if (!newImage.file || !newImage.name) {
-      alert('Please provide both a name and select a file');
+      showNotification('Please provide both a name and select a file', 'warning');
       return;
     }
 
@@ -289,12 +427,12 @@ const Admin = () => {
         setImages([...images, newImageData]);
         setNewImage({ name: '', category: 'services', file: null });
         setShowImageUpload(false);
-        alert('Image uploaded successfully!');
+        showNotification('Image uploaded successfully!', 'success');
       };
       reader.readAsDataURL(newImage.file);
     } catch (error) {
       console.error('Error uploading image:', error);
-      alert('Error uploading image. Please try again.');
+      showNotification('Error uploading image. Please try again.', 'error');
     } finally {
       setLoading(false);
     }
@@ -303,11 +441,55 @@ const Admin = () => {
   const deleteImage = (id) => {
     if (confirm('Are you sure you want to delete this image?')) {
       setImages(images.filter(img => img.id !== id));
+      showNotification('Image deleted successfully', 'success');
     }
   };
 
   const loadCaseStudies = async () => {
     try {
+      if (!db) {
+        const localCaseStudies = JSON.parse(localStorage.getItem('caseStudies') || '[]');
+        if (localCaseStudies.length === 0) {
+          const defaultCaseStudies = [
+            {
+              id: '1',
+              title: 'E-commerce Platform Development',
+              category: 'Web',
+              client: 'TechCorp Solutions',
+              description: 'Built a complete e-commerce platform with payment integration, admin panel, and inventory management system.',
+              date: '2024-01-15',
+              link: '',
+              createdAt: new Date().toISOString()
+            },
+            {
+              id: '2',
+              title: 'Mobile Banking Application',
+              category: 'App',
+              client: 'FinanceFlow Bank',
+              description: 'Developed a secure mobile banking application with biometric authentication and real-time transaction monitoring.',
+              date: '2024-02-20',
+              link: '',
+              createdAt: new Date().toISOString()
+            },
+            {
+              id: '3',
+              title: 'SaaS Dashboard Platform',
+              category: 'SaaS',
+              client: 'DataFlow Analytics',
+              description: 'Created a comprehensive SaaS platform with multi-tenant architecture, analytics dashboard, and subscription management.',
+              date: '2024-03-10',
+              link: '',
+              createdAt: new Date().toISOString()
+            }
+          ];
+          setCaseStudies(defaultCaseStudies);
+          localStorage.setItem('caseStudies', JSON.stringify(defaultCaseStudies));
+        } else {
+          setCaseStudies(localCaseStudies);
+        }
+        return;
+      }
+
       const querySnapshot = await getDocs(collection(db, 'caseStudies'));
       const studiesData = [];
       querySnapshot.forEach((doc) => {
@@ -315,44 +497,14 @@ const Admin = () => {
       });
       setCaseStudies(studiesData);
     } catch (error) {
-      console.log('Firebase not available, loading from localStorage');
-      // Fallback to localStorage
-      const localCaseStudies = localStorage.getItem('caseStudies');
-      if (localCaseStudies) {
-        setCaseStudies(JSON.parse(localCaseStudies));
-      } else {
-        // Set some default case studies if none exist
-        const defaultCaseStudies = [
-          {
-            id: '1',
-            title: 'E-commerce Platform',
-            category: 'Web',
-            client: 'TechCorp Solutions',
-            description: 'Built a complete e-commerce platform with payment integration and admin panel.',
-            date: '2024-01-15',
-            link: '',
-            createdAt: new Date().toISOString()
-          },
-          {
-            id: '2',
-            title: 'Mobile Banking App',
-            category: 'App',
-            client: 'FinanceFlow Bank',
-            description: 'Developed a secure mobile banking application with biometric authentication.',
-            date: '2024-02-20',
-            link: '',
-            createdAt: new Date().toISOString()
-          }
-        ];
-        setCaseStudies(defaultCaseStudies);
-        localStorage.setItem('caseStudies', JSON.stringify(defaultCaseStudies));
-      }
+      console.error('Error loading case studies:', error);
+      showNotification('Failed to load case studies', 'error');
     }
   };
 
   const handleAddCaseStudy = async () => {
     if (!newCaseStudy.title || !newCaseStudy.category || !newCaseStudy.client) {
-      alert('Please fill in all required fields (Title, Category, Client)');
+      showNotification('Please fill in all required fields (Title, Category, Client)', 'warning');
       return;
     }
 
@@ -361,7 +513,7 @@ const Admin = () => {
 
       const caseStudyData = {
         ...newCaseStudy,
-        id: Date.now().toString(), // Generate unique ID
+        id: Date.now().toString(),
         createdAt: new Date().toISOString(),
         timestamp: Date.now()
       };
@@ -372,102 +524,106 @@ const Admin = () => {
           caseStudyData.image = e.target.result;
           
           try {
-            // Try Firebase first
-            await addDoc(collection(db, 'caseStudies'), caseStudyData);
-            alert('Case study added successfully!');
-          } catch (dbError) {
-            console.log('Firebase not available, saving locally');
-            // Fallback to localStorage
-            const existingStudies = JSON.parse(localStorage.getItem('caseStudies') || '[]');
-            existingStudies.push(caseStudyData);
-            localStorage.setItem('caseStudies', JSON.stringify(existingStudies));
-            alert('Case study added locally! (Firebase not available)');
-          }
+            if (db) {
+              await addDoc(collection(db, 'caseStudies'), caseStudyData);
+              showNotification('Case study added successfully!', 'success');
+            } else {
+              const existingStudies = JSON.parse(localStorage.getItem('caseStudies') || '[]');
+              existingStudies.push(caseStudyData);
+              localStorage.setItem('caseStudies', JSON.stringify(existingStudies));
+              showNotification('Case study added locally!', 'success');
+            }
 
-          // Reset form
-          setNewCaseStudy({
-            title: '',
-            category: '',
-            client: '',
-            description: '',
-            date: '',
-            link: '',
-            imageFile: null
-          });
-          setShowCaseStudyForm(false);
-          loadCaseStudies();
+            resetCaseStudyForm();
+            loadCaseStudies();
+          } catch (error) {
+            console.error('Error adding case study:', error);
+            showNotification('Error adding case study', 'error');
+          }
         };
         reader.readAsDataURL(newCaseStudy.imageFile);
       } else {
         try {
-          // Try Firebase first
-          await addDoc(collection(db, 'caseStudies'), caseStudyData);
-          alert('Case study added successfully!');
-        } catch (dbError) {
-          console.log('Firebase not available, saving locally');
-          // Fallback to localStorage
-          const existingStudies = JSON.parse(localStorage.getItem('caseStudies') || '[]');
-          existingStudies.push(caseStudyData);
-          localStorage.setItem('caseStudies', JSON.stringify(existingStudies));
-          alert('Case study added locally! (Firebase not available)');
-        }
+          if (db) {
+            await addDoc(collection(db, 'caseStudies'), caseStudyData);
+            showNotification('Case study added successfully!', 'success');
+          } else {
+            const existingStudies = JSON.parse(localStorage.getItem('caseStudies') || '[]');
+            existingStudies.push(caseStudyData);
+            localStorage.setItem('caseStudies', JSON.stringify(existingStudies));
+            showNotification('Case study added locally!', 'success');
+          }
 
-        // Reset form
-        setNewCaseStudy({
-          title: '',
-          category: '',
-          client: '',
-          description: '',
-          date: '',
-          link: '',
-          imageFile: null
-        });
-        setShowCaseStudyForm(false);
-        loadCaseStudies();
+          resetCaseStudyForm();
+          loadCaseStudies();
+        } catch (error) {
+          console.error('Error adding case study:', error);
+          showNotification('Error adding case study', 'error');
+        }
       }
     } catch (error) {
       console.error('Error adding case study:', error);
-      alert('Error adding case study: ' + error.message);
+      showNotification('Error adding case study: ' + error.message, 'error');
     } finally {
       setLoading(false);
     }
   };
 
+  const resetCaseStudyForm = () => {
+    setNewCaseStudy({
+      title: '',
+      category: '',
+      client: '',
+      description: '',
+      date: '',
+      link: '',
+      imageFile: null
+    });
+    setShowCaseStudyForm(false);
+  };
+
   const deleteCaseStudy = async (id) => {
     if (confirm('Are you sure you want to delete this case study?')) {
       try {
-        await deleteDoc(doc(db, 'caseStudies', id));
+        if (db) {
+          await deleteDoc(doc(db, 'caseStudies', id));
+        } else {
+          const localStudies = caseStudies.filter(c => c.id !== id);
+          setCaseStudies(localStudies);
+          localStorage.setItem('caseStudies', JSON.stringify(localStudies));
+        }
+        showNotification('Case study deleted successfully', 'success');
         loadCaseStudies();
       } catch (error) {
         console.error('Error deleting case study:', error);
+        showNotification('Error deleting case study', 'error');
       }
     }
   };
 
   const handlePasswordChange = async () => {
     if (!adminSettings.currentPassword || !adminSettings.newPassword || !adminSettings.confirmPassword) {
-      alert('Please fill in all password fields');
+      showNotification('Please fill in all password fields', 'warning');
       return;
     }
 
     if (adminSettings.newPassword !== adminSettings.confirmPassword) {
-      alert('New password and confirm password do not match');
+      showNotification('New password and confirm password do not match', 'warning');
       return;
     }
 
     if (adminSettings.newPassword.length < 6) {
-      alert('Password must be at least 6 characters long');
+      showNotification('Password must be at least 6 characters long', 'warning');
       return;
     }
 
     try {
       setLoading(true);
       
-      // Get current credentials - default to admin/admin123 if not set
       const currentCredentials = JSON.parse(localStorage.getItem('admin_credentials') || '{"username":"admin","password":"admin123"}');
       
       if (adminSettings.currentPassword !== currentCredentials.password) {
-        alert('Current password is incorrect');
+        showNotification('Current password is incorrect', 'error');
         setLoading(false);
         return;
       }
@@ -479,15 +635,16 @@ const Admin = () => {
 
       localStorage.setItem('admin_credentials', JSON.stringify(newCredentials));
       
-      // Update admin settings in Firebase as well
-      try {
-        await setDoc(doc(db, 'adminSettings', 'main'), {
-          lastPasswordChange: new Date(),
-          adminName: adminSettings.adminName,
-          adminEmail: adminSettings.adminEmail
-        });
-      } catch (dbError) {
-        console.log('Firebase not available, password saved locally');
+      if (db) {
+        try {
+          await setDoc(doc(db, 'adminSettings', 'main'), {
+            lastPasswordChange: new Date(),
+            adminName: adminSettings.adminName,
+            adminEmail: adminSettings.adminEmail
+          });
+        } catch (dbError) {
+          console.log('Firebase not available for admin settings');
+        }
       }
       
       setAdminSettings({
@@ -497,19 +654,91 @@ const Admin = () => {
         confirmPassword: ''
       });
       
-      alert('Password changed successfully! Please login again with new password.');
+      showNotification('Password changed successfully! Please login again with new password.', 'success');
       
-      // Clear session and redirect to login
-      sessionStorage.removeItem('admin_authenticated');
-      window.location.reload();
+      setTimeout(() => {
+        sessionStorage.removeItem('admin_authenticated');
+        window.location.reload();
+      }, 2000);
       
     } catch (error) {
       console.error('Error changing password:', error);
-      alert('Error changing password. Please try again.');
+      showNotification('Error changing password. Please try again.', 'error');
     } finally {
       setLoading(false);
     }
   };
+
+  const handleUsernameChange = async () => {
+    if (!adminSettings.newUsername || adminSettings.newUsername.length < 3) {
+      showNotification('Username must be at least 3 characters long', 'warning');
+      return;
+    }
+
+    if (adminSettings.newUsername === adminSettings.currentUsername) {
+      showNotification('New username must be different from current username', 'warning');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      const currentCredentials = JSON.parse(localStorage.getItem('admin_credentials') || '{"username":"admin","password":"admin123"}');
+      
+      const newCredentials = {
+        username: adminSettings.newUsername,
+        password: currentCredentials.password
+      };
+
+      localStorage.setItem('admin_credentials', JSON.stringify(newCredentials));
+      
+      setAdminSettings({
+        ...adminSettings,
+        currentUsername: adminSettings.newUsername,
+        newUsername: ''
+      });
+      
+      showNotification('Username changed successfully!', 'success');
+      
+    } catch (error) {
+      console.error('Error changing username:', error);
+      showNotification('Error changing username. Please try again.', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const markNotificationAsRead = (id) => {
+    setNotifications(prev => prev.map(n => 
+      n.id === id ? { ...n, read: true } : n
+    ));
+  };
+
+  const clearAllNotifications = () => {
+    setNotifications([]);
+    localStorage.removeItem('notifications');
+  };
+
+  // Simple chart component
+  const SimpleLineChart = ({ data, title, color = '#0EA5E9' }) => (
+    <div className="bg-white p-6 rounded-lg shadow">
+      <h3 className="text-lg font-semibold mb-4">{title}</h3>
+      <div className="h-64 flex items-end justify-between">
+        {data.map((value, index) => (
+          <div key={index} className="flex flex-col items-center">
+            <div
+              className="bg-sky-400 w-6 rounded-t"
+              style={{ 
+                height: `${(value / Math.max(...data)) * 200}px`,
+                backgroundColor: color 
+              }}
+            ></div>
+            <span className="text-xs text-gray-500 mt-2">{index + 1}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 
   const renderOverview = () => (
     <div className="space-y-6">
@@ -573,32 +802,6 @@ const Admin = () => {
             </div>
           </div>
         </div>
-
-        <div className="bg-white p-6 rounded-2xl shadow-lg border border-indigo-200 hover:shadow-xl transition-shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-gray-600 text-sm font-medium">Website Views</h3>
-              <p className="text-3xl font-bold text-gray-900">{stats.websiteViews}</p>
-              <p className="text-indigo-500 text-sm">Click Rate: {stats.clickRate}</p>
-            </div>
-            <div className="w-12 h-12 bg-indigo-500 rounded-full flex items-center justify-center">
-              <Eye className="text-white" size={24} />
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-2xl shadow-lg border border-pink-200 hover:shadow-xl transition-shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-gray-600 text-sm font-medium">Conversion Rate</h3>
-              <p className="text-3xl font-bold text-gray-900">{stats.conversionRate}</p>
-              <p className="text-pink-500 text-sm">This month</p>
-            </div>
-            <div className="w-12 h-12 bg-pink-500 rounded-full flex items-center justify-center">
-              <TrendingUp className="text-white" size={24} />
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Recent Activity */}
@@ -650,6 +853,105 @@ const Admin = () => {
             ))}
           </div>
         </div>
+      </div>
+    </div>
+  );
+
+  const renderAnalytics = () => (
+    <div className="space-y-6">
+      <h2 className="text-3xl font-bold text-gray-900">Analytics Dashboard</h2>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <SimpleLineChart 
+          data={analyticsData.monthlyVisits} 
+          title="Monthly Website Visits" 
+          color="#0EA5E9" 
+        />
+        <SimpleLineChart 
+          data={analyticsData.projectsCompleted} 
+          title="Projects Completed per Month" 
+          color="#10B981" 
+        />
+      </div>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <SimpleLineChart 
+          data={analyticsData.revenueData} 
+          title="Monthly Revenue ($)" 
+          color="#F59E0B" 
+        />
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h3 className="text-lg font-semibold mb-4">Performance Metrics</h3>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Conversion Rate</span>
+              <span className="font-semibold text-green-600">{stats.conversionRate}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Click Rate</span>
+              <span className="font-semibold text-blue-600">{stats.clickRate}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Website Views</span>
+              <span className="font-semibold text-purple-600">{stats.websiteViews}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Growth Rate</span>
+              <span className="font-semibold text-yellow-600">{stats.growth}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderNotifications = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-3xl font-bold text-gray-900">Notifications</h2>
+        <button
+          onClick={clearAllNotifications}
+          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-semibold"
+        >
+          Clear All
+        </button>
+      </div>
+
+      <div className="space-y-4">
+        {notifications.length === 0 ? (
+          <div className="bg-white p-12 rounded-lg shadow text-center">
+            <Bell className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-500 mb-2">No Notifications</h3>
+            <p className="text-gray-400">You're all caught up!</p>
+          </div>
+        ) : (
+          notifications.map((notification) => (
+            <div 
+              key={notification.id}
+              className={`bg-white p-4 rounded-lg shadow border-l-4 ${
+                notification.type === 'success' ? 'border-green-500' :
+                notification.type === 'warning' ? 'border-yellow-500' :
+                notification.type === 'error' ? 'border-red-500' :
+                'border-blue-500'
+              } ${notification.read ? 'opacity-60' : ''}`}
+            >
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-gray-900 font-medium">{notification.message}</p>
+                  <p className="text-gray-500 text-sm">{new Date(notification.timestamp).toLocaleString()}</p>
+                </div>
+                {!notification.read && (
+                  <button
+                    onClick={() => markNotificationAsRead(notification.id)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <Eye size={16} />
+                  </button>
+                )}
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
@@ -989,6 +1291,39 @@ const Admin = () => {
         </div>
       </div>
 
+      {/* Username Change */}
+      <div className="bg-white p-6 rounded-lg shadow border">
+        <h3 className="text-xl font-semibold mb-4">Change Username</h3>
+        <div className="space-y-4 max-w-md">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Current Username</label>
+            <input
+              type="text"
+              value={adminSettings.currentUsername}
+              disabled
+              className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">New Username</label>
+            <input
+              type="text"
+              value={adminSettings.newUsername}
+              onChange={(e) => setAdminSettings({...adminSettings, newUsername: e.target.value})}
+              className="w-full p-3 border border-gray-300 rounded-lg"
+              placeholder="Enter new username"
+            />
+          </div>
+          <button
+            onClick={handleUsernameChange}
+            disabled={loading || !adminSettings.newUsername}
+            className="bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-semibold"
+          >
+            {loading ? 'Changing...' : 'Change Username'}
+          </button>
+        </div>
+      </div>
+
       {/* Admin Profile */}
       <div className="bg-white p-6 rounded-lg shadow border">
         <h3 className="text-xl font-semibold mb-4">Admin Profile</h3>
@@ -1063,6 +1398,7 @@ const Admin = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex">
+      {/* Sidebar */}
       <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-blue-600 to-blue-800 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:inset-0`}>
         <div className="flex items-center justify-center h-16 bg-blue-700">
           <h1 className="text-white text-xl font-bold">Admin Panel</h1>
@@ -1088,6 +1424,11 @@ const Admin = () => {
             >
               {tab.icon}
               {tab.name}
+              {tab.id === 'notifications' && notifications.filter(n => !n.read).length > 0 && (
+                <span className="ml-auto bg-red-500 text-white text-xs rounded-full px-2 py-1">
+                  {notifications.filter(n => !n.read).length}
+                </span>
+              )}
             </button>
           ))}
         </nav>
@@ -1136,6 +1477,25 @@ const Admin = () => {
           </button>
         </div>
 
+        {/* Notifications Toast */}
+        {notifications.length > 0 && (
+          <div className="fixed top-4 right-4 z-50 space-y-2">
+            {notifications.slice(0, 3).map((notification) => (
+              <div 
+                key={notification.id}
+                className={`max-w-sm p-4 rounded-lg shadow-lg border-l-4 ${
+                  notification.type === 'success' ? 'bg-green-50 border-green-500 text-green-800' :
+                  notification.type === 'warning' ? 'bg-yellow-50 border-yellow-500 text-yellow-800' :
+                  notification.type === 'error' ? 'bg-red-50 border-red-500 text-red-800' :
+                  'bg-blue-50 border-blue-500 text-blue-800'
+                }`}
+              >
+                <p className="font-medium">{notification.message}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
         <div className="mb-8">
           <div className="flex justify-between items-center">
             <div>
@@ -1148,6 +1508,17 @@ const Admin = () => {
                 placeholder="Search..." 
                 className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
+              <button 
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Bell size={20} />
+                {notifications.filter(n => !n.read).length > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {notifications.filter(n => !n.read).length}
+                  </span>
+                )}
+              </button>
               <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">
                 <Settings size={20} />
               </button>
@@ -1158,6 +1529,7 @@ const Admin = () => {
         {/* Content */}
         <div className="animate-fade-in">
           {activeTab === 'overview' && renderOverview()}
+          {activeTab === 'analytics' && renderAnalytics()}
           {activeTab === 'content' && renderContentManagement()}
           {activeTab === 'about' && renderAboutPage()}
           {activeTab === 'services' && renderServicesPage()}
@@ -1488,6 +1860,28 @@ const Admin = () => {
                   </div>
 
                   <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">GitHub URL</label>
+                    <input
+                      type="url"
+                      value={socialLinks.github || ''}
+                      onChange={(e) => setSocialLinks({...socialLinks, github: e.target.value})}
+                      className="w-full p-3 border border-gray-300 rounded-lg"
+                      placeholder="https://github.com/droptechify"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">YouTube URL</label>
+                    <input
+                      type="url"
+                      value={socialLinks.youtube || ''}
+                      onChange={(e) => setSocialLinks({...socialLinks, youtube: e.target.value})}
+                      className="w-full p-3 border border-gray-300 rounded-lg"
+                      placeholder="https://youtube.com/@droptechify"
+                    />
+                  </div>
+
+                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Clutch URL</label>
                     <input
                       type="url"
@@ -1507,6 +1901,72 @@ const Admin = () => {
                       className="w-full p-3 border border-gray-300 rounded-lg"
                       placeholder="https://upwork.com/agencies/droptechify"
                     />
+                  </div>
+                </div>
+              </div>
+
+              {/* Icon Visibility Controls */}
+              <div className="bg-white p-6 rounded-lg shadow border">
+                <h3 className="text-xl font-semibold mb-4">Social Media Icons Visibility</h3>
+                <p className="text-gray-600 mb-6">Control which social media icons are displayed in the footer</p>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {Object.keys(iconVisibility).map((platform) => (
+                    <div key={platform} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-gray-700 capitalize">
+                          {platform === 'youtube' ? 'YouTube' : platform}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => setIconVisibility({
+                          ...iconVisibility,
+                          [platform]: !iconVisibility[platform]
+                        })}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                          iconVisibility[platform] ? 'bg-green-500' : 'bg-gray-300'
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                            iconVisibility[platform] ? 'translate-x-6' : 'translate-x-1'
+                          }`}
+                        />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                  <h4 className="font-medium text-blue-900 mb-2">Quick Actions:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => setIconVisibility(Object.keys(iconVisibility).reduce((acc, key) => ({ ...acc, [key]: true }), {}))}
+                      className="px-3 py-1 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors"
+                    >
+                      Show All
+                    </button>
+                    <button
+                      onClick={() => setIconVisibility(Object.keys(iconVisibility).reduce((acc, key) => ({ ...acc, [key]: false }), {}))}
+                      className="px-3 py-1 bg-gray-500 text-white text-sm rounded-lg hover:bg-gray-600 transition-colors"
+                    >
+                      Hide All
+                    </button>
+                    <button
+                      onClick={() => setIconVisibility({
+                        facebook: true,
+                        twitter: true,
+                        instagram: true,
+                        linkedin: true,
+                        clutch: false,
+                        upwork: false,
+                        github: false,
+                        youtube: false
+                      })}
+                      className="px-3 py-1 bg-purple-500 text-white text-sm rounded-lg hover:bg-purple-600 transition-colors"
+                    >
+                      Show Main Only
+                    </button>
                   </div>
                 </div>
               </div>
@@ -1586,6 +2046,7 @@ const Admin = () => {
               </div>
             </div>
           )}
+          {activeTab === 'notifications' && renderNotifications()}
           {activeTab === 'settings' && renderSettings()}
         </div>
       </div>

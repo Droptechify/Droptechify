@@ -1,38 +1,61 @@
+
 import React, { useState, useEffect } from 'react';
-import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin, ArrowRight, MessageCircle, ExternalLink } from 'lucide-react';
+import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin, ArrowRight, MessageCircle, ExternalLink, Github, Play } from 'lucide-react';
 import { db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
 function Footer({ onPageChange }) {
   const [socialLinks, setSocialLinks] = useState({
-    facebook: '',
-    twitter: '',
-    instagram: '',
+    facebook: 'https://facebook.com/droptechify',
+    twitter: 'https://twitter.com/droptechify',
+    instagram: 'https://instagram.com/droptechify',
     linkedin: 'https://linkedin.com/company/droptechify',
-    clutch: '',
-    upwork: ''
+    github: 'https://github.com/droptechify',
+    youtube: 'https://youtube.com/@droptechify',
+    clutch: 'https://clutch.co/profile/droptechify',
+    upwork: 'https://upwork.com/agencies/droptechify'
   });
 
   const [contactInfo, setContactInfo] = useState({
     companyEmail: 'droptechify@gmail.com',
     managerEmail: 'manager@droptechify.com',
-    CeoPhone: '+92 303 0273718',
+    companyPhone: '+92 303 0273718',
     managerPhone: '+92 317 2664119',
-    whatsappCeo: '923030273718',
+    whatsappCompany: '923030273718',
     whatsappManager: '923172664119'
+  });
+
+  const [iconVisibility, setIconVisibility] = useState({
+    facebook: true,
+    twitter: true,
+    instagram: true,
+    linkedin: true,
+    clutch: true,
+    upwork: true,
+    github: true,
+    youtube: true
   });
 
   useEffect(() => {
     loadSocialLinks();
     loadContactInfo();
+    loadIconVisibility();
   }, []);
 
   const loadSocialLinks = async () => {
     try {
+      if (!db) {
+        const localSocialLinks = JSON.parse(localStorage.getItem('socialLinks') || '{}');
+        if (Object.keys(localSocialLinks).length > 0) {
+          setSocialLinks(prev => ({ ...prev, ...localSocialLinks }));
+        }
+        return;
+      }
+
       const docRef = doc(db, 'socialLinks', 'main');
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        setSocialLinks(docSnap.data());
+        setSocialLinks(prev => ({ ...prev, ...docSnap.data() }));
       }
     } catch (error) {
       console.error('Error loading social links:', error);
@@ -41,13 +64,41 @@ function Footer({ onPageChange }) {
 
   const loadContactInfo = async () => {
     try {
+      if (!db) {
+        const localContactInfo = JSON.parse(localStorage.getItem('contactInfo') || '{}');
+        if (Object.keys(localContactInfo).length > 0) {
+          setContactInfo(prev => ({ ...prev, ...localContactInfo }));
+        }
+        return;
+      }
+
       const docRef = doc(db, 'contactInfo', 'main');
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        setContactInfo(docSnap.data());
+        setContactInfo(prev => ({ ...prev, ...docSnap.data() }));
       }
     } catch (error) {
       console.error('Error loading contact info:', error);
+    }
+  };
+
+  const loadIconVisibility = async () => {
+    try {
+      if (!db) {
+        const localIconVisibility = JSON.parse(localStorage.getItem('iconVisibility') || '{}');
+        if (Object.keys(localIconVisibility).length > 0) {
+          setIconVisibility(prev => ({ ...prev, ...localIconVisibility }));
+        }
+        return;
+      }
+
+      const iconDocRef = doc(db, 'iconVisibility', 'main');
+      const iconDocSnap = await getDoc(iconDocRef);
+      if (iconDocSnap.exists()) {
+        setIconVisibility(prev => ({ ...prev, ...iconDocSnap.data() }));
+      }
+    } catch (error) {
+      console.error('Error loading icon visibility:', error);
     }
   };
 
@@ -93,36 +144,50 @@ function Footer({ onPageChange }) {
               Leading software development company with 20+ years of experience and 500+ completed projects.
               We specialize in web development, app development, and digital solutions that drive business growth.
             </p>
-            <div className="flex flex-wrap gap-3 sm:gap-4">
-              {socialLinks.facebook && (
+            <div className="flex flex-wrap gap-2 sm:gap-3">
+              {socialLinks.facebook && iconVisibility.facebook && (
                 <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer"
                    className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-all duration-300 hover:scale-110 shadow-lg">
                   <Facebook size={18} className="sm:w-[20px] sm:h-[20px] text-white" />
                 </a>
               )}
-              {socialLinks.twitter && (
+              {socialLinks.twitter && iconVisibility.twitter && (
                 <a href={socialLinks.twitter} target="_blank" rel="noopener noreferrer"
                    className="w-10 h-10 sm:w-12 sm:h-12 bg-sky-400 rounded-full flex items-center justify-center hover:bg-sky-500 transition-all duration-300 hover:scale-110 shadow-lg">
                   <Twitter size={18} className="sm:w-[20px] sm:h-[20px] text-white" />
                 </a>
               )}
-              {socialLinks.instagram && (
+              {socialLinks.instagram && iconVisibility.instagram && (
                 <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer"
                    className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center hover:from-purple-600 hover:to-pink-600 transition-all duration-300 hover:scale-110 shadow-lg">
                   <Instagram size={18} className="sm:w-[20px] sm:h-[20px] text-white" />
                 </a>
               )}
-              <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer"
-                 className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-700 rounded-full flex items-center justify-center hover:bg-blue-800 transition-all duration-300 hover:scale-110 shadow-lg">
-                <Linkedin size={18} className="sm:w-[20px] sm:h-[20px] text-white" />
-              </a>
-              {socialLinks.clutch && (
+              {iconVisibility.linkedin && (
+                <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer"
+                   className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-700 rounded-full flex items-center justify-center hover:bg-blue-800 transition-all duration-300 hover:scale-110 shadow-lg">
+                  <Linkedin size={18} className="sm:w-[20px] sm:h-[20px] text-white" />
+                </a>
+              )}
+              {socialLinks.github && iconVisibility.github && (
+                <a href={socialLinks.github} target="_blank" rel="noopener noreferrer"
+                   className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-700 rounded-full flex items-center justify-center hover:bg-gray-800 transition-all duration-300 hover:scale-110 shadow-lg">
+                  <Github size={18} className="sm:w-[20px] sm:h-[20px] text-white" />
+                </a>
+              )}
+              {socialLinks.youtube && iconVisibility.youtube && (
+                <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer"
+                   className="w-10 h-10 sm:w-12 sm:h-12 bg-red-600 rounded-full flex items-center justify-center hover:bg-red-700 transition-all duration-300 hover:scale-110 shadow-lg">
+                  <Play size={18} className="sm:w-[20px] sm:h-[20px] text-white fill-current" />
+                </a>
+              )}
+              {socialLinks.clutch && iconVisibility.clutch && (
                 <a href={socialLinks.clutch} target="_blank" rel="noopener noreferrer"
                    className="w-10 h-10 sm:w-12 sm:h-12 bg-red-500 rounded-full flex items-center justify-center hover:bg-red-600 transition-all duration-300 hover:scale-110 shadow-lg">
                   <CustomIcon type="clutch" size={18} />
                 </a>
               )}
-              {socialLinks.upwork && (
+              {socialLinks.upwork && iconVisibility.upwork && (
                 <a href={socialLinks.upwork} target="_blank" rel="noopener noreferrer"
                    className="w-10 h-10 sm:w-12 sm:h-12 bg-green-500 rounded-full flex items-center justify-center hover:bg-green-600 transition-all duration-300 hover:scale-110 shadow-lg">
                   <CustomIcon type="upwork" size={18} />
@@ -165,6 +230,7 @@ function Footer({ onPageChange }) {
                 { name: 'About Us', page: 'about' },
                 { name: 'Services', page: 'services' },
                 { name: 'Contact', page: 'contact' },
+                { name: 'Case Studies', page: 'case-studies' },
                 { name: 'Privacy Policy', page: 'privacy' },
                 { name: 'Terms & Conditions', page: 'terms' }
               ].map((link, index) => (
@@ -244,7 +310,7 @@ function Footer({ onPageChange }) {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-8 sm:mt-12 pt-6 sm:pt-8 text-center animate-fade-in">
           <p className="text-gray-400 text-sm sm:text-base">
-            © 2024 DropTechify. All rights reserved. | 20+ Years Experience | 500+ Projects Completed | Designed with for your digital success.
+            © 2024 DropTechify. All rights reserved. | 25+ Projects Completed | 20+ Happy Clients | Designed with ❤️ for your digital success.
           </p>
         </div>
       </div>
