@@ -16,9 +16,9 @@ function Footer({ onPageChange }) {
   const [contactInfo, setContactInfo] = useState({
     companyEmail: 'droptechify@gmail.com',
     managerEmail: 'manager@droptechify.com',
-    CeoPhone: '+92 303 0273718',
+    companyPhone: '+92 303 0273718',
     managerPhone: '+92 317 2664119',
-    whatsappCeo: '923030273718',
+    whatsappCompany: '923030273718',
     whatsappManager: '923172664119'
   });
 

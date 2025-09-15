@@ -44,9 +44,7 @@ function Contact() {
           date: new Date().toISOString(),
           timestamp: new Date()
         });
-        console.log('Contact submitted via Firebase');
       } catch (firebaseError) {
-        console.error('Firebase submission failed:', firebaseError);
         // Fallback to API endpoint
         const response = await fetch('/api/contact', {
           method: 'POST',
@@ -55,11 +53,10 @@ function Contact() {
           },
           body: JSON.stringify(formData)
         });
-
+        
         if (!response.ok) {
-          throw new Error(`API request failed with status: ${response.status}`);
+          throw new Error('API request failed');
         }
-        console.log('Contact submitted via API fallback');
       }
 
       setIsSubmitted(true);
@@ -249,11 +246,7 @@ function Contact() {
                     </div>
                     <div>
                       <h4 className="font-semibold text-gray-900 mb-1">Phone</h4>
-<<<<<<< HEAD
                       <p className="text-gray-600">CEO: +92 303 0273718</p>
-=======
-                      <p className="text-gray-600">Ceo: +92 303 0273718</p>
->>>>>>> 2366ec8f309868c0cf8760664cd347e82d628706
                       <p className="text-gray-600">Manager: +92 317 2664119</p>
                     </div>
                   </div>
