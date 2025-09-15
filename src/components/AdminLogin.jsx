@@ -26,17 +26,23 @@ const AdminLogin = ({ onLogin }) => {
     setLoading(true);
     setError('');
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-    if (credentials.username === ADMIN_CREDENTIALS.username &&
-        credentials.password === ADMIN_CREDENTIALS.password) {
-      onLogin(true);
-    } else {
-      setError('Invalid username or password');
+      if (credentials.username === ADMIN_CREDENTIALS.username &&
+          credentials.password === ADMIN_CREDENTIALS.password) {
+        onLogin(true);
+      } else {
+        setError('Invalid username or password');
+        onLogin(false);
+      }
+    } catch (err) {
+      setError('An unexpected error occurred. Please try again.');
       onLogin(false);
+      console.error("Login error:", err);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (

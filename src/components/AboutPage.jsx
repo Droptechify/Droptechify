@@ -1,5 +1,17 @@
+import React, { useState, useEffect } from 'react';
+import { db } from '../firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 function AboutPage() {
+  const [websiteContent, setWebsiteContent] = useState({
+    aboutTitle: 'About DropTechify',
+    aboutDescription: 'We are a passionate team of developers and designers committed to transforming your digital vision into reality through innovative software solutions.',
+    aboutStory: 'Founded with a vision to democratize technology, DropTechify started as a small team of passionate developers who believed that every business deserves access to high-quality software solutions.',
+    aboutMission: 'Today, we have grown into a full-service software development company, but our core values remain the same: deliver exceptional results, maintain transparent communication, and build long-lasting partnerships with our clients.'
+  });
+
+  const [loading, setLoading] = useState(true);
+
   const stats = [
     { number: '500+', label: 'Projects Completed' },
     { number: '500+', label: 'Happy Clients' },
@@ -7,6 +19,38 @@ function AboutPage() {
     { number: '24/7', label: 'Support Available' }
   ];
 
+  // Load website content from Firebase
+  useEffect(() => {
+    const loadWebsiteContent = async () => {
+      try {
+        const docRef = doc(db, 'websiteContent', 'main');
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setWebsiteContent(prevContent => ({
+            ...prevContent,
+            ...docSnap.data()
+          }));
+        }
+      } catch (error) {
+        console.error('Error loading website content:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadWebsiteContent();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="pt-20 animate-fade-in">
@@ -15,11 +59,10 @@ function AboutPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-5xl md:text-7xl font-bold mb-6 animate-fade-in-up">
-              About <span className="text-yellow-400">DropTechify</span>
+              <span className="text-yellow-400">{websiteContent.aboutTitle}</span>
             </h1>
             <p className="text-xl md:text-2xl text-blue-100 leading-relaxed">
-              We are a passionate team of developers and designers committed to transforming
-              your digital vision into reality through innovative software solutions.
+              {websiteContent.aboutDescription}
             </p>
           </div>
         </div>
@@ -57,14 +100,10 @@ function AboutPage() {
                   Our Story
                 </h2>
                 <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                  Founded with a vision to democratize technology, DropTechify started as a small team
-                  of passionate developers who believed that every business deserves access to
-                  high-quality software solutions.
+                  {websiteContent.aboutStory}
                 </p>
                 <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                  Today, we have grown into a full-service software development company, but our
-                  core values remain the same: deliver exceptional results, maintain transparent
-                  communication, and build long-lasting partnerships with our clients.
+                  {websiteContent.aboutMission}
                 </p>
                 <div className="flex flex-wrap gap-4">
                   <div className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full font-medium">
@@ -82,6 +121,7 @@ function AboutPage() {
                 <img
                   src="/attached_assets/IMAGE.jpg"
                   alt="Our Team"
+                  loading="lazy"
                   className="w-full h-96 object-cover rounded-2xl shadow-2xl"
                 />
               </div>
@@ -89,7 +129,6 @@ function AboutPage() {
           </div>
         </div>
       </section>
-
 
       {/* Team Section */}
       <section className="py-20 bg-gray-900 text-white">

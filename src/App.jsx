@@ -8,15 +8,16 @@ import Contact from './components/Contact';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsConditions from './components/TermsConditions';
 import CaseStudies from './components/CaseStudies';
-import Admin from './components/Admin';
+// Lazy load admin components for better performance
+const Admin = React.lazy(() => import('./components/Admin'));
 import ServiceDetailPage from './components/ServiceDetailPage';
-import AdminLogin from './components/AdminLogin';
+const AdminLogin = React.lazy(() => import('./components/AdminLogin'));
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [currentService, setCurrentService] = useState('');
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(() => {
-    // Check if admin is already authenticated
+    // Check if admin is already authenticated from localStorage
     return localStorage.getItem('admin_authenticated') === 'true';
   });
 
@@ -38,15 +39,59 @@ function App() {
   };
 
   const handleAdminLogin = (success) => {
-    setIsAdminAuthenticated(success);
     if (success) {
-      localStorage.setItem('admin_authenticated', 'true');
+      setIsAdminAuthenticated(true);
       setCurrentPage('admin');
+      // Set session storage to remember authentication
+      sessionStorage.setItem('admin_authenticated', 'true');
+      // Update URL without causing a page reload
+      window.history.pushState(null, '', '/#admin');
     } else {
-      localStorage.removeItem('admin_authenticated');
+      setIsAdminAuthenticated(false);
+      setCurrentPage('admin-login');
+      sessionStorage.removeItem('admin_authenticated');
+      alert('Invalid credentials. Please try again.');
+    }
+  };
+
+  // Check for admin access - require proper authentication
+  const checkAdminAccess = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const adminParam = urlParams.get('admin');
+    const isAdminPath = window.location.pathname.includes('admin');
+    const isAdminHash = window.location.hash === '#admin';
+    const sessionAuth = sessionStorage.getItem('admin_authenticated');
+
+    if (adminParam === 'true' || isAdminPath || isAdminHash) {
+      // Check if already authenticated
+      if (sessionAuth === 'true') {
+        setIsAdminAuthenticated(true);
+        setCurrentPage('admin');
+      } else {
+        setCurrentPage('admin-login');
+        setIsAdminAuthenticated(false);
+      }
+      // Clear the admin param to prevent redirect loops
+      if (adminParam === 'true') {
+        const newUrl = new URL(window.location);
+        newUrl.searchParams.delete('admin');
+        window.history.replaceState(null, '', newUrl.pathname + newUrl.hash);
+      }
+    } else if (window.location.pathname.includes('admin-login') || window.location.hash === '#admin-login') {
       setCurrentPage('admin-login');
     }
   };
+
+  // Protect admin routes
+  useEffect(() => {
+    if (currentPage === 'admin' && !isAdminAuthenticated) {
+      const sessionAuth = sessionStorage.getItem('admin_authenticated');
+      if (sessionAuth !== 'true') {
+        setCurrentPage('admin-login');
+      }
+    }
+  }, [currentPage, isAdminAuthenticated]);
+
 
   const renderPage = () => {
     switch (currentPage) {
@@ -75,9 +120,21 @@ function App() {
       case 'case-studies':
         return <CaseStudies onPageChange={handlePageChange} />;
       case 'admin-login':
-        return <AdminLogin onLogin={handleAdminLogin} />;
+        return (
+          <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div></div>}>
+            <AdminLogin onLogin={handleAdminLogin} />
+          </React.Suspense>
+        );
       case 'admin':
-        return isAdminAuthenticated ? <Admin /> : <AdminLogin onLogin={handleAdminLogin} />;
+        return isAdminAuthenticated ? (
+          <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div></div>}>
+            <Admin />
+          </React.Suspense>
+        ) : (
+          <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div></div>}>
+            <AdminLogin onLogin={handleAdminLogin} />
+          </React.Suspense>
+        );
       default:
         return <HomePage onPageChange={handlePageChange} />;
     }
@@ -94,56 +151,36 @@ function App() {
     favicon.href = '/attached_assets/favicon.png';
     document.getElementsByTagName('head')[0].appendChild(favicon);
 
-    // Handle hash-based navigation
     const handleHashChange = () => {
-      const hash = window.location.hash.substring(1);
+      const hash = window.location.hash.substring(1); // Remove the '#'
       if (hash) {
-        if (hash.startsWith('services/')) {
-          const serviceId = hash.split('/')[1];
+        if (hash.startsWith('service-detail-')) {
+          const serviceId = hash.replace('service-detail-', '');
           setCurrentPage('service-detail');
           setCurrentService(serviceId);
-        } else if (['home', 'services', 'about', 'contact', 'portfolio', 'privacy', 'terms'].includes(hash)) {
+        } else if (hash === 'admin') {
+          const sessionAuth = sessionStorage.getItem('admin_authenticated');
+          if (sessionAuth === 'true') {
+            setIsAdminAuthenticated(true);
+            setCurrentPage('admin');
+          } else {
+            setCurrentPage('admin-login');
+          }
+        } else if (hash === 'admin-login') {
+          setCurrentPage('admin-login');
+        } else if (['home', 'services', 'about', 'contact', 'portfolio', 'privacy', 'terms', 'case-studies'].includes(hash)) {
           setCurrentPage(hash);
         }
       }
     };
 
-    // Check for admin access - require proper authentication
-    const checkAdminAccess = () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const adminParam = urlParams.get('admin');
-      const isAdminPath = window.location.pathname.includes('admin');
-      const isAdminHash = window.location.hash === '#admin';
-
-      if (adminParam === 'true' || isAdminPath || isAdminHash) {
-        // Always require login for admin access
-        setCurrentPage('admin-login');
-        setIsAdminAuthenticated(false);
-      } else if (window.location.pathname.includes('admin-login') || window.location.hash === '#admin-login') {
-        setCurrentPage('admin-login');
-      }
-    };
-
-    // Listen for keyboard shortcut to access admin (Ctrl + Alt + A)
-    const handleKeyPress = (e) => {
-      if (e.ctrlKey && e.altKey && e.key === 'a') {
-        e.preventDefault();
-        if (currentPage !== 'admin' && currentPage !== 'admin-login') {
-          setCurrentPage('admin-login'); // Go to login first
-          setIsAdminAuthenticated(false);
-        }
-      }
-    };
-
     window.addEventListener('hashchange', handleHashChange);
-    window.addEventListener('keydown', handleKeyPress);
 
     handleHashChange(); // Check initial hash
     checkAdminAccess(); // Check for admin access
 
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
-      window.removeEventListener('keydown', handleKeyPress);
     };
   }, [currentPage]); // Depend on currentPage to re-evaluate admin access if needed
 

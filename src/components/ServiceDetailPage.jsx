@@ -19,7 +19,7 @@ const ServiceDetailPage = ({ service, onBack, onPageChange }) => {
         'Analytics & Tracking Setup'
       ],
       techStack: ['React.js', 'Next.js', 'TypeScript', 'Tailwind CSS', 'Node.js', 'MongoDB'],
-      pricing: 'Starting from $499',
+
       timeline: '2-4 weeks',
       process: [
         'Requirements Analysis',
@@ -45,7 +45,7 @@ const ServiceDetailPage = ({ service, onBack, onPageChange }) => {
         'SEO Configuration'
       ],
       techStack: ['WordPress', 'PHP', 'MySQL', 'JavaScript', 'CSS3', 'HTML5'],
-      pricing: 'Starting from $299',
+
       timeline: '1-3 weeks',
       process: [
         'Consultation',
@@ -71,7 +71,7 @@ const ServiceDetailPage = ({ service, onBack, onPageChange }) => {
         'Performance Optimization'
       ],
       techStack: ['React Native', 'Flutter', 'Swift', 'Kotlin', 'Firebase'],
-      pricing: 'Starting from $1,999',
+
       timeline: '6-12 weeks',
       process: [
         'App Concept & Planning',
@@ -97,7 +97,7 @@ const ServiceDetailPage = ({ service, onBack, onPageChange }) => {
         'Corporate Video Production'
       ],
       techStack: ['Adobe Premiere Pro', 'After Effects', 'DaVinci Resolve', 'Photoshop'],
-      pricing: 'Starting from $99 per video',
+
       timeline: '3-7 days',
       process: [
         'Content Review',
@@ -123,7 +123,7 @@ const ServiceDetailPage = ({ service, onBack, onPageChange }) => {
         'Scalable Database Design'
       ],
       techStack: ['React.js', 'Node.js', 'PostgreSQL', 'Redis', 'AWS', 'Stripe'],
-      pricing: 'Starting from $4,999',
+
       timeline: '8-16 weeks',
       process: [
         'Market Research',
@@ -163,6 +163,7 @@ const ServiceDetailPage = ({ service, onBack, onPageChange }) => {
                 <img
                   src={currentService.image}
                   alt={currentService.title}
+                  loading="lazy"
                   className="w-full h-72 md:h-96 object-contain mx-auto"
                 />
               </div>
@@ -202,10 +203,10 @@ const ServiceDetailPage = ({ service, onBack, onPageChange }) => {
       <section className="py-12 md:py-20">
         <div className="container mx-auto px-4 md:px-6">
           <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col lg:grid lg:grid-cols-3 gap-8 lg:gap-12">
+            <div className="max-w-5xl mx-auto">
 
               {/* Features */}
-              <div className="lg:col-span-2 order-2 lg:order-1">
+              <div>
                 <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 md:mb-8">What's Included</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                   {currentService.features.map((feature, index) => (
@@ -234,7 +235,7 @@ const ServiceDetailPage = ({ service, onBack, onPageChange }) => {
                 </div>
               </div>
 
-              {/* Pricing Card */}
+
               <div className="lg:col-span-1 order-1 lg:order-2">
                 <div className="lg:sticky lg:top-32">
                   <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-6 md:p-8 animate-slide-right">
@@ -245,8 +246,13 @@ const ServiceDetailPage = ({ service, onBack, onPageChange }) => {
 
                     <div className="space-y-4 md:space-y-6">
                       <div className="flex items-center justify-between">
-                        <span className="text-gray-600 text-sm md:text-base">Pricing</span>
-                        <span className="text-xl md:text-2xl font-bold text-sky-500">Let's Discuss</span>
+
+
+
+
+                        <span className="text-gray-600 text-sm md:text-base">Custom Pricing</span>
+                        <span className="text-xl md:text-2xl font-bold text-sky-500">Get Quote</span>
+
                       </div>
 
                       <div className="flex items-center justify-between">
@@ -291,18 +297,18 @@ const ServiceDetailPage = ({ service, onBack, onPageChange }) => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
               <div className="animate-bounce-in" style={{ animationDelay: '200ms' }}>
                 <Award className="text-sky-400 w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 md:mb-4" />
-                <h4 className="text-xl md:text-2xl font-bold text-gray-900 mb-1 md:mb-2">500+</h4>
+                <h4 className="text-xl md:text-2xl font-bold text-gray-900 mb-1 md:mb-2">100+</h4>
                 <p className="text-gray-600 text-sm md:text-base">Projects Completed</p>
               </div>
               <div className="animate-bounce-in" style={{ animationDelay: '400ms' }}>
                 <Users className="text-sky-400 w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 md:mb-4" />
-                <h4 className="text-xl md:text-2xl font-bold text-gray-900 mb-1 md:mb-2">500+</h4>
+                <h4 className="text-xl md:text-2xl font-bold text-gray-900 mb-1 md:mb-2">50+</h4>
                 <p className="text-gray-600 text-sm md:text-base">Happy Clients</p>
               </div>
               <div className="animate-bounce-in" style={{ animationDelay: '600ms' }}>
                 <Star className="text-sky-400 w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 md:mb-4" />
                 <h4 className="text-xl md:text-2xl font-bold text-gray-900 mb-1 md:mb-2">5.0</h4>
-                <p className="text-gray-600 text-sm md:text-base">Top Rating</p>
+                <p className="text-gray-600 text-sm md:text-base">Average Rating</p>
               </div>
             </div>
           </div>

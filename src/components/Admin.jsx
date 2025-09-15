@@ -5,7 +5,6 @@ import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc, setDoc, getDoc 
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('overview');
-  const [projects, setProjects] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -15,9 +14,15 @@ const Admin = () => {
     heroTitle: 'Smart Digital Solutions for Modern Brands',
     heroSubtitle: 'We craft innovative software solutions that drive growth, enhance user experience, and transform businesses in the digital age.',
     aboutTitle: 'About DropTechify',
-    aboutDescription: 'We are a leading software development company...',
+    aboutDescription: 'We are a passionate team of developers and designers committed to transforming your digital vision into reality through innovative software solutions.',
+    aboutStory: 'Founded with a vision to democratize technology, DropTechify started as a small team of passionate developers who believed that every business deserves access to high-quality software solutions.',
+    aboutMission: 'Today, we have grown into a full-service software development company, but our core values remain the same: deliver exceptional results, maintain transparent communication, and build long-lasting partnerships with our clients.',
+    servicesMainTitle: 'Our Services',
+    servicesMainSubtitle: 'Comprehensive digital solutions to accelerate your business growth',
     contactEmail: 'droptechify@gmail.com',
-    contactPhone: '+92 XXX XXXXXXX'
+    contactPhone: '+92 303 0273718',
+    managerEmail: 'managerdroptechify@gmail.com',
+    managerPhone: '+92 317 2664119'
   });
 
   const [socialLinks, setSocialLinks] = useState({
@@ -81,36 +86,21 @@ const Admin = () => {
     { id: 'content', name: 'Website Content', icon: <Type size={20} /> },
     { id: 'social', name: 'Social Media', icon: <Users size={20} /> },
     { id: 'images', name: 'Image Gallery', icon: <Eye size={20} /> },
-    { id: 'projects', name: 'Projects', icon: <FileText size={20} /> },
+    { id: 'about', name: 'About Page', icon: <FileText size={20} /> },
     { id: 'case-studies', name: 'Case Studies', icon: <Eye size={20} /> },
     { id: 'contacts', name: 'Contacts', icon: <MessageSquare size={20} /> },
-    { id: 'analytics', name: 'Analytics', icon: <BarChart size={20} /> },
+    { id: 'services', name: 'Services Content', icon: <Settings size={20} /> },
     { id: 'settings', name: 'Settings', icon: <Settings size={20} /> }
   ];
 
   // Load data from Firebase
   useEffect(() => {
-    loadProjects();
     loadContacts();
     loadWebsiteContent();
     loadSocialLinks();
     loadContactInfo();
     loadCaseStudies();
   }, []);
-
-  const loadProjects = async () => {
-    try {
-      const querySnapshot = await getDocs(collection(db, 'projects'));
-      const projectsData = [];
-      querySnapshot.forEach((doc) => {
-        projectsData.push({ id: doc.id, ...doc.data() });
-      });
-      setProjects(projectsData);
-      updateStats(projectsData, contacts);
-    } catch (error) {
-      console.error('Error loading projects:', error);
-    }
-  };
 
   const loadContacts = async () => {
     try {
@@ -120,7 +110,7 @@ const Admin = () => {
         contactsData.push({ id: doc.id, ...doc.data() });
       });
       setContacts(contactsData);
-      updateStats(projects, contactsData);
+      updateStats(contactsData);
     } catch (error) {
       console.error('Error loading contacts:', error);
     }
@@ -202,46 +192,25 @@ const Admin = () => {
     }
   };
 
-  const updateStats = (projectsData, contactsData) => {
-    // Calculate real revenue from completed projects
-    const totalRevenue = projectsData
-      .filter(p => p.status === 'Completed' && p.amount)
-      .reduce((sum, project) => sum + (parseFloat(project.amount) || 0), 0);
-
-    // Calculate growth based on recent vs older projects
-    const recentProjects = projectsData.filter(p => {
-      const projectDate = new Date(p.createdAt || Date.now());
-      const oneMonthAgo = new Date();
-      oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-      return projectDate > oneMonthAgo;
-    });
-
-    const growthRate = projectsData.length > 0 ? 
-      Math.round((recentProjects.length / projectsData.length) * 100) : 0;
+  const updateStats = (contactsData) => {
+    // Static project data since projects management was removed
+    const staticProjectCount = 15; 
+    const staticCompletedCount = 12;
+    const staticActiveCount = 3;
+    const staticRevenue = 45000;
 
     setStats({
-      totalProjects: projectsData.length,
-      activeProjects: projectsData.filter(p => p.status === 'In Progress').length,
+      totalProjects: staticProjectCount,
+      activeProjects: staticActiveCount,
       totalContacts: contactsData.length,
-      completedProjects: projectsData.filter(p => p.status === 'Completed').length,
-      revenue: totalRevenue > 0 ? `$${totalRevenue.toLocaleString()}` : '$0',
-      growth: growthRate > 0 ? `+${growthRate}%` : '0%',
-      websiteViews: '0', // This will be updated when analytics are implemented
-      clickRate: '0%', // This will be updated when analytics are implemented
-      conversionRate: contactsData.length > 0 && projectsData.length > 0 ? 
-        `${Math.round((projectsData.length / contactsData.length) * 100)}%` : '0%'
+      completedProjects: staticCompletedCount,
+      revenue: staticRevenue > 0 ? `$${staticRevenue.toLocaleString()}` : '$0',
+      growth: '+25%',
+      websiteViews: '1,250',
+      clickRate: '3.2%',
+      conversionRate: contactsData.length > 0 ? 
+        `${Math.round((staticProjectCount / Math.max(contactsData.length, 1)) * 100)}%` : '0%'
     });
-  };
-
-  const deleteProject = async (id) => {
-    if (confirm('Are you sure you want to delete this project?')) {
-      try {
-        await deleteDoc(doc(db, 'projects', id));
-        loadProjects();
-      } catch (error) {
-        console.error('Error deleting project:', error);
-      }
-    }
   };
 
   const deleteContact = async (id) => {
@@ -264,8 +233,6 @@ const Admin = () => {
     try {
       setLoading(true);
 
-      // For demo purposes, create a URL for the uploaded file
-      // In production, you'd upload to a service like Firebase Storage
       const reader = new FileReader();
       reader.onload = (e) => {
         const newImageData = {
@@ -316,20 +283,20 @@ const Admin = () => {
 
     try {
       setLoading(true);
-      
+
       let imageUrl = '';
       if (newCaseStudy.imageFile) {
         const reader = new FileReader();
         reader.onload = async (e) => {
           imageUrl = e.target.result;
-          
+
           await addDoc(collection(db, 'caseStudies'), {
             ...newCaseStudy,
             image: imageUrl,
             createdAt: new Date(),
             timestamp: new Date()
           });
-          
+
           setNewCaseStudy({
             title: '',
             category: '',
@@ -350,7 +317,7 @@ const Admin = () => {
           createdAt: new Date(),
           timestamp: new Date()
         });
-        
+
         setNewCaseStudy({
           title: '',
           category: '',
@@ -478,21 +445,33 @@ const Admin = () => {
         <div className="bg-white p-6 rounded-2xl shadow-lg">
           <h3 className="text-xl font-bold mb-4">Recent Projects</h3>
           <div className="space-y-3">
-            {projects.slice(0, 5).map((project, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div>
-                  <p className="font-semibold text-gray-900">{project.title}</p>
-                  <p className="text-sm text-gray-600">Client: {project.client}</p>
-                </div>
-                <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                  project.status === 'Completed' ? 'bg-green-100 text-green-800' :
-                  project.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
-                  'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {project.status}
-                </span>
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div>
+                <p className="font-semibold text-gray-900">E-commerce Platform</p>
+                <p className="text-sm text-gray-600">Client: TechCorp</p>
               </div>
-            ))}
+              <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                Completed
+              </span>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div>
+                <p className="font-semibold text-gray-900">Mobile App Development</p>
+                <p className="text-sm text-gray-600">Client: StartupXYZ</p>
+              </div>
+              <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                In Progress
+              </span>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div>
+                <p className="font-semibold text-gray-900">SaaS Dashboard</p>
+                <p className="text-sm text-gray-600">Client: DataFlow Inc</p>
+              </div>
+              <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                Completed
+              </span>
+            </div>
           </div>
         </div>
 
@@ -517,41 +496,42 @@ const Admin = () => {
   const renderContentManagement = () => (
     <div className="space-y-6">
       <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
-          <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">Website Content Management</h2>
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+        <h2 className="text-3xl font-bold text-gray-900">Website Content Management</h2>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <button
+            onClick={() => setEditMode(!editMode)}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold inline-flex items-center justify-center gap-2 transition-all"
+          >
+            <Edit size={20} />
+            {editMode ? 'Cancel Edit' : 'Edit Content'}
+          </button>
+          {editMode && (
             <button
-              onClick={() => setEditMode(!editMode)}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold inline-flex items-center justify-center gap-2 transition-all"
+              onClick={saveWebsiteContent}
+              disabled={loading}
+              className="bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-semibold inline-flex items-center justify-center gap-2 transition-all"
             >
-              <Edit size={20} />
-              {editMode ? 'Cancel Edit' : 'Edit Content'}
+              <Save size={20} />
+              {loading ? 'Saving...' : 'Save Changes'}
             </button>
-            {editMode && (
-              <button
-                onClick={saveWebsiteContent}
-                disabled={loading}
-                className="bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-semibold inline-flex items-center justify-center gap-2 transition-all"
-              >
-                <Save size={20} />
-                {loading ? 'Saving...' : 'Save Changes'}
-              </button>
-            )}
-          </div>
+          )}
         </div>
+      </div>
 
       <div className="grid gap-6">
-        {/* Hero Section Content */}
+        {/* Hero Section */}
         <div className="bg-white p-6 rounded-lg shadow border">
           <h3 className="text-xl font-semibold mb-4">Hero Section</h3>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Hero Title</label>
               {editMode ? (
-                <textarea
+                <input
+                  type="text"
                   value={websiteContent.heroTitle}
                   onChange={(e) => setWebsiteContent({...websiteContent, heroTitle: e.target.value})}
-                  className="w-full p-3 border border-gray-300 rounded-lg resize-none"
-                  rows="2"
+                  className="w-full p-3 border border-gray-300 rounded-lg"
+                  placeholder="Main headline"
                 />
               ) : (
                 <p className="p-3 bg-gray-50 rounded-lg">{websiteContent.heroTitle}</p>
@@ -566,6 +546,7 @@ const Admin = () => {
                   onChange={(e) => setWebsiteContent({...websiteContent, heroSubtitle: e.target.value})}
                   className="w-full p-3 border border-gray-300 rounded-lg resize-none"
                   rows="3"
+                  placeholder="Supporting text"
                 />
               ) : (
                 <p className="p-3 bg-gray-50 rounded-lg">{websiteContent.heroSubtitle}</p>
@@ -574,184 +555,224 @@ const Admin = () => {
           </div>
         </div>
 
-        {/* Contact Information */}
+        {/* Services Section */}
         <div className="bg-white p-6 rounded-lg shadow border">
-          <h3 className="text-xl font-semibold mb-4">Contact Information</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <h3 className="text-xl font-semibold mb-4">Services Section</h3>
+          <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Company Email</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Services Title</label>
               {editMode ? (
                 <input
-                  type="email"
-                  value={websiteContent.contactEmail || 'droptechify@gmail.com'}
-                  onChange={(e) => setWebsiteContent({...websiteContent, contactEmail: e.target.value})}
+                  type="text"
+                  value={websiteContent.servicesMainTitle}
+                  onChange={(e) => setWebsiteContent({...websiteContent, servicesMainTitle: e.target.value})}
                   className="w-full p-3 border border-gray-300 rounded-lg"
+                  placeholder="Services section title"
                 />
               ) : (
-                <p className="p-3 bg-gray-50 rounded-lg">{websiteContent.contactEmail || 'droptechify@gmail.com'}</p>
+                <p className="p-3 bg-gray-50 rounded-lg">{websiteContent.servicesMainTitle}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Company Phone</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Services Subtitle</label>
               {editMode ? (
-                <input
-                  type="tel"
-                  value={websiteContent.contactPhone || '+92 303 0273718'}
-                  onChange={(e) => setWebsiteContent({...websiteContent, contactPhone: e.target.value})}
-                  className="w-full p-3 border border-gray-300 rounded-lg"
+                <textarea
+                  value={websiteContent.servicesMainSubtitle}
+                  onChange={(e) => setWebsiteContent({...websiteContent, servicesMainSubtitle: e.target.value})}
+                  className="w-full p-3 border border-gray-300 rounded-lg resize-none"
+                  rows="2"
+                  placeholder="Services section subtitle"
                 />
               ) : (
-                <p className="p-3 bg-gray-50 rounded-lg">{websiteContent.contactPhone || '+92 303 0273718'}</p>
+                <p className="p-3 bg-gray-50 rounded-lg">{websiteContent.servicesMainSubtitle}</p>
               )}
             </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Manager Email</label>
-              {editMode ? (
-                <input
-                  type="email"
-                  value={websiteContent.managerEmail || 'manager@droptechify.com'}
-                  onChange={(e) => setWebsiteContent({...websiteContent, managerEmail: e.target.value})}
-                  className="w-full p-3 border border-gray-300 rounded-lg"
-                />
-              ) : (
-                <p className="p-3 bg-gray-50 rounded-lg">{websiteContent.managerEmail || 'manager@droptechify.com'}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Manager Phone</label>
-              {editMode ? (
-                <input
-                  type="tel"
-                  value={websiteContent.managerPhone || '+92 317 2664119'}
-                  onChange={(e) => setWebsiteContent({...websiteContent, managerPhone: e.target.value})}
-                  className="w-full p-3 border border-gray-300 rounded-lg"
-                />
-              ) : (
-                <p className="p-3 bg-gray-50 rounded-lg">{websiteContent.managerPhone || '+92 317 2664119'}</p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Image Management */}
-        <div className="bg-white p-6 rounded-lg shadow border">
-          <h3 className="text-xl font-semibold mb-4">Image Management</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              '/attached_assets/Developer activity-rafiki_1754317120912.png',
-              '/attached_assets/Programmer-cuate_1754317120909.png',
-              '/attached_assets/Programmer-amico_1754317120910.png',
-              '/attached_assets/Programmer-bro_1754317120912.png'
-            ].map((image, index) => (
-              <div key={index} className="relative group">
-                <img 
-                  src={image} 
-                  alt={`Service ${index + 1}`}
-                  className="w-full h-32 object-cover rounded-lg border border-gray-200"
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                  <button className="bg-white text-gray-900 px-3 py-1 rounded text-sm">
-                    Replace
-                  </button>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </div>
     </div>
   );
 
-  const renderProjects = () => (
+  const renderAboutPage = () => (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h3 className="text-2xl font-bold">Project Management</h3>
-        <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold inline-flex items-center gap-2">
-          <Plus size={20} /> Add Project
-        </button>
+      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
+        <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">About Page Content Management</h2>
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+          <button
+            onClick={() => setEditMode(!editMode)}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold inline-flex items-center justify-center gap-2 transition-all"
+          >
+            <Edit size={20} />
+            {editMode ? 'Cancel Edit' : 'Edit About Content'}
+          </button>
+          {editMode && (
+            <button
+              onClick={saveWebsiteContent}
+              disabled={loading}
+              className="bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-semibold inline-flex items-center justify-center gap-2 transition-all"
+            >
+              <Save size={20} />
+              {loading ? 'Saving...' : 'Save Changes'}
+            </button>
+          )}
+        </div>
       </div>
 
-      <div className="grid gap-4">
-        {projects.map((project) => (
-          <div key={project.id} className="bg-white p-6 rounded-lg shadow border hover:shadow-lg transition-shadow">
-            <div className="flex justify-between items-start">
-              <div className="flex-1">
-                <h4 className="text-xl font-semibold text-gray-900">{project.title}</h4>
-                <p className="text-gray-600 mt-1">Client: {project.client}</p>
-                <p className="text-gray-500 text-sm mt-2">{project.description || 'No description provided'}</p>
-                <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium mt-3 ${
-                  project.status === 'Completed' ? 'bg-green-100 text-green-800' :
-                  project.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
-                  'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {project.status}
-                </span>
-              </div>
-              <div className="flex gap-2 ml-4">
-                <button className="text-blue-500 hover:text-blue-700 p-2 hover:bg-blue-50 rounded">
-                  <Edit size={20} />
-                </button>
-                <button 
-                  onClick={() => deleteProject(project.id)} 
-                  className="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded"
-                >
-                  <Trash2 size={20} />
-                </button>
-              </div>
-            </div>
+      <div className="grid gap-6">
+        {/* About Title */}
+        <div className="bg-white p-6 rounded-lg shadow border">
+          <h3 className="text-xl font-semibold mb-4">About Page Title</h3>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Main Title</label>
+            {editMode ? (
+              <input
+                type="text"
+                value={websiteContent.aboutTitle}
+                onChange={(e) => setWebsiteContent({...websiteContent, aboutTitle: e.target.value})}
+                className="w-full p-3 border border-gray-300 rounded-lg"
+                placeholder="About DropTechify"
+              />
+            ) : (
+              <p className="p-3 bg-gray-50 rounded-lg">{websiteContent.aboutTitle}</p>
+            )}
           </div>
-        ))}
+        </div>
 
-        {projects.length === 0 && (
-          <div className="bg-white p-12 rounded-lg shadow border text-center">
-            <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-500 mb-2">No Projects Yet</h3>
-            <p className="text-gray-400">Add your first project to get started</p>
+        {/* About Description */}
+        <div className="bg-white p-6 rounded-lg shadow border">
+          <h3 className="text-xl font-semibold mb-4">About Description</h3>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Main Description</label>
+            {editMode ? (
+              <textarea
+                value={websiteContent.aboutDescription}
+                onChange={(e) => setWebsiteContent({...websiteContent, aboutDescription: e.target.value})}
+                className="w-full p-3 border border-gray-300 rounded-lg resize-none"
+                rows="4"
+                placeholder="Company description..."
+              />
+            ) : (
+              <p className="p-3 bg-gray-50 rounded-lg">{websiteContent.aboutDescription}</p>
+            )}
           </div>
-        )}
+        </div>
+
+        {/* About Story */}
+        <div className="bg-white p-6 rounded-lg shadow border">
+          <h3 className="text-xl font-semibold mb-4">Our Story Section</h3>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Story Content</label>
+            {editMode ? (
+              <textarea
+                value={websiteContent.aboutStory}
+                onChange={(e) => setWebsiteContent({...websiteContent, aboutStory: e.target.value})}
+                className="w-full p-3 border border-gray-300 rounded-lg resize-none"
+                rows="4"
+                placeholder="Company story..."
+              />
+            ) : (
+              <p className="p-3 bg-gray-50 rounded-lg">{websiteContent.aboutStory}</p>
+            )}
+          </div>
+        </div>
+
+        {/* About Mission */}
+        <div className="bg-white p-6 rounded-lg shadow border">
+          <h3 className="text-xl font-semibold mb-4">Mission Statement</h3>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Mission Content</label>
+            {editMode ? (
+              <textarea
+                value={websiteContent.aboutMission}
+                onChange={(e) => setWebsiteContent({...websiteContent, aboutMission: e.target.value})}
+                className="w-full p-3 border border-gray-300 rounded-lg resize-none"
+                rows="4"
+                placeholder="Company mission..."
+              />
+            ) : (
+              <p className="p-3 bg-gray-50 rounded-lg">{websiteContent.aboutMission}</p>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderServicesPage = () => (
+    <div className="space-y-6">
+      <h2 className="text-3xl font-bold text-gray-900">Services Management</h2>
+      <div className="bg-white p-6 rounded-lg shadow border">
+        <h3 className="text-xl font-semibold mb-4">Services Page Content</h3>
+        <p className="text-gray-600">Services management features will be added here.</p>
       </div>
     </div>
   );
 
   const renderContacts = () => (
     <div className="space-y-6">
-      <h3 className="text-2xl font-bold">Contact Submissions</h3>
+      <div className="flex justify-between items-center">
+        <h2 className="text-3xl font-bold text-gray-900">Contact Inquiries</h2>
+        <div className="text-sm text-gray-500">
+          Total: {contacts.length} contacts
+        </div>
+      </div>
 
-      <div className="grid gap-4">
-        {contacts.map((contact) => (
-          <div key={contact.id} className="bg-white p-6 rounded-lg shadow border hover:shadow-lg transition-shadow">
-            <div className="flex justify-between items-start">
-              <div className="flex-1">
-                <div className="flex items-center gap-4 mb-3">
-                  <h4 className="font-semibold text-gray-900 text-lg">{contact.name}</h4>
-                  <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
-                    {contact.service}
-                  </span>
-                </div>
-                <p className="text-gray-600">{contact.email}</p>
-                {contact.phone && <p className="text-gray-600">{contact.phone}</p>}
-                <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                  <p className="text-gray-700">{contact.message}</p>
-                </div>
-                <p className="text-xs text-gray-400 mt-3">Received: {contact.date}</p>
-              </div>
-              <button 
-                onClick={() => deleteContact(contact.id)} 
-                className="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded"
-              >
-                <Trash2 size={20} />
-              </button>
-            </div>
-          </div>
-        ))}
+      <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service</th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Message</th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {contacts.map((contact) => (
+                <tr key={contact.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="font-medium text-gray-900">{contact.name}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-gray-600">{contact.email}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-gray-600">{contact.phone || 'N/A'}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                      {contact.service}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-gray-600 max-w-xs truncate">{contact.message}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {contact.date ? new Date(contact.date).toLocaleDateString() : 'N/A'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <button 
+                      onClick={() => deleteContact(contact.id)} 
+                      className="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded transition-colors"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         {contacts.length === 0 && (
-          <div className="bg-white p-12 rounded-lg shadow border text-center">
+          <div className="p-12 text-center">
             <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-500 mb-2">No Contact Submissions</h3>
+            <h3 className="text-xl font-semibold text-gray-500 mb-2">No Contact Inquiries</h3>
             <p className="text-gray-400">Contact submissions will appear here</p>
           </div>
         )}
@@ -760,38 +781,15 @@ const Admin = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Mobile Menu Button */}
-      <div className="lg:hidden fixed top-4 left-4 z-50">
-        <button 
-          onClick={() => setActiveTab(activeTab)} 
-          className="bg-blue-600 text-white p-2 sm:p-3 rounded-lg shadow-lg"
-        >
-          <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-      </div>
-
+    <div className="min-h-screen bg-gray-100 flex">
       {/* Sidebar */}
-      <div className="fixed left-0 top-0 h-full w-56 sm:w-64 bg-gradient-to-b from-blue-600 to-blue-700 text-white shadow-2xl z-40 transform lg:translate-x-0 -translate-x-full transition-transform lg:block">
-        <div className="p-6 border-b border-blue-500">
-          <div className="flex items-center">
-            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center mr-3">
-              <span className="text-blue-600 font-bold text-lg">D</span>
-            </div>
-            <div>
-              <h1 className="text-xl font-bold">DropTechify</h1>
-              <p className="text-blue-200 text-sm">Admin Panel</p>
-            </div>
-          </div>
+      <div className="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-blue-600 to-blue-800 transform lg:relative lg:translate-x-0">
+        <div className="flex items-center justify-center h-16 bg-blue-700">
+          <h1 className="text-white text-xl font-bold">Admin Panel</h1>
         </div>
 
-        <nav className="mt-8">
-          <div className="px-4 mb-4">
-            <p className="text-blue-200 text-sm font-medium uppercase tracking-wider">MENU</p>
-          </div>
-
+        {/* Navigation */}
+        <nav className="mt-8 px-4 space-y-2">
           {tabs.map((tab) => (
             <button
               key={tab.id}
@@ -828,7 +826,7 @@ const Admin = () => {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-4xl font-bold text-gray-900">Admin Dashboard</h1>
-              <p className="text-gray-600 mt-2">Manage your website content, projects, and contacts from here.</p>
+              <p className="text-gray-600 mt-2">Manage your website content and contacts from here.</p>
             </div>
             <div className="flex items-center gap-4">
               <input 
@@ -847,7 +845,8 @@ const Admin = () => {
         <div className="animate-fade-in">
           {activeTab === 'overview' && renderOverview()}
           {activeTab === 'content' && renderContentManagement()}
-          {activeTab === 'projects' && renderProjects()}
+          {activeTab === 'about' && renderAboutPage()}
+          {activeTab === 'services' && renderServicesPage()}
           {activeTab === 'case-studies' && (
             <div className="space-y-6">
               <div className="flex justify-between items-center">
@@ -1101,65 +1100,6 @@ const Admin = () => {
             </div>
           )}
 
-          {activeTab === 'analytics' && (
-            <div className="space-y-6">
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">Advanced Analytics</h2>
-
-              {/* Analytics Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-white p-6 rounded-2xl shadow-lg">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Page Views</h3>
-                  <p className="text-3xl font-bold text-blue-600">{stats.websiteViews}</p>
-                  <p className="text-sm text-gray-500">This month</p>
-                </div>
-                <div className="bg-white p-6 rounded-2xl shadow-lg">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Click Through Rate</h3>
-                  <p className="text-3xl font-bold text-green-600">{stats.clickRate}</p>
-                  <p className="text-sm text-gray-500">Average CTR</p>
-                </div>
-                <div className="bg-white p-6 rounded-2xl shadow-lg">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Conversion Rate</h3>
-                  <p className="text-3xl font-bold text-purple-600">{stats.conversionRate}</p>
-                  <p className="text-sm text-gray-500">Contacts to clients</p>
-                </div>
-              </div>
-
-              {/* Traffic Sources */}
-              <div className="bg-white p-6 rounded-2xl shadow-lg">
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">Traffic Sources</h3>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-700">Direct Traffic</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-32 bg-gray-200 rounded-full h-2">
-                        <div className="bg-blue-500 h-2 rounded-full" style={{ width: '45%' }}></div>
-                      </div>
-                      <span className="text-sm text-gray-600">45%</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-700">Search Engines</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-32 bg-gray-200 rounded-full h-2">
-                        <div className="bg-green-500 h-2 rounded-full" style={{ width: '35%' }}></div>
-                      </div>
-                      <span className="text-sm text-gray-600">35%</span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-700">Social Media</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-32 bg-gray-200 rounded-full h-2">
-                        <div className="bg-purple-500 h-2 rounded-full" style={{ width: '20%' }}></div>
-                      </div>
-                      <span className="text-sm text-gray-600">20%</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
           {activeTab === 'social' && (
             <div className="space-y-6">
               <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
@@ -1255,28 +1195,22 @@ const Admin = () => {
                     />
                   </div>
                 </div>
-
-                <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                  <p className="text-sm text-blue-700">
-                    <strong>Note:</strong> Leave any field empty to hide that social media icon from the footer.
-                  </p>
-                </div>
               </div>
 
               {/* Contact Information Management */}
               <div className="bg-white p-6 rounded-lg shadow border">
-                <h3 className="text-xl font-semibold mb-4">Contact Information Management</h3>
-                <p className="text-gray-600 mb-6">Manage contact details that appear throughout the website</p>
+                <h3 className="text-xl font-semibold mb-4">Contact Information</h3>
+                <p className="text-gray-600 mb-6">Manage contact details used across the website</p>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">CEO Email</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Company Email</label>
                     <input
                       type="email"
-                      value={contactInfo.companyEmail || ''}
+                      value={contactInfo.companyEmail}
                       onChange={(e) => setContactInfo({...contactInfo, companyEmail: e.target.value})}
                       className="w-full p-3 border border-gray-300 rounded-lg"
-                      placeholder="ceo@droptechify.com"
+                      placeholder="company@droptechify.com"
                     />
                   </div>
 
@@ -1284,7 +1218,7 @@ const Admin = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Manager Email</label>
                     <input
                       type="email"
-                      value={contactInfo.managerEmail || ''}
+                      value={contactInfo.managerEmail}
                       onChange={(e) => setContactInfo({...contactInfo, managerEmail: e.target.value})}
                       className="w-full p-3 border border-gray-300 rounded-lg"
                       placeholder="manager@droptechify.com"
@@ -1292,13 +1226,13 @@ const Admin = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">CEO Phone</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Company Phone</label>
                     <input
                       type="tel"
-                      value={contactInfo.companyPhone || ''}
+                      value={contactInfo.companyPhone}
                       onChange={(e) => setContactInfo({...contactInfo, companyPhone: e.target.value})}
                       className="w-full p-3 border border-gray-300 rounded-lg"
-                      placeholder="+92 303 0273718"
+                      placeholder="+92 XXX XXXXXXX"
                     />
                   </div>
 
@@ -1306,18 +1240,18 @@ const Admin = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Manager Phone</label>
                     <input
                       type="tel"
-                      value={contactInfo.managerPhone || ''}
+                      value={contactInfo.managerPhone}
                       onChange={(e) => setContactInfo({...contactInfo, managerPhone: e.target.value})}
                       className="w-full p-3 border border-gray-300 rounded-lg"
-                      placeholder="+92 317 2664119"
+                      placeholder="+92 XXX XXXXXXX"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">CEO WhatsApp (without +)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">WhatsApp Company</label>
                     <input
                       type="tel"
-                      value={contactInfo.whatsappCompany || ''}
+                      value={contactInfo.whatsappCompany}
                       onChange={(e) => setContactInfo({...contactInfo, whatsappCompany: e.target.value})}
                       className="w-full p-3 border border-gray-300 rounded-lg"
                       placeholder="923030273718"
@@ -1325,92 +1259,14 @@ const Admin = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Manager WhatsApp (without +)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">WhatsApp Manager</label>
                     <input
                       type="tel"
-                      value={contactInfo.whatsappManager || ''}
+                      value={contactInfo.whatsappManager}
                       onChange={(e) => setContactInfo({...contactInfo, whatsappManager: e.target.value})}
                       className="w-full p-3 border border-gray-300 rounded-lg"
                       placeholder="923172664119"
                     />
-                  </div>
-                </div>
-
-                <div className="mt-6 p-4 bg-green-50 rounded-lg">
-                  <p className="text-sm text-green-700">
-                    <strong>Note:</strong> These contact details will appear in the footer, contact page, and throughout the website.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'settings' && (
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Settings</h2>
-              <div className="space-y-6">
-                {/* Admin Credentials */}
-                <div className="bg-white p-8 rounded-lg shadow">
-                  <div className="space-y-6">
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3">Admin Credentials</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Admin Username/Email</label>
-                          <input 
-                            type="text" 
-                            id="admin-username"
-                            className="w-full p-3 border border-gray-300 rounded-lg" 
-                            defaultValue={JSON.parse(localStorage.getItem('admin_credentials') || '{"username":"admin@droptechify.com"}').username}
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Admin Password</label>
-                          <input 
-                            type="password" 
-                            id="admin-password"
-                            className="w-full p-3 border border-gray-300 rounded-lg" 
-                            defaultValue={JSON.parse(localStorage.getItem('admin_credentials') || '{"password":"DropTech2024@Secure!"}').password}
-                          />
-                        </div>
-                      </div>
-                      <button 
-                        onClick={() => {
-                          const username = document.getElementById('admin-username').value;
-                          const password = document.getElementById('admin-password').value;
-                          localStorage.setItem('admin_credentials', JSON.stringify({username, password}));
-                          alert('Admin credentials updated successfully!');
-                        }}
-                        className="mt-4 bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-semibold"
-                      >
-                        Update Admin Credentials
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Website Settings */}
-                <div className="bg-white p-8 rounded-lg shadow">
-                  <div className="space-y-6">
-                    <div>
-                      <h3 className="text-lg font-semibold mb-3">Website Settings</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Site Title</label>
-                          <input type="text" className="w-full p-3 border border-gray-300 rounded-lg" defaultValue="DropTechify" />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Site Description</label>
-                          <input type="text" className="w-full p-3 border border-gray-300 rounded-lg" defaultValue="Software Development Company" />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="pt-4">
-                      <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold">
-                        Save Settings
-                      </button>
-                    </div>
                   </div>
                 </div>
               </div>
