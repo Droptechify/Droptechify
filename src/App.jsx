@@ -15,7 +15,10 @@ import AdminLogin from './components/AdminLogin';
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [currentService, setCurrentService] = useState('');
-  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(() => {
+    // Check if admin is already authenticated
+    return localStorage.getItem('admin_authenticated') === 'true';
+  });
 
   const handlePageChange = (page, serviceId = '') => {
     if (page === 'service-detail') {
@@ -37,9 +40,11 @@ function App() {
   const handleAdminLogin = (success) => {
     setIsAdminAuthenticated(success);
     if (success) {
+      localStorage.setItem('admin_authenticated', 'true');
       setCurrentPage('admin');
     } else {
-      setCurrentPage('admin-login'); // Redirect back to login if login fails
+      localStorage.removeItem('admin_authenticated');
+      setCurrentPage('admin-login');
     }
   };
 
@@ -79,6 +84,16 @@ function App() {
   };
 
   useEffect(() => {
+    // Set page title and favicon
+    document.title = 'DropTechify - Leading Software Development Company | Web & App Development';
+
+    // Ensure favicon is loaded
+    const favicon = document.querySelector("link[rel*='icon']") || document.createElement('link');
+    favicon.type = 'image/x-icon';
+    favicon.rel = 'shortcut icon';
+    favicon.href = '/attached_assets/favicon.png';
+    document.getElementsByTagName('head')[0].appendChild(favicon);
+
     // Handle hash-based navigation
     const handleHashChange = () => {
       const hash = window.location.hash.substring(1);
@@ -142,9 +157,9 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white flex flex-col">
       <Header currentPage={currentPage} onPageChange={handlePageChange} />
-      <main className="animate-page-transition">
+      <main className="flex-1 animate-page-transition">
         {renderPage()}
       </main>
       <Footer onPageChange={handlePageChange} />

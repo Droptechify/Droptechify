@@ -26,7 +26,6 @@ const AdminLogin = ({ onLogin }) => {
     setLoading(true);
     setError('');
 
-    // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     if (credentials.username === ADMIN_CREDENTIALS.username &&

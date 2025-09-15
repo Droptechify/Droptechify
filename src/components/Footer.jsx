@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin, ArrowRight, MessageCircle, ExternalLink } from 'lucide-react';
 import { db } from '../firebase';
@@ -52,15 +51,15 @@ function Footer({ onPageChange }) {
     }
   };
 
-  const handlePageChange = (page) => {
+  const handlePageChange = (page, serviceId = null) => {
     if (onPageChange) {
-      onPageChange(page);
+      onPageChange(page, serviceId);
     }
   };
 
   const CustomIcon = ({ type, size = 18 }) => {
     const iconStyle = { width: size, height: size };
-    
+
     switch (type) {
       case 'clutch':
         return (
@@ -85,40 +84,50 @@ function Footer({ onPageChange }) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {/* Company Info */}
           <div className="animate-fade-in">
-            <img 
-              src="/attached_assets/Droptechify_white.png" 
-              alt="DropTechify" 
+            <img
+              src="/attached_assets/Droptechify_white.png"
+              alt="DropTechify"
               className="h-10 sm:h-12 mb-4 sm:mb-6"
             />
             <p className="text-gray-400 mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base">
-              Leading software development company with 20+ years of experience and 500+ completed projects. 
+              Leading software development company with 20+ years of experience and 500+ completed projects.
               We specialize in web development, app development, and digital solutions that drive business growth.
             </p>
             <div className="flex flex-wrap gap-3 sm:gap-4">
-              <a href="https://facebook.com/droptechify" target="_blank" rel="noopener noreferrer" 
-                 className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-all duration-300 hover:scale-110 shadow-lg">
-                <Facebook size={18} className="sm:w-[20px] sm:h-[20px] text-white" />
-              </a>
-              <a href="https://twitter.com/droptechify" target="_blank" rel="noopener noreferrer" 
-                 className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-400 rounded-full flex items-center justify-center hover:bg-blue-500 transition-all duration-300 hover:scale-110 shadow-lg">
-                <Twitter size={18} className="sm:w-[20px] sm:h-[20px] text-white" />
-              </a>
-              <a href="https://instagram.com/droptechify" target="_blank" rel="noopener noreferrer" 
-                 className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center hover:from-purple-600 hover:to-pink-600 transition-all duration-300 hover:scale-110 shadow-lg">
-                <Instagram size={18} className="sm:w-[20px] sm:h-[20px] text-white" />
-              </a>
-              <a href="https://linkedin.com/company/droptechify" target="_blank" rel="noopener noreferrer" 
+              {socialLinks.facebook && (
+                <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer"
+                   className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-all duration-300 hover:scale-110 shadow-lg">
+                  <Facebook size={18} className="sm:w-[20px] sm:h-[20px] text-white" />
+                </a>
+              )}
+              {socialLinks.twitter && (
+                <a href={socialLinks.twitter} target="_blank" rel="noopener noreferrer"
+                   className="w-10 h-10 sm:w-12 sm:h-12 bg-sky-400 rounded-full flex items-center justify-center hover:bg-sky-500 transition-all duration-300 hover:scale-110 shadow-lg">
+                  <Twitter size={18} className="sm:w-[20px] sm:h-[20px] text-white" />
+                </a>
+              )}
+              {socialLinks.instagram && (
+                <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer"
+                   className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center hover:from-purple-600 hover:to-pink-600 transition-all duration-300 hover:scale-110 shadow-lg">
+                  <Instagram size={18} className="sm:w-[20px] sm:h-[20px] text-white" />
+                </a>
+              )}
+              <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer"
                  className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-700 rounded-full flex items-center justify-center hover:bg-blue-800 transition-all duration-300 hover:scale-110 shadow-lg">
                 <Linkedin size={18} className="sm:w-[20px] sm:h-[20px] text-white" />
               </a>
-              <a href="https://clutch.co/profile/droptechify" target="_blank" rel="noopener noreferrer" 
-                 className="w-10 h-10 sm:w-12 sm:h-12 bg-red-500 rounded-full flex items-center justify-center hover:bg-red-600 transition-all duration-300 hover:scale-110 shadow-lg">
-                <CustomIcon type="clutch" size={18} />
-              </a>
-              <a href="https://upwork.com/agencies/droptechify" target="_blank" rel="noopener noreferrer" 
-                 className="w-10 h-10 sm:w-12 sm:h-12 bg-green-500 rounded-full flex items-center justify-center hover:bg-green-600 transition-all duration-300 hover:scale-110 shadow-lg">
-                <CustomIcon type="upwork" size={18} />
-              </a>
+              {socialLinks.clutch && (
+                <a href={socialLinks.clutch} target="_blank" rel="noopener noreferrer"
+                   className="w-10 h-10 sm:w-12 sm:h-12 bg-red-500 rounded-full flex items-center justify-center hover:bg-red-600 transition-all duration-300 hover:scale-110 shadow-lg">
+                  <CustomIcon type="clutch" size={18} />
+                </a>
+              )}
+              {socialLinks.upwork && (
+                <a href={socialLinks.upwork} target="_blank" rel="noopener noreferrer"
+                   className="w-10 h-10 sm:w-12 sm:h-12 bg-green-500 rounded-full flex items-center justify-center hover:bg-green-600 transition-all duration-300 hover:scale-110 shadow-lg">
+                  <CustomIcon type="upwork" size={18} />
+                </a>
+              )}
             </div>
           </div>
 
@@ -127,20 +136,20 @@ function Footer({ onPageChange }) {
             <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Our Services</h3>
             <ul className="space-y-2 sm:space-y-3">
               {[
-                'Website Development',
-                'WordPress Development',
-                'App Development',
-                'Video Editing',
-                'Custom Software',
-                'SaaS Development'
+                { name: 'Website Development', serviceId: 'website-development' },
+                { name: 'WordPress Development', serviceId: 'wordpress-development' },
+                { name: 'App Development', serviceId: 'app-development' },
+                { name: 'Video Editing', serviceId: 'video-editing' },
+                { name: 'Custom Software', serviceId: 'custom-software' },
+                { name: 'SaaS Development', serviceId: 'saas-development' }
               ].map((service, index) => (
                 <li key={index}>
                   <button
-                    onClick={() => handlePageChange('services')}
+                    onClick={() => handlePageChange('service-detail', service.serviceId)}
                     className="text-gray-400 hover:text-sky-400 transition-colors duration-300 flex items-center group text-sm sm:text-base"
                   >
                     <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 mr-2 group-hover:translate-x-1 transition-transform duration-300" />
-                    {service}
+                    {service.name}
                   </button>
                 </li>
               ))}
@@ -175,63 +184,60 @@ function Footer({ onPageChange }) {
           {/* Contact Info */}
           <div className="animate-slide-up" style={{ animationDelay: '300ms' }}>
             <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Get In Touch</h3>
-            <div className="space-y-3 sm:space-y-4">
+            <div className="space-y-4">
               <div>
-                <p className="text-gray-400 text-sm mb-2">CEO Email</p>
-                <a href={`mailto:${contactInfo.companyEmail}`} 
-                   className="text-white hover:text-sky-400 transition-colors duration-300 text-sm sm:text-base flex items-center gap-2">
+                <div className="flex items-center gap-2 mb-3">
                   <Mail className="w-4 h-4 text-sky-400" />
-                  {contactInfo.companyEmail}
-                </a>
+                  <p className="text-gray-400 text-sm font-medium">Email Contacts</p>
+                </div>
+                <div className="space-y-2 pl-6">
+                  <div>
+                    <p className="text-gray-500 text-xs">CEO Email</p>
+                    <a href={`mailto:${contactInfo.companyEmail}`}
+                       className="text-white hover:text-sky-400 transition-colors duration-300 text-sm">
+                      {contactInfo.companyEmail}
+                    </a>
+                  </div>
+                  <div>
+                    <p className="text-gray-500 text-xs">Manager Email</p>
+                    <a href={`mailto:${contactInfo.managerEmail}`}
+                       className="text-white hover:text-sky-400 transition-colors duration-300 text-sm">
+                      {contactInfo.managerEmail}
+                    </a>
+                  </div>
+                </div>
               </div>
 
               <div>
-                <p className="text-gray-400 text-sm mb-2">Manager Email</p>
-                <a href={`mailto:${contactInfo.managerEmail}`} 
-                   className="text-white hover:text-sky-400 transition-colors duration-300 text-sm sm:text-base flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-sky-400" />
-                  {contactInfo.managerEmail}
-                </a>
-              </div>
-              
-              <div>
-                <p className="text-gray-400 text-sm mb-2">CEO Phone</p>
-                <a href={`tel:${contactInfo.companyPhone}`} 
-                   className="text-white hover:text-sky-400 transition-colors duration-300 text-sm sm:text-base flex items-center gap-2">
+                <div className="flex items-center gap-2 mb-3">
                   <Phone className="w-4 h-4 text-sky-400" />
-                  {contactInfo.companyPhone}
-                </a>
+                  <p className="text-gray-400 text-sm font-medium">Phone Contacts</p>
+                </div>
+                <div className="space-y-2 pl-6">
+                  <div>
+                    <p className="text-gray-500 text-xs">CEO Phone</p>
+                    <a href={`tel:${contactInfo.companyPhone}`}
+                       className="text-white hover:text-sky-400 transition-colors duration-300 text-sm">
+                      {contactInfo.companyPhone}
+                    </a>
+                  </div>
+                  <div>
+                    <p className="text-gray-500 text-xs">Manager Phone</p>
+                    <a href={`tel:${contactInfo.managerPhone}`}
+                       className="text-white hover:text-sky-400 transition-colors duration-300 text-sm">
+                      {contactInfo.managerPhone}
+                    </a>
+                  </div>
+                </div>
               </div>
-
-              <div>
-                <p className="text-gray-400 text-sm mb-2">Manager Phone</p>
-                <a href={`tel:${contactInfo.managerPhone}`} 
-                   className="text-white hover:text-sky-400 transition-colors duration-300 text-sm sm:text-base flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-sky-400" />
-                  {contactInfo.managerPhone}
-                </a>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-3 pt-3">
-                <a href={`https://wa.me/${contactInfo.whatsappCompany}`} target="_blank" rel="noopener noreferrer"
-                   className="bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg text-sm flex items-center gap-2 justify-center sm:justify-start">
-                  <MessageCircle size={16} />
-                  CEO WhatsApp
-                </a>
-                <a href={`https://wa.me/${contactInfo.whatsappManager}`} target="_blank" rel="noopener noreferrer"
-                   className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg text-sm flex items-center gap-2 justify-center sm:justify-start">
-                  <MessageCircle size={16} />
-                  Manager WhatsApp
-                </a>
-              </div>
-
-              <button
-                onClick={() => handlePageChange('contact')}
-                className="w-full sm:w-auto mt-4 sm:mt-6 bg-sky-400 hover:bg-sky-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg text-sm sm:text-base"
-              >
-                Start Your Project
-              </button>
             </div>
+
+            <button
+              onClick={() => handlePageChange('contact')}
+              className="w-full sm:w-auto mt-4 sm:mt-6 bg-sky-400 hover:bg-sky-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg text-sm sm:text-base"
+            >
+              Start Your Project
+            </button>
           </div>
         </div>
 

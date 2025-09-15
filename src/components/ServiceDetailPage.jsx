@@ -245,8 +245,8 @@ const ServiceDetailPage = ({ service, onBack, onPageChange }) => {
 
                     <div className="space-y-4 md:space-y-6">
                       <div className="flex items-center justify-between">
-                        <span className="text-gray-600 text-sm md:text-base">Starting Price</span>
-                        <span className="text-xl md:text-2xl font-bold text-sky-500">{currentService.pricing}</span>
+                        <span className="text-gray-600 text-sm md:text-base">Pricing</span>
+                        <span className="text-xl md:text-2xl font-bold text-sky-500">Let's Discuss</span>
                       </div>
 
                       <div className="flex items-center justify-between">

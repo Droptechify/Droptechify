@@ -24,7 +24,18 @@ const Admin = () => {
     facebook: '',
     twitter: '',
     instagram: '',
-    linkedin: 'https://linkedin.com/company/droptechify'
+    linkedin: 'https://linkedin.com/company/droptechify',
+    clutch: '',
+    upwork: ''
+  });
+
+  const [contactInfo, setContactInfo] = useState({
+    companyEmail: 'droptechify@gmail.com',
+    managerEmail: 'manager@droptechify.com',
+    companyPhone: '+92 303 0273718',
+    managerPhone: '+92 317 2664119',
+    whatsappCompany: '923030273718',
+    whatsappManager: '923172664119'
   });
 
   const [stats, setStats] = useState({
@@ -53,6 +64,18 @@ const Admin = () => {
     file: null
   });
 
+  const [caseStudies, setCaseStudies] = useState([]);
+  const [showCaseStudyForm, setShowCaseStudyForm] = useState(false);
+  const [newCaseStudy, setNewCaseStudy] = useState({
+    title: '',
+    category: '',
+    client: '',
+    description: '',
+    date: '',
+    link: '',
+    imageFile: null
+  });
+
   const tabs = [
     { id: 'overview', name: 'Overview', icon: <BarChart size={20} /> },
     { id: 'content', name: 'Website Content', icon: <Type size={20} /> },
@@ -71,6 +94,8 @@ const Admin = () => {
     loadContacts();
     loadWebsiteContent();
     loadSocialLinks();
+    loadContactInfo();
+    loadCaseStudies();
   }, []);
 
   const loadProjects = async () => {
@@ -125,6 +150,18 @@ const Admin = () => {
     }
   };
 
+  const loadContactInfo = async () => {
+    try {
+      const docRef = doc(db, 'contactInfo', 'main');
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setContactInfo(docSnap.data());
+      }
+    } catch (error) {
+      console.error('Error loading contact info:', error);
+    }
+  };
+
   const saveSocialLinks = async () => {
     try {
       setLoading(true);
@@ -133,6 +170,19 @@ const Admin = () => {
     } catch (error) {
       console.error('Error saving social links:', error);
       alert('Error saving social links. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const saveContactInfo = async () => {
+    try {
+      setLoading(true);
+      await setDoc(doc(db, 'contactInfo', 'main'), contactInfo);
+      alert('Contact information updated successfully!');
+    } catch (error) {
+      console.error('Error saving contact info:', error);
+      alert('Error saving contact info. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -242,6 +292,94 @@ const Admin = () => {
   const deleteImage = (id) => {
     if (confirm('Are you sure you want to delete this image?')) {
       setImages(images.filter(img => img.id !== id));
+    }
+  };
+
+  const loadCaseStudies = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, 'caseStudies'));
+      const studiesData = [];
+      querySnapshot.forEach((doc) => {
+        studiesData.push({ id: doc.id, ...doc.data() });
+      });
+      setCaseStudies(studiesData);
+    } catch (error) {
+      console.error('Error loading case studies:', error);
+    }
+  };
+
+  const handleAddCaseStudy = async () => {
+    if (!newCaseStudy.title || !newCaseStudy.category || !newCaseStudy.client) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      let imageUrl = '';
+      if (newCaseStudy.imageFile) {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          imageUrl = e.target.result;
+          
+          await addDoc(collection(db, 'caseStudies'), {
+            ...newCaseStudy,
+            image: imageUrl,
+            createdAt: new Date(),
+            timestamp: new Date()
+          });
+          
+          setNewCaseStudy({
+            title: '',
+            category: '',
+            client: '',
+            description: '',
+            date: '',
+            link: '',
+            imageFile: null
+          });
+          setShowCaseStudyForm(false);
+          loadCaseStudies();
+          alert('Case study added successfully!');
+        };
+        reader.readAsDataURL(newCaseStudy.imageFile);
+      } else {
+        await addDoc(collection(db, 'caseStudies'), {
+          ...newCaseStudy,
+          createdAt: new Date(),
+          timestamp: new Date()
+        });
+        
+        setNewCaseStudy({
+          title: '',
+          category: '',
+          client: '',
+          description: '',
+          date: '',
+          link: '',
+          imageFile: null
+        });
+        setShowCaseStudyForm(false);
+        loadCaseStudies();
+        alert('Case study added successfully!');
+      }
+    } catch (error) {
+      console.error('Error adding case study:', error);
+      alert('Error adding case study. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteCaseStudy = async (id) => {
+    if (confirm('Are you sure you want to delete this case study?')) {
+      try {
+        await deleteDoc(doc(db, 'caseStudies', id));
+        loadCaseStudies();
+      } catch (error) {
+        console.error('Error deleting case study:', error);
+      }
     }
   };
 
@@ -675,7 +813,7 @@ const Admin = () => {
           <div className="bg-blue-800 rounded-lg p-4 text-center">
             <p className="text-blue-200 text-sm mb-2">Quick Access</p>
             <button 
-              onClick={() => window.open('/?admin=true', '_blank')}
+              onClick={() => window.open('/', '_blank')}
               className="w-full bg-white text-blue-600 py-2 rounded-lg font-semibold text-sm hover:bg-gray-100 transition-colors"
             >
               View Website
@@ -712,14 +850,155 @@ const Admin = () => {
           {activeTab === 'projects' && renderProjects()}
           {activeTab === 'case-studies' && (
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold">Case Studies Management</h2>
-              <div className="bg-white p-8 rounded-lg shadow text-center">
-                <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-500 mb-2">Case Studies Management</h3>
-                <p className="text-gray-400">Add, edit, and manage your project case studies</p>
-                <button className="mt-4 bg-sky-400 hover:bg-sky-500 text-white px-6 py-3 rounded-lg font-semibold">
+              <div className="flex justify-between items-center">
+                <h2 className="text-3xl font-bold text-gray-900">Case Studies Management</h2>
+                <button 
+                  onClick={() => setShowCaseStudyForm(!showCaseStudyForm)}
+                  className="bg-sky-400 hover:bg-sky-500 text-white px-4 py-2 rounded-lg font-semibold inline-flex items-center gap-2"
+                >
+                  <Plus size={20} />
                   Add Case Study
                 </button>
+              </div>
+
+              {showCaseStudyForm && (
+                <div className="bg-white p-6 rounded-lg shadow border">
+                  <h3 className="text-xl font-semibold mb-4">Add New Case Study</h3>
+                  <div className="grid gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Project Title</label>
+                      <input
+                        type="text"
+                        value={newCaseStudy.title}
+                        onChange={(e) => setNewCaseStudy({...newCaseStudy, title: e.target.value})}
+                        className="w-full p-3 border border-gray-300 rounded-lg"
+                        placeholder="Enter project title"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                        <select
+                          value={newCaseStudy.category}
+                          onChange={(e) => setNewCaseStudy({...newCaseStudy, category: e.target.value})}
+                          className="w-full p-3 border border-gray-300 rounded-lg"
+                        >
+                          <option value="">Select Category</option>
+                          <option value="Web">Website Development</option>
+                          <option value="App">Mobile App</option>
+                          <option value="SaaS">SaaS Platform</option>
+                          <option value="Custom">Custom Software</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Client Name</label>
+                        <input
+                          type="text"
+                          value={newCaseStudy.client}
+                          onChange={(e) => setNewCaseStudy({...newCaseStudy, client: e.target.value})}
+                          className="w-full p-3 border border-gray-300 rounded-lg"
+                          placeholder="Client name"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                      <textarea
+                        value={newCaseStudy.description}
+                        onChange={(e) => setNewCaseStudy({...newCaseStudy, description: e.target.value})}
+                        className="w-full p-3 border border-gray-300 rounded-lg"
+                        rows="4"
+                        placeholder="Project description"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Project Date</label>
+                        <input
+                          type="date"
+                          value={newCaseStudy.date}
+                          onChange={(e) => setNewCaseStudy({...newCaseStudy, date: e.target.value})}
+                          className="w-full p-3 border border-gray-300 rounded-lg"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Project Link (Optional)</label>
+                        <input
+                          type="url"
+                          value={newCaseStudy.link}
+                          onChange={(e) => setNewCaseStudy({...newCaseStudy, link: e.target.value})}
+                          className="w-full p-3 border border-gray-300 rounded-lg"
+                          placeholder="https://..."
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Project Image</label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => setNewCaseStudy({...newCaseStudy, imageFile: e.target.files[0]})}
+                        className="w-full p-3 border border-gray-300 rounded-lg"
+                      />
+                    </div>
+                    <div className="flex gap-4">
+                      <button
+                        onClick={handleAddCaseStudy}
+                        disabled={loading}
+                        className="bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-semibold"
+                      >
+                        {loading ? 'Adding...' : 'Add Case Study'}
+                      </button>
+                      <button
+                        onClick={() => setShowCaseStudyForm(false)}
+                        className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg font-semibold"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="grid gap-4">
+                {caseStudies.map((study) => (
+                  <div key={study.id} className="bg-white p-6 rounded-lg shadow border hover:shadow-lg transition-shadow">
+                    <div className="flex justify-between items-start">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-4 mb-3">
+                          <h4 className="font-semibold text-gray-900 text-lg">{study.title}</h4>
+                          <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                            {study.category}
+                          </span>
+                        </div>
+                        <p className="text-gray-600 mb-2">Client: {study.client}</p>
+                        <p className="text-gray-500 text-sm mb-3">{study.description}</p>
+                        <div className="flex items-center gap-4 text-xs text-gray-400">
+                          <span>Date: {study.date}</span>
+                          {study.link && (
+                            <a href={study.link} target="_blank" rel="noopener noreferrer" className="text-sky-500 hover:text-sky-600">
+                              View Project
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                      <button 
+                        onClick={() => deleteCaseStudy(study.id)} 
+                        className="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded"
+                      >
+                        <Trash2 size={20} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+
+                {caseStudies.length === 0 && (
+                  <div className="bg-white p-12 rounded-lg shadow border text-center">
+                    <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                    <h3 className="text-xl font-semibold text-gray-500 mb-2">No Case Studies Yet</h3>
+                    <p className="text-gray-400">Add your first case study to showcase your work</p>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -883,16 +1162,26 @@ const Admin = () => {
 
           {activeTab === 'social' && (
             <div className="space-y-6">
-              <div className="flex justify-between items-center">
-                <h2 className="text-3xl font-bold text-gray-900">Social Media Management</h2>
-                <button
-                  onClick={saveSocialLinks}
-                  disabled={loading}
-                  className="bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-semibold inline-flex items-center gap-2 transition-all"
-                >
-                  <Save size={20} />
-                  {loading ? 'Saving...' : 'Save Social Links'}
-                </button>
+              <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
+                <h2 className="text-3xl font-bold text-gray-900">Social Media & Contact Management</h2>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <button
+                    onClick={saveSocialLinks}
+                    disabled={loading}
+                    className="bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-semibold inline-flex items-center justify-center gap-2 transition-all"
+                  >
+                    <Save size={20} />
+                    {loading ? 'Saving...' : 'Save Social Links'}
+                  </button>
+                  <button
+                    onClick={saveContactInfo}
+                    disabled={loading}
+                    className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-semibold inline-flex items-center justify-center gap-2 transition-all"
+                  >
+                    <Save size={20} />
+                    {loading ? 'Saving...' : 'Save Contact Info'}
+                  </button>
+                </div>
               </div>
 
               <div className="bg-white p-6 rounded-lg shadow border">
@@ -970,6 +1259,86 @@ const Admin = () => {
                 <div className="mt-6 p-4 bg-blue-50 rounded-lg">
                   <p className="text-sm text-blue-700">
                     <strong>Note:</strong> Leave any field empty to hide that social media icon from the footer.
+                  </p>
+                </div>
+              </div>
+
+              {/* Contact Information Management */}
+              <div className="bg-white p-6 rounded-lg shadow border">
+                <h3 className="text-xl font-semibold mb-4">Contact Information Management</h3>
+                <p className="text-gray-600 mb-6">Manage contact details that appear throughout the website</p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">CEO Email</label>
+                    <input
+                      type="email"
+                      value={contactInfo.companyEmail || ''}
+                      onChange={(e) => setContactInfo({...contactInfo, companyEmail: e.target.value})}
+                      className="w-full p-3 border border-gray-300 rounded-lg"
+                      placeholder="ceo@droptechify.com"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Manager Email</label>
+                    <input
+                      type="email"
+                      value={contactInfo.managerEmail || ''}
+                      onChange={(e) => setContactInfo({...contactInfo, managerEmail: e.target.value})}
+                      className="w-full p-3 border border-gray-300 rounded-lg"
+                      placeholder="manager@droptechify.com"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">CEO Phone</label>
+                    <input
+                      type="tel"
+                      value={contactInfo.companyPhone || ''}
+                      onChange={(e) => setContactInfo({...contactInfo, companyPhone: e.target.value})}
+                      className="w-full p-3 border border-gray-300 rounded-lg"
+                      placeholder="+92 303 0273718"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Manager Phone</label>
+                    <input
+                      type="tel"
+                      value={contactInfo.managerPhone || ''}
+                      onChange={(e) => setContactInfo({...contactInfo, managerPhone: e.target.value})}
+                      className="w-full p-3 border border-gray-300 rounded-lg"
+                      placeholder="+92 317 2664119"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">CEO WhatsApp (without +)</label>
+                    <input
+                      type="tel"
+                      value={contactInfo.whatsappCompany || ''}
+                      onChange={(e) => setContactInfo({...contactInfo, whatsappCompany: e.target.value})}
+                      className="w-full p-3 border border-gray-300 rounded-lg"
+                      placeholder="923030273718"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Manager WhatsApp (without +)</label>
+                    <input
+                      type="tel"
+                      value={contactInfo.whatsappManager || ''}
+                      onChange={(e) => setContactInfo({...contactInfo, whatsappManager: e.target.value})}
+                      className="w-full p-3 border border-gray-300 rounded-lg"
+                      placeholder="923172664119"
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-6 p-4 bg-green-50 rounded-lg">
+                  <p className="text-sm text-green-700">
+                    <strong>Note:</strong> These contact details will appear in the footer, contact page, and throughout the website.
                   </p>
                 </div>
               </div>

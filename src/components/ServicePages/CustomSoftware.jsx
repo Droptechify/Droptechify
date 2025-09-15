@@ -1,6 +1,6 @@
-
 import React from 'react'
-import { ArrowLeft, Code, Settings, Users, Shield } from 'lucide-react'
+import { ArrowLeft, Cog, Database, Users } from 'lucide-react'
+import CompanyStats from '../CompanyStats'
 
 const CustomSoftware = ({ onBack }) => {
   return (
@@ -61,7 +61,10 @@ const CustomSoftware = ({ onBack }) => {
             </div>
           </div>
           
-          <div className="text-center">
+          {/* Company Statistics */}
+          <CompanyStats className="mt-20" />
+
+          <div className="text-center mt-16">
             <a
               href="#contact"
               className="bg-sky-400 hover:bg-sky-500 text-black px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 shadow-xl"

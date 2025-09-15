@@ -1,0 +1,106 @@
+    Please follow these instructions carefully. I want a professional website for my software development company that looks and behaves exactly like https://conciergelite.fr in terms of layout, style, and background video effect.
+
+🔧 TECHNICAL REQUIREMENTS:
+
+    Use React + TailwindCSS
+
+    I will host the site on Netlify
+
+    Video and images will be hosted externally — I will provide the video file
+
+    Make the site SEO-optimized for Google search rankings
+
+    Code must be clean, responsive, and lightweight
+
+✅ DESIGN & STRUCTURE REQUIREMENTS:
+1. Hero Section (Top)
+
+    Same layout and structure as https://conciergelite.fr
+
+    Background video must autoplay, loop, and be muted
+
+    I will provide the video file
+
+    Overlay text should include:
+
+        My company name: DropTechify
+
+        Tagline: “We Build Digital Solutions That Build Your Brand” (can be updated)
+
+2. Scrolling Services Section (Below the video)
+
+    Same style as ConciergeLite — with services scrolling horizontally below the hero video
+
+    My services (animated or scrolling list):
+
+        Website Development
+
+        WordPress Development
+
+        Video Editing
+
+        Guest Posting
+
+        App Development
+
+3. About Section
+
+    Simple, clean, 2-column layout with:
+
+        Company intro
+
+        Brief description of mission/vision
+
+        Image on one side (optional)
+
+4. Services Section
+
+    This should have a different visual style than ConciergeLite
+
+    Each service should be in its own card/block with icon, title, and short description
+
+    Clean and minimal, responsive design
+
+5. FAQ Section
+
+    Add 4–6 dummy questions and answers
+
+    Use collapsible accordions or clean toggles
+
+6. Privacy Policy
+
+    Add a placeholder privacy policy page or section
+
+    Include basic info for compliance
+
+7. Contact Section
+
+    Leave a placeholder — I will add it myself later
+
+📈 SEO REQUIREMENTS:
+
+    Add meaningful meta tags (title, description, OG tags)
+
+    Add robots.txt and sitemap.xml (for Netlify SEO)
+
+    Ensure site is mobile-first responsive
+
+    Optimize all images and videos for fast load
+
+    Use <h1>, <h2> etc. correctly for structure
+
+    Ensure clean URLs and semantic HTML
+
+📝 ADDITIONAL NOTES:
+
+    I will provide the background video file separately
+
+    The site should look identical to https://conciergelite.fr in layout and transitions, but with my own content and services
+
+    Keep all text and content easy to update
+
+    All animations should be smooth and lightweight
+
+Once done, I will connect the custom domain and Firebase myself if needed.
+
+Thank you — please do not make design or structure changes on your own. Follow the above exactly.

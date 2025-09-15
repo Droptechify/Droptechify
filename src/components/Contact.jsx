@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Send, CheckCircle } from 'lucide-react';
 import { db } from '../firebase';
@@ -247,7 +246,7 @@ function Contact() {
                     </div>
                     <div>
                       <h4 className="font-semibold text-gray-900 mb-1">Phone</h4>
-                      <p className="text-gray-600">Company: +92 303 0273718</p>
+                      <p className="text-gray-600">CEO: +92 303 0273718</p>
                       <p className="text-gray-600">Manager: +92 317 2664119</p>
                     </div>
                   </div>

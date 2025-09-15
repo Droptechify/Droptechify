@@ -1,5 +1,6 @@
 import React from 'react'
 import { ArrowLeft, Globe, Code, Smartphone, Zap, Database, Shield, Search } from 'lucide-react'
+import CompanyStats from '../CompanyStats'
 
 const WebsiteDevelopment = ({ onBack }) => {
   return (
@@ -108,6 +109,9 @@ const WebsiteDevelopment = ({ onBack }) => {
             </div>
           </div>
 
+          {/* Company Statistics */}
+          <CompanyStats className="mt-20 -mx-4 lg:-mx-20" />
+
           <div className="text-center mt-16">
             <a
               href="#contact"
@@ -116,7 +120,7 @@ const WebsiteDevelopment = ({ onBack }) => {
               Contact Us for Discussion
             </a>
             <p className="mt-4 text-gray-600">
-              Get in touch to discuss your project requirements and get a personalized quote.
+              Get in touch to discuss your project requirements. Pricing will be discussed based on your specific needs.
             </p>
           </div>
         </div>
