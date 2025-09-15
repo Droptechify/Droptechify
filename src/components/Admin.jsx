@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { Settings, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, Save, Type, Eye, Calendar, DollarSign, TrendingUp, Lock, User, Bell, UserCheck, BarChart3, PieChart, Activity } from 'lucide-react';
-import { db } from '../firebase';
+import { db, auth } from '../firebase';
 import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc, setDoc, getDoc, onSnapshot } from 'firebase/firestore';
+import { updatePassword, reauthenticateWithCredential, EmailAuthProvider, updateEmail } from 'firebase/auth';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -76,10 +77,9 @@ const Admin = () => {
     currentPassword: '',
     newPassword: '',
     confirmPassword: '',
-    adminEmail: 'admin@droptechify.com',
+    adminEmail: auth.currentUser?.email || 'admin@droptechify.com',
+    newEmail: '',
     adminName: 'DropTechify Admin',
-    currentUsername: 'admin',
-    newUsername: '',
     twoFactorEnabled: false,
     emailNotifications: true,
     systemNotifications: true
@@ -620,31 +620,29 @@ const Admin = () => {
     try {
       setLoading(true);
       
-      const currentCredentials = JSON.parse(localStorage.getItem('admin_credentials') || '{"username":"admin","password":"admin123"}');
-      
-      if (adminSettings.currentPassword !== currentCredentials.password) {
-        showNotification('Current password is incorrect', 'error');
-        setLoading(false);
+      if (!auth.currentUser) {
+        showNotification('User not authenticated', 'error');
         return;
       }
 
-      const newCredentials = {
-        username: currentCredentials.username || 'admin',
-        password: adminSettings.newPassword
-      };
-
-      localStorage.setItem('admin_credentials', JSON.stringify(newCredentials));
+      // Re-authenticate user with current password
+      const credential = EmailAuthProvider.credential(
+        auth.currentUser.email,
+        adminSettings.currentPassword
+      );
       
+      await reauthenticateWithCredential(auth.currentUser, credential);
+      
+      // Update password
+      await updatePassword(auth.currentUser, adminSettings.newPassword);
+      
+      // Save to Firestore if available
       if (db) {
-        try {
-          await setDoc(doc(db, 'adminSettings', 'main'), {
-            lastPasswordChange: new Date(),
-            adminName: adminSettings.adminName,
-            adminEmail: adminSettings.adminEmail
-          });
-        } catch (dbError) {
-          console.log('Firebase not available for admin settings');
-        }
+        await setDoc(doc(db, 'adminSettings', 'main'), {
+          lastPasswordChange: new Date(),
+          adminName: adminSettings.adminName,
+          adminEmail: auth.currentUser.email
+        });
       }
       
       setAdminSettings({
@@ -654,55 +652,95 @@ const Admin = () => {
         confirmPassword: ''
       });
       
-      showNotification('Password changed successfully! Please login again with new password.', 'success');
-      
-      setTimeout(() => {
-        sessionStorage.removeItem('admin_authenticated');
-        window.location.reload();
-      }, 2000);
+      showNotification('Password changed successfully!', 'success');
       
     } catch (error) {
       console.error('Error changing password:', error);
-      showNotification('Error changing password. Please try again.', 'error');
+      
+      let errorMessage = 'Error changing password. Please try again.';
+      
+      switch (error.code) {
+        case 'auth/wrong-password':
+          errorMessage = 'Current password is incorrect';
+          break;
+        case 'auth/requires-recent-login':
+          errorMessage = 'Please logout and login again before changing password';
+          break;
+        case 'auth/weak-password':
+          errorMessage = 'Password is too weak. Please use a stronger password.';
+          break;
+        default:
+          errorMessage = 'Failed to change password. Please try again.';
+      }
+      
+      showNotification(errorMessage, 'error');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleUsernameChange = async () => {
-    if (!adminSettings.newUsername || adminSettings.newUsername.length < 3) {
-      showNotification('Username must be at least 3 characters long', 'warning');
+  const handleEmailChange = async () => {
+    if (!adminSettings.newEmail || !adminSettings.currentPassword) {
+      showNotification('Please enter new email and current password', 'warning');
       return;
     }
 
-    if (adminSettings.newUsername === adminSettings.currentUsername) {
-      showNotification('New username must be different from current username', 'warning');
+    if (adminSettings.newEmail === auth.currentUser?.email) {
+      showNotification('New email must be different from current email', 'warning');
       return;
     }
 
     try {
       setLoading(true);
       
-      const currentCredentials = JSON.parse(localStorage.getItem('admin_credentials') || '{"username":"admin","password":"admin123"}');
-      
-      const newCredentials = {
-        username: adminSettings.newUsername,
-        password: currentCredentials.password
-      };
+      if (!auth.currentUser) {
+        showNotification('User not authenticated', 'error');
+        return;
+      }
 
-      localStorage.setItem('admin_credentials', JSON.stringify(newCredentials));
+      // Re-authenticate user with current password
+      const credential = EmailAuthProvider.credential(
+        auth.currentUser.email,
+        adminSettings.currentPassword
+      );
+      
+      await reauthenticateWithCredential(auth.currentUser, credential);
+      
+      // Update email
+      await updateEmail(auth.currentUser, adminSettings.newEmail);
       
       setAdminSettings({
         ...adminSettings,
-        currentUsername: adminSettings.newUsername,
-        newUsername: ''
+        adminEmail: adminSettings.newEmail,
+        newEmail: '',
+        currentPassword: ''
       });
       
-      showNotification('Username changed successfully!', 'success');
+      showNotification('Email changed successfully!', 'success');
       
     } catch (error) {
-      console.error('Error changing username:', error);
-      showNotification('Error changing username. Please try again.', 'error');
+      console.error('Error changing email:', error);
+      
+      let errorMessage = 'Error changing email. Please try again.';
+      
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          errorMessage = 'This email is already in use by another account';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'Please enter a valid email address';
+          break;
+        case 'auth/wrong-password':
+          errorMessage = 'Current password is incorrect';
+          break;
+        case 'auth/requires-recent-login':
+          errorMessage = 'Please logout and login again before changing email';
+          break;
+        default:
+          errorMessage = 'Failed to change email. Please try again.';
+      }
+      
+      showNotification(errorMessage, 'error');
     } finally {
       setLoading(false);
     }
@@ -1291,35 +1329,45 @@ const Admin = () => {
         </div>
       </div>
 
-      {/* Username Change */}
+      {/* Email Change */}
       <div className="bg-white p-6 rounded-lg shadow border">
-        <h3 className="text-xl font-semibold mb-4">Change Username</h3>
+        <h3 className="text-xl font-semibold mb-4">Change Email Address</h3>
         <div className="space-y-4 max-w-md">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Current Username</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Current Email</label>
             <input
-              type="text"
-              value={adminSettings.currentUsername}
+              type="email"
+              value={adminSettings.adminEmail}
               disabled
               className="w-full p-3 border border-gray-300 rounded-lg bg-gray-100"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">New Username</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">New Email</label>
             <input
-              type="text"
-              value={adminSettings.newUsername}
-              onChange={(e) => setAdminSettings({...adminSettings, newUsername: e.target.value})}
+              type="email"
+              value={adminSettings.newEmail}
+              onChange={(e) => setAdminSettings({...adminSettings, newEmail: e.target.value})}
               className="w-full p-3 border border-gray-300 rounded-lg"
-              placeholder="Enter new username"
+              placeholder="Enter new email address"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Current Password (for verification)</label>
+            <input
+              type="password"
+              value={adminSettings.currentPassword}
+              onChange={(e) => setAdminSettings({...adminSettings, currentPassword: e.target.value})}
+              className="w-full p-3 border border-gray-300 rounded-lg"
+              placeholder="Enter current password"
             />
           </div>
           <button
-            onClick={handleUsernameChange}
-            disabled={loading || !adminSettings.newUsername}
+            onClick={handleEmailChange}
+            disabled={loading || !adminSettings.newEmail || !adminSettings.currentPassword}
             className="bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-semibold"
           >
-            {loading ? 'Changing...' : 'Change Username'}
+            {loading ? 'Changing...' : 'Change Email'}
           </button>
         </div>
       </div>
@@ -1444,10 +1492,16 @@ const Admin = () => {
               View Website
             </button>
             <button 
-              onClick={() => {
-                sessionStorage.removeItem('admin_authenticated');
-                localStorage.removeItem('admin_authenticated');
-                window.location.reload();
+              onClick={async () => {
+                try {
+                  await auth.signOut();
+                  sessionStorage.removeItem('admin_authenticated');
+                  localStorage.removeItem('admin_authenticated');
+                  window.location.reload();
+                } catch (error) {
+                  console.error('Error signing out:', error);
+                  window.location.reload();
+                }
               }}
               className="w-full bg-red-500 text-white py-2 rounded-lg font-semibold text-sm hover:bg-red-600 transition-colors"
             >

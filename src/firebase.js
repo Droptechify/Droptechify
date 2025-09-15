@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, connectFirestoreEmulator, enableNetwork, disableNetwork } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration - using environment variables for security
 const firebaseConfig = {
@@ -26,7 +27,7 @@ const validateConfig = () => {
 };
 
 // Initialize Firebase only if config is valid
-let app, db, storage;
+let app, db, storage, auth;
 
 if (validateConfig()) {
   try {
@@ -37,6 +38,9 @@ if (validateConfig()) {
 
     // Initialize Firebase Storage
     storage = getStorage(app);
+
+    // Initialize Firebase Authentication
+    auth = getAuth(app);
 
     console.log('Firebase initialized successfully');
 
@@ -72,4 +76,4 @@ export const retryFirestoreOperation = async (operation, maxRetries = 3) => {
   }
 };
 
-export { db, storage };
+export { db, storage, auth };

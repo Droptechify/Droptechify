@@ -1,45 +1,65 @@
+
 import React, { useState } from 'react';
 import { Lock, User, Eye, EyeOff } from 'lucide-react';
+import { auth } from '../firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 const AdminLogin = ({ onLogin }) => {
-  const [credentials, setCredentials] = useState({ username: '', password: '' });
+  const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
-  // Get admin credentials from localStorage or use defaults
-  const getAdminCredentials = () => {
-    const stored = localStorage.getItem('admin_credentials');
-    if (stored) {
-      return JSON.parse(stored);
-    }
-    return {
-      username: 'admin@droptechify.com',
-      password: 'DropTech2024@Secure!'
-    };
-  };
-
-  const ADMIN_CREDENTIALS = getAdminCredentials();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+    if (!credentials.email || !credentials.password) {
+      setError('Please fill in all fields');
+      setLoading(false);
+      return;
+    }
 
-      if (credentials.username === ADMIN_CREDENTIALS.username &&
-          credentials.password === ADMIN_CREDENTIALS.password) {
-        onLogin(true);
-      } else {
-        setError('Invalid username or password');
-        onLogin(false);
+    try {
+      // Sign in with Firebase Auth
+      const userCredential = await signInWithEmailAndPassword(auth, credentials.email, credentials.password);
+      const user = userCredential.user;
+      
+      console.log('User signed in successfully:', user.email);
+      
+      // Store authentication state
+      sessionStorage.setItem('admin_authenticated', 'true');
+      sessionStorage.setItem('admin_email', user.email);
+      
+      onLogin(true);
+    } catch (error) {
+      console.error('Firebase Auth Error:', error);
+      
+      let errorMessage = 'Login failed. Please try again.';
+      
+      switch (error.code) {
+        case 'auth/user-not-found':
+          errorMessage = 'No account found with this email address.';
+          break;
+        case 'auth/wrong-password':
+          errorMessage = 'Incorrect password. Please try again.';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'Please enter a valid email address.';
+          break;
+        case 'auth/too-many-requests':
+          errorMessage = 'Too many failed attempts. Please try again later.';
+          break;
+        case 'auth/network-request-failed':
+          errorMessage = 'Network error. Please check your connection.';
+          break;
+        default:
+          errorMessage = 'Authentication failed. Please contact support.';
       }
-    } catch (err) {
-      setError('An unexpected error occurred. Please try again.');
+      
+      setError(errorMessage);
       onLogin(false);
-      console.error("Login error:", err);
     } finally {
       setLoading(false);
     }
@@ -69,16 +89,16 @@ const AdminLogin = ({ onLogin }) => {
 
               <div>
                 <label className="block text-gray-700 text-sm font-medium mb-2">
-                  Username / Email
+                  Admin Email
                 </label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                   <input
-                    type="text"
-                    value={credentials.username}
-                    onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+                    type="email"
+                    value={credentials.email}
+                    onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
                     className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-all"
-                    placeholder="Enter your username"
+                    placeholder="Enter your admin email"
                     required
                   />
                 </div>
@@ -125,7 +145,8 @@ const AdminLogin = ({ onLogin }) => {
             </form>
 
             <div className="mt-8 text-center text-sm text-gray-500">
-              <p className="text-gray-400">Contact your administrator for login credentials</p>
+              <p className="text-gray-400">Secure Firebase Authentication</p>
+              <p className="text-xs text-gray-300 mt-2">Contact administrator for access credentials</p>
             </div>
           </div>
         </div>
