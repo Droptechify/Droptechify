@@ -149,7 +149,12 @@ const Admin = () => {
         setSocialLinks(docSnap.data());
       }
     } catch (error) {
-      console.error('Error loading social links:', error);
+      console.log('Firebase not available, loading from localStorage');
+      // Fallback to localStorage
+      const localSocialLinks = localStorage.getItem('socialLinks');
+      if (localSocialLinks) {
+        setSocialLinks(JSON.parse(localSocialLinks));
+      }
     }
   };
 
@@ -161,18 +166,35 @@ const Admin = () => {
         setContactInfo(docSnap.data());
       }
     } catch (error) {
-      console.error('Error loading contact info:', error);
+      console.log('Firebase not available, loading from localStorage');
+      // Fallback to localStorage
+      const localContactInfo = localStorage.getItem('contactInfo');
+      if (localContactInfo) {
+        setContactInfo(JSON.parse(localContactInfo));
+      }
     }
   };
 
   const saveSocialLinks = async () => {
     try {
       setLoading(true);
-      await setDoc(doc(db, 'socialLinks', 'main'), socialLinks);
-      alert('Social media links updated successfully!');
+      
+      // Try to save to Firebase first
+      try {
+        await setDoc(doc(db, 'socialLinks', 'main'), socialLinks);
+        alert('Social media links updated successfully!');
+      } catch (dbError) {
+        console.log('Firebase not available, saving locally');
+        // Fallback to localStorage
+        localStorage.setItem('socialLinks', JSON.stringify(socialLinks));
+        alert('Social media links saved locally! (Firebase not available)');
+      }
+      
     } catch (error) {
       console.error('Error saving social links:', error);
-      alert('Error saving social links. Please try again.');
+      // Final fallback
+      localStorage.setItem('socialLinks', JSON.stringify(socialLinks));
+      alert('Social links saved locally as fallback!');
     } finally {
       setLoading(false);
     }
@@ -181,11 +203,21 @@ const Admin = () => {
   const saveContactInfo = async () => {
     try {
       setLoading(true);
-      await setDoc(doc(db, 'contactInfo', 'main'), contactInfo);
-      alert('Contact information updated successfully!');
+      
+      // Try to save to Firebase first
+      try {
+        await setDoc(doc(db, 'contactInfo', 'main'), contactInfo);
+        alert('Contact information updated successfully!');
+      } catch (dbError) {
+        console.log('Firebase not available, saving locally');
+        localStorage.setItem('contactInfo', JSON.stringify(contactInfo));
+        alert('Contact information saved locally! (Firebase not available)');
+      }
+      
     } catch (error) {
       console.error('Error saving contact info:', error);
-      alert('Error saving contact info. Please try again.');
+      localStorage.setItem('contactInfo', JSON.stringify(contactInfo));
+      alert('Contact information saved locally as fallback!');
     } finally {
       setLoading(false);
     }
@@ -283,32 +315,76 @@ const Admin = () => {
       });
       setCaseStudies(studiesData);
     } catch (error) {
-      console.error('Error loading case studies:', error);
+      console.log('Firebase not available, loading from localStorage');
+      // Fallback to localStorage
+      const localCaseStudies = localStorage.getItem('caseStudies');
+      if (localCaseStudies) {
+        setCaseStudies(JSON.parse(localCaseStudies));
+      } else {
+        // Set some default case studies if none exist
+        const defaultCaseStudies = [
+          {
+            id: '1',
+            title: 'E-commerce Platform',
+            category: 'Web',
+            client: 'TechCorp Solutions',
+            description: 'Built a complete e-commerce platform with payment integration and admin panel.',
+            date: '2024-01-15',
+            link: '',
+            createdAt: new Date().toISOString()
+          },
+          {
+            id: '2',
+            title: 'Mobile Banking App',
+            category: 'App',
+            client: 'FinanceFlow Bank',
+            description: 'Developed a secure mobile banking application with biometric authentication.',
+            date: '2024-02-20',
+            link: '',
+            createdAt: new Date().toISOString()
+          }
+        ];
+        setCaseStudies(defaultCaseStudies);
+        localStorage.setItem('caseStudies', JSON.stringify(defaultCaseStudies));
+      }
     }
   };
 
   const handleAddCaseStudy = async () => {
     if (!newCaseStudy.title || !newCaseStudy.category || !newCaseStudy.client) {
-      alert('Please fill in all required fields');
+      alert('Please fill in all required fields (Title, Category, Client)');
       return;
     }
 
     try {
       setLoading(true);
 
-      let imageUrl = '';
+      const caseStudyData = {
+        ...newCaseStudy,
+        id: Date.now().toString(), // Generate unique ID
+        createdAt: new Date().toISOString(),
+        timestamp: Date.now()
+      };
+
       if (newCaseStudy.imageFile) {
         const reader = new FileReader();
         reader.onload = async (e) => {
-          imageUrl = e.target.result;
+          caseStudyData.image = e.target.result;
+          
+          try {
+            // Try Firebase first
+            await addDoc(collection(db, 'caseStudies'), caseStudyData);
+            alert('Case study added successfully!');
+          } catch (dbError) {
+            console.log('Firebase not available, saving locally');
+            // Fallback to localStorage
+            const existingStudies = JSON.parse(localStorage.getItem('caseStudies') || '[]');
+            existingStudies.push(caseStudyData);
+            localStorage.setItem('caseStudies', JSON.stringify(existingStudies));
+            alert('Case study added locally! (Firebase not available)');
+          }
 
-          await addDoc(collection(db, 'caseStudies'), {
-            ...newCaseStudy,
-            image: imageUrl,
-            createdAt: new Date(),
-            timestamp: new Date()
-          });
-
+          // Reset form
           setNewCaseStudy({
             title: '',
             category: '',
@@ -320,16 +396,23 @@ const Admin = () => {
           });
           setShowCaseStudyForm(false);
           loadCaseStudies();
-          alert('Case study added successfully!');
         };
         reader.readAsDataURL(newCaseStudy.imageFile);
       } else {
-        await addDoc(collection(db, 'caseStudies'), {
-          ...newCaseStudy,
-          createdAt: new Date(),
-          timestamp: new Date()
-        });
+        try {
+          // Try Firebase first
+          await addDoc(collection(db, 'caseStudies'), caseStudyData);
+          alert('Case study added successfully!');
+        } catch (dbError) {
+          console.log('Firebase not available, saving locally');
+          // Fallback to localStorage
+          const existingStudies = JSON.parse(localStorage.getItem('caseStudies') || '[]');
+          existingStudies.push(caseStudyData);
+          localStorage.setItem('caseStudies', JSON.stringify(existingStudies));
+          alert('Case study added locally! (Firebase not available)');
+        }
 
+        // Reset form
         setNewCaseStudy({
           title: '',
           category: '',
@@ -341,11 +424,10 @@ const Admin = () => {
         });
         setShowCaseStudyForm(false);
         loadCaseStudies();
-        alert('Case study added successfully!');
       }
     } catch (error) {
       console.error('Error adding case study:', error);
-      alert('Error adding case study. Please try again.');
+      alert('Error adding case study: ' + error.message);
     } finally {
       setLoading(false);
     }
@@ -373,27 +455,40 @@ const Admin = () => {
       return;
     }
 
-    if (adminSettings.newPassword.length < 8) {
-      alert('Password must be at least 8 characters long');
+    if (adminSettings.newPassword.length < 6) {
+      alert('Password must be at least 6 characters long');
       return;
     }
 
     try {
       setLoading(true);
-      // In a real app, you would verify current password and update it
-      const currentCredentials = JSON.parse(localStorage.getItem('admin_credentials') || '{}');
+      
+      // Get current credentials - default to admin/admin123 if not set
+      const currentCredentials = JSON.parse(localStorage.getItem('admin_credentials') || '{"username":"admin","password":"admin123"}');
       
       if (adminSettings.currentPassword !== currentCredentials.password) {
         alert('Current password is incorrect');
+        setLoading(false);
         return;
       }
 
       const newCredentials = {
-        username: currentCredentials.username,
+        username: currentCredentials.username || 'admin',
         password: adminSettings.newPassword
       };
 
       localStorage.setItem('admin_credentials', JSON.stringify(newCredentials));
+      
+      // Update admin settings in Firebase as well
+      try {
+        await setDoc(doc(db, 'adminSettings', 'main'), {
+          lastPasswordChange: new Date(),
+          adminName: adminSettings.adminName,
+          adminEmail: adminSettings.adminEmail
+        });
+      } catch (dbError) {
+        console.log('Firebase not available, password saved locally');
+      }
       
       setAdminSettings({
         ...adminSettings,
@@ -402,7 +497,12 @@ const Admin = () => {
         confirmPassword: ''
       });
       
-      alert('Password changed successfully!');
+      alert('Password changed successfully! Please login again with new password.');
+      
+      // Clear session and redirect to login
+      sessionStorage.removeItem('admin_authenticated');
+      window.location.reload();
+      
     } catch (error) {
       console.error('Error changing password:', error);
       alert('Error changing password. Please try again.');
@@ -963,7 +1063,6 @@ const Admin = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex">
-      {/* Sidebar */}
       <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-blue-600 to-blue-800 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:inset-0`}>
         <div className="flex items-center justify-center h-16 bg-blue-700">
           <h1 className="text-white text-xl font-bold">Admin Panel</h1>
@@ -995,13 +1094,23 @@ const Admin = () => {
 
         {/* Quick Actions */}
         <div className="absolute bottom-6 left-4 right-4">
-          <div className="bg-blue-800 rounded-lg p-4 text-center">
+          <div className="bg-blue-800 rounded-lg p-4 text-center space-y-2">
             <p className="text-blue-200 text-sm mb-2">Quick Access</p>
             <button 
               onClick={() => window.open('/', '_blank')}
-              className="w-full bg-white text-blue-600 py-2 rounded-lg font-semibold text-sm hover:bg-gray-100 transition-colors"
+              className="w-full bg-white text-blue-600 py-2 rounded-lg font-semibold text-sm hover:bg-gray-100 transition-colors mb-2"
             >
               View Website
+            </button>
+            <button 
+              onClick={() => {
+                sessionStorage.removeItem('admin_authenticated');
+                localStorage.removeItem('admin_authenticated');
+                window.location.reload();
+              }}
+              className="w-full bg-red-500 text-white py-2 rounded-lg font-semibold text-sm hover:bg-red-600 transition-colors"
+            >
+              Logout
             </button>
           </div>
         </div>
