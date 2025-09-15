@@ -72,4 +72,8 @@ export const retryFirestoreOperation = async (operation, maxRetries = 3) => {
   }
 };
 
+<<<<<<< HEAD
 export { db, storage };
+=======
+export { db, storage };
+>>>>>>> 2366ec8f309868c0cf8760664cd347e82d628706
