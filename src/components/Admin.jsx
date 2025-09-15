@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { Settings, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, Save, Type, Eye, Calendar, DollarSign, TrendingUp } from 'lucide-react';
+import { Settings, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, Save, Type, Eye, Calendar, DollarSign, TrendingUp, Lock, User } from 'lucide-react';
 import { db } from '../firebase';
 import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc, setDoc, getDoc } from 'firebase/firestore';
 
@@ -8,6 +9,7 @@ const Admin = () => {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   // Website content state
   const [websiteContent, setWebsiteContent] = useState({
@@ -48,11 +50,22 @@ const Admin = () => {
     activeProjects: 0,
     totalContacts: 0,
     completedProjects: 0,
-    revenue: '$0',
+    revenue: '$5,000',
     growth: '0%',
     websiteViews: '0',
     clickRate: '0%',
     conversionRate: '0%'
+  });
+
+  const [adminSettings, setAdminSettings] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+    adminEmail: 'admin@droptechify.com',
+    adminName: 'DropTechify Admin',
+    twoFactorEnabled: false,
+    emailNotifications: true,
+    systemNotifications: true
   });
 
   const [images, setImages] = useState([
@@ -193,23 +206,22 @@ const Admin = () => {
   };
 
   const updateStats = (contactsData) => {
-    // Static project data since projects management was removed
+    // Static project data with fixed revenue
     const staticProjectCount = 15; 
     const staticCompletedCount = 12;
     const staticActiveCount = 3;
-    const staticRevenue = 45000;
 
     setStats({
       totalProjects: staticProjectCount,
       activeProjects: staticActiveCount,
       totalContacts: contactsData.length,
       completedProjects: staticCompletedCount,
-      revenue: staticRevenue > 0 ? `$${staticRevenue.toLocaleString()}` : '$0',
+      revenue: '$5,000',
       growth: '+25%',
-      websiteViews: '1,250',
+      websiteViews: contactsData.length > 0 ? (contactsData.length * 50).toString() : '150',
       clickRate: '3.2%',
       conversionRate: contactsData.length > 0 ? 
-        `${Math.round((staticProjectCount / Math.max(contactsData.length, 1)) * 100)}%` : '0%'
+        `${Math.round((staticProjectCount / Math.max(contactsData.length, 1)) * 100)}%` : '8%'
     });
   };
 
@@ -347,6 +359,55 @@ const Admin = () => {
       } catch (error) {
         console.error('Error deleting case study:', error);
       }
+    }
+  };
+
+  const handlePasswordChange = async () => {
+    if (!adminSettings.currentPassword || !adminSettings.newPassword || !adminSettings.confirmPassword) {
+      alert('Please fill in all password fields');
+      return;
+    }
+
+    if (adminSettings.newPassword !== adminSettings.confirmPassword) {
+      alert('New password and confirm password do not match');
+      return;
+    }
+
+    if (adminSettings.newPassword.length < 8) {
+      alert('Password must be at least 8 characters long');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      // In a real app, you would verify current password and update it
+      const currentCredentials = JSON.parse(localStorage.getItem('admin_credentials') || '{}');
+      
+      if (adminSettings.currentPassword !== currentCredentials.password) {
+        alert('Current password is incorrect');
+        return;
+      }
+
+      const newCredentials = {
+        username: currentCredentials.username,
+        password: adminSettings.newPassword
+      };
+
+      localStorage.setItem('admin_credentials', JSON.stringify(newCredentials));
+      
+      setAdminSettings({
+        ...adminSettings,
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
+      
+      alert('Password changed successfully!');
+    } catch (error) {
+      console.error('Error changing password:', error);
+      alert('Error changing password. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -780,21 +841,147 @@ const Admin = () => {
     </div>
   );
 
+  const renderSettings = () => (
+    <div className="space-y-6">
+      <h2 className="text-3xl font-bold text-gray-900">Admin Settings</h2>
+      
+      {/* Password Change */}
+      <div className="bg-white p-6 rounded-lg shadow border">
+        <h3 className="text-xl font-semibold mb-4">Change Password</h3>
+        <div className="space-y-4 max-w-md">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
+            <input
+              type="password"
+              value={adminSettings.currentPassword}
+              onChange={(e) => setAdminSettings({...adminSettings, currentPassword: e.target.value})}
+              className="w-full p-3 border border-gray-300 rounded-lg"
+              placeholder="Enter current password"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+            <input
+              type="password"
+              value={adminSettings.newPassword}
+              onChange={(e) => setAdminSettings({...adminSettings, newPassword: e.target.value})}
+              className="w-full p-3 border border-gray-300 rounded-lg"
+              placeholder="Enter new password"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
+            <input
+              type="password"
+              value={adminSettings.confirmPassword}
+              onChange={(e) => setAdminSettings({...adminSettings, confirmPassword: e.target.value})}
+              className="w-full p-3 border border-gray-300 rounded-lg"
+              placeholder="Confirm new password"
+            />
+          </div>
+          <button
+            onClick={handlePasswordChange}
+            disabled={loading}
+            className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-semibold"
+          >
+            {loading ? 'Changing...' : 'Change Password'}
+          </button>
+        </div>
+      </div>
+
+      {/* Admin Profile */}
+      <div className="bg-white p-6 rounded-lg shadow border">
+        <h3 className="text-xl font-semibold mb-4">Admin Profile</h3>
+        <div className="space-y-4 max-w-md">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Admin Name</label>
+            <input
+              type="text"
+              value={adminSettings.adminName}
+              onChange={(e) => setAdminSettings({...adminSettings, adminName: e.target.value})}
+              className="w-full p-3 border border-gray-300 rounded-lg"
+              placeholder="Admin Name"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Admin Email</label>
+            <input
+              type="email"
+              value={adminSettings.adminEmail}
+              onChange={(e) => setAdminSettings({...adminSettings, adminEmail: e.target.value})}
+              className="w-full p-3 border border-gray-300 rounded-lg"
+              placeholder="admin@droptechify.com"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Notifications */}
+      <div className="bg-white p-6 rounded-lg shadow border">
+        <h3 className="text-xl font-semibold mb-4">Notification Settings</h3>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium text-gray-900">Email Notifications</h4>
+              <p className="text-sm text-gray-500">Receive email alerts for new contacts</p>
+            </div>
+            <button
+              onClick={() => setAdminSettings({...adminSettings, emailNotifications: !adminSettings.emailNotifications})}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                adminSettings.emailNotifications ? 'bg-blue-500' : 'bg-gray-300'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  adminSettings.emailNotifications ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium text-gray-900">System Notifications</h4>
+              <p className="text-sm text-gray-500">Receive system alerts and updates</p>
+            </div>
+            <button
+              onClick={() => setAdminSettings({...adminSettings, systemNotifications: !adminSettings.systemNotifications})}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                adminSettings.systemNotifications ? 'bg-blue-500' : 'bg-gray-300'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  adminSettings.systemNotifications ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-gray-100 flex">
       {/* Sidebar */}
-      <div className="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-blue-600 to-blue-800 transform lg:relative lg:translate-x-0">
+      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-blue-600 to-blue-800 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:inset-0`}>
         <div className="flex items-center justify-center h-16 bg-blue-700">
           <h1 className="text-white text-xl font-bold">Admin Panel</h1>
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="lg:hidden absolute right-4 text-white hover:bg-blue-600 p-1 rounded"
+          >
+            ×
+          </button>
         </div>
 
         {/* Navigation */}
-        <nav className="mt-8 px-4 space-y-2">
+        <nav className="mt-8 px-4 space-y-2 overflow-y-auto h-full pb-20">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`w-full flex items-center gap-3 px-6 py-3 text-left transition-all duration-200 ${
+              className={`w-full flex items-center gap-3 px-6 py-3 text-left transition-all duration-200 rounded-lg ${
                 activeTab === tab.id
                   ? 'bg-blue-500 text-white font-medium border-r-4 border-white'
                   : 'text-blue-100 hover:bg-blue-500 hover:text-white'
@@ -820,8 +1007,26 @@ const Admin = () => {
         </div>
       </div>
 
+      {/* Overlay for mobile */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        ></div>
+      )}
+
       {/* Main Content */}
-      <div className="lg:ml-64 p-4 lg:p-8">
+      <div className="flex-1 lg:ml-0 p-4 lg:p-8">
+        {/* Mobile header */}
+        <div className="lg:hidden mb-4">
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="bg-blue-600 text-white p-2 rounded-lg"
+          >
+            ☰
+          </button>
+        </div>
+
         <div className="mb-8">
           <div className="flex justify-between items-center">
             <div>
@@ -1272,6 +1477,7 @@ const Admin = () => {
               </div>
             </div>
           )}
+          {activeTab === 'settings' && renderSettings()}
         </div>
       </div>
     </div>
