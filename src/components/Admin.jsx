@@ -85,6 +85,9 @@ const Admin = () => {
     systemNotifications: true
   });
 
+  const [selectedMessage, setSelectedMessage] = useState(null);
+  const [showMessageModal, setShowMessageModal] = useState(false);
+
   const [images, setImages] = useState([
     { id: 1, name: 'SaaS Development', url: '/attached_assets/Developer activity-rafiki_1754317120912.png', category: 'services' },
     { id: 2, name: 'Website Development', url: '/attached_assets/Programmer-cuate_1754317120909.png', category: 'services' },
@@ -757,6 +760,16 @@ const Admin = () => {
     localStorage.removeItem('notifications');
   };
 
+  const viewMessage = (contact) => {
+    setSelectedMessage(contact);
+    setShowMessageModal(true);
+  };
+
+  const closeMessageModal = () => {
+    setSelectedMessage(null);
+    setShowMessageModal(false);
+  };
+
   // Simple chart component
   const SimpleLineChart = ({ data, title, color = '#0EA5E9' }) => (
     <div className="bg-white p-6 rounded-lg shadow">
@@ -1257,12 +1270,22 @@ const Admin = () => {
                     {contact.date ? new Date(contact.date).toLocaleDateString() : 'N/A'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button 
-                      onClick={() => deleteContact(contact.id)} 
-                      className="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded transition-colors"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={() => viewMessage(contact)} 
+                        className="text-blue-600 hover:text-blue-900 p-2 hover:bg-blue-50 rounded transition-colors"
+                        title="View Full Message"
+                      >
+                        <Eye size={16} />
+                      </button>
+                      <button 
+                        onClick={() => deleteContact(contact.id)} 
+                        className="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded transition-colors"
+                        title="Delete Contact"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -2104,6 +2127,139 @@ const Admin = () => {
           {activeTab === 'settings' && renderSettings()}
         </div>
       </div>
+
+      {/* Message View Modal */}
+      {showMessageModal && selectedMessage && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex justify-between items-center">
+                <h3 className="text-2xl font-bold text-gray-900">Contact Message Details</h3>
+                <button
+                  onClick={closeMessageModal}
+                  className="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            
+            <div className="p-6 space-y-6">
+              {/* Contact Information Grid */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Full Name</label>
+                    <div className="p-3 bg-gray-50 rounded-lg border">
+                      <p className="text-gray-900 font-medium">{selectedMessage.name}</p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Email Address</label>
+                    <div className="p-3 bg-gray-50 rounded-lg border">
+                      <p className="text-gray-900">{selectedMessage.email}</p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Phone Number</label>
+                    <div className="p-3 bg-gray-50 rounded-lg border">
+                      <p className="text-gray-900">{selectedMessage.phone || 'Not provided'}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Service Required</label>
+                    <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                        {selectedMessage.service}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Submission Date</label>
+                    <div className="p-3 bg-gray-50 rounded-lg border">
+                      <p className="text-gray-900">
+                        {selectedMessage.date ? new Date(selectedMessage.date).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        }) : 'Not available'}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Contact ID</label>
+                    <div className="p-3 bg-gray-50 rounded-lg border">
+                      <p className="text-gray-600 text-sm font-mono">{selectedMessage.id}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Full Message */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Complete Message</label>
+                <div className="p-4 bg-gray-50 rounded-lg border min-h-[120px]">
+                  <p className="text-gray-900 whitespace-pre-wrap leading-relaxed">
+                    {selectedMessage.message}
+                  </p>
+                </div>
+              </div>
+              
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200">
+                <button
+                  onClick={() => {
+                    const emailSubject = `Re: ${selectedMessage.service} Inquiry from ${selectedMessage.name}`;
+                    const emailBody = `Hi ${selectedMessage.name},\n\nThank you for your inquiry about ${selectedMessage.service}. We have received your message and will get back to you soon.\n\nBest regards,\nDropTechify Team`;
+                    window.open(`mailto:${selectedMessage.email}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`, '_blank');
+                  }}
+                  className="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2"
+                >
+                  <Mail size={18} />
+                  Reply via Email
+                </button>
+                
+                {selectedMessage.phone && (
+                  <button
+                    onClick={() => {
+                      const whatsappMessage = `Hi ${selectedMessage.name}! Thank you for your inquiry about ${selectedMessage.service}. We received your message and would like to discuss your project requirements. When would be a good time to talk?`;
+                      window.open(`https://wa.me/${selectedMessage.phone.replace(/[^\d]/g, '')}?text=${encodeURIComponent(whatsappMessage)}`, '_blank');
+                    }}
+                    className="flex-1 bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2"
+                  >
+                    <Phone size={18} />
+                    WhatsApp
+                  </button>
+                )}
+                
+                <button
+                  onClick={() => {
+                    if (confirm('Are you sure you want to delete this contact?')) {
+                      deleteContact(selectedMessage.id);
+                      closeMessageModal();
+                    }
+                  }}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2"
+                >
+                  <Trash2 size={18} />
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
