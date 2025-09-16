@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Settings, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, Save, Type, Eye, Calendar, DollarSign, TrendingUp, Lock, User, Bell, UserCheck, BarChart3, PieChart, Activity } from 'lucide-react';
+import { Settings, Users, FileText, MessageSquare, BarChart, Plus, Edit, Trash2, Save, Type, Eye, Calendar, DollarSign, TrendingUp, Lock, User, Bell, UserCheck, BarChart3, PieChart, Activity, Mail, Phone } from 'lucide-react';
 import { db, auth } from '../firebase';
 import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc, setDoc, getDoc, onSnapshot } from 'firebase/firestore';
 import { updatePassword, reauthenticateWithCredential, EmailAuthProvider, updateEmail } from 'firebase/auth';
@@ -1225,62 +1225,138 @@ const Admin = () => {
 
   const renderContacts = () => (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-bold text-gray-900">Contact Inquiries</h2>
-        <div className="text-sm text-gray-500">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">Contact Inquiries</h2>
+        <div className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-sm font-medium">
           Total: {contacts.length} contacts
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+      {/* Mobile Card View */}
+      <div className="lg:hidden space-y-4">
+        {contacts.map((contact) => (
+          <div key={contact.id} className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+            <div className="p-6">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">{contact.name}</h3>
+                  <p className="text-gray-600 text-sm">{contact.email}</p>
+                </div>
+                <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full whitespace-nowrap">
+                  {contact.service}
+                </span>
+              </div>
+              
+              <div className="space-y-3">
+                {contact.phone && (
+                  <div className="flex items-center gap-2">
+                    <Phone size={14} className="text-gray-400" />
+                    <span className="text-sm text-gray-600">{contact.phone}</span>
+                  </div>
+                )}
+                
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <p className="text-sm text-gray-700 line-clamp-3">{contact.message}</p>
+                </div>
+                
+                <div className="flex items-center justify-between pt-2">
+                  <span className="text-xs text-gray-500">
+                    {contact.date ? new Date(contact.date).toLocaleDateString() : 'N/A'}
+                  </span>
+                  
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => viewMessage(contact)} 
+                      className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1"
+                    >
+                      <Eye size={14} />
+                      View
+                    </button>
+                    <button 
+                      onClick={() => deleteContact(contact.id)} 
+                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1"
+                    >
+                      <Trash2 size={14} />
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+        
+        {contacts.length === 0 && (
+          <div className="bg-white p-12 rounded-xl shadow-lg text-center">
+            <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-500 mb-2">No Contact Inquiries</h3>
+            <p className="text-gray-400">Contact submissions will appear here</p>
+          </div>
+        )}
+      </div>
+
+      {/* Desktop Table View */}
+      <div className="hidden lg:block bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Message</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Contact</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Service</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Message</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
+                <th className="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {contacts.map((contact) => (
-                <tr key={contact.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="font-medium text-gray-900">{contact.name}</div>
+              {contacts.map((contact, index) => (
+                <tr key={contact.id} className={`hover:bg-gray-50 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-25'}`}>
+                  <td className="px-6 py-4">
+                    <div className="space-y-1">
+                      <div className="font-semibold text-gray-900">{contact.name}</div>
+                      <div className="text-sm text-gray-600 flex items-center gap-1">
+                        <Mail size={12} />
+                        {contact.email}
+                      </div>
+                      {contact.phone && (
+                        <div className="text-sm text-gray-600 flex items-center gap-1">
+                          <Phone size={12} />
+                          {contact.phone}
+                        </div>
+                      )}
+                    </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-gray-600">{contact.email}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-gray-600">{contact.phone || 'N/A'}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                  <td className="px-6 py-4">
+                    <span className="px-3 py-1.5 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 border border-blue-200">
                       {contact.service}
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-gray-600 max-w-xs truncate">{contact.message}</div>
+                    <div className="max-w-xs">
+                      <p className="text-gray-700 text-sm line-clamp-2">{contact.message}</p>
+                    </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {contact.date ? new Date(contact.date).toLocaleDateString() : 'N/A'}
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-600">
+                      {contact.date ? new Date(contact.date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      }) : 'N/A'}
+                    </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex gap-2">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex justify-center gap-2">
                       <button 
                         onClick={() => viewMessage(contact)} 
-                        className="text-blue-600 hover:text-blue-900 p-2 hover:bg-blue-50 rounded transition-colors"
+                        className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-lg transition-all duration-200 hover:scale-105 shadow-sm"
                         title="View Full Message"
                       >
                         <Eye size={16} />
                       </button>
                       <button 
                         onClick={() => deleteContact(contact.id)} 
-                        className="text-red-600 hover:text-red-900 p-2 hover:bg-red-50 rounded transition-colors"
+                        className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg transition-all duration-200 hover:scale-105 shadow-sm"
                         title="Delete Contact"
                       >
                         <Trash2 size={16} />
@@ -1294,8 +1370,10 @@ const Admin = () => {
         </div>
 
         {contacts.length === 0 && (
-          <div className="p-12 text-center">
-            <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <div className="p-16 text-center">
+            <div className="bg-gray-100 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+              <MessageSquare className="w-12 h-12 text-gray-400" />
+            </div>
             <h3 className="text-xl font-semibold text-gray-500 mb-2">No Contact Inquiries</h3>
             <p className="text-gray-400">Contact submissions will appear here</p>
           </div>
