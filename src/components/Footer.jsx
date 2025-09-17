@@ -17,11 +17,8 @@ function Footer({ onPageChange }) {
   });
 
   const [contactInfo, setContactInfo] = useState({
-    companyEmail: 'droptechify@gmail.com',
     managerEmail: 'manager@droptechify.com',
-    companyPhone: '+92 303 0273718',
     managerPhone: '+92 317 2664119',
-    whatsappCompany: '923030273718',
     whatsappManager: '923172664119'
   });
 
@@ -283,10 +280,15 @@ function Footer({ onPageChange }) {
                 </div>
               </div>
             </div>
+
+            <button
+              onClick={() => handlePageChange('contact')}
+              className="w-full sm:w-auto mt-4 sm:mt-6 bg-sky-400 hover:bg-sky-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg text-sm sm:text-base"
+            >
+              Start Your Project
+            </button>
           </div>
         </div>
-
-        {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-8 sm:mt-12 pt-6 sm:pt-8 text-center animate-fade-in">
           <p className="text-gray-400 text-sm sm:text-base">
             © 2025 DropTechify. All rights reserved. | 500+ Projects Completed | 500+ Happy Clients | Designed with ❤️ for your digital success.

@@ -305,8 +305,6 @@ function Contact() {
                   </div>
                 </div>
               </div>
-
-              {/* Quick Connect */}
               <div className="bg-white rounded-2xl shadow-xl p-8">
                 <h3 className="text-2xl font-bold text-gray-900 mb-6">Quick Connect</h3>
                 
