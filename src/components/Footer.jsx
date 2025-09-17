@@ -17,11 +17,8 @@ function Footer({ onPageChange }) {
   });
 
   const [contactInfo, setContactInfo] = useState({
-    companyEmail: 'droptechify@gmail.com',
     managerEmail: 'manager@droptechify.com',
-    companyPhone: '+92 303 0273718',
     managerPhone: '+92 317 2664119',
-    whatsappCompany: '923030273718',
     whatsappManager: '923172664119'
   });
 
@@ -256,15 +253,6 @@ function Footer({ onPageChange }) {
                   <Mail className="w-4 h-4 text-sky-400" />
                   <p className="text-gray-400 text-sm font-medium">Email Contacts</p>
                 </div>
-                <div className="space-y-2 pl-6">
-                  <div>
-                    <p className="text-gray-500 text-xs">CEO Email</p>
-                    <a href={`mailto:${contactInfo.companyEmail}`}
-                       className="text-white hover:text-sky-400 transition-colors duration-300 text-sm">
-                      {contactInfo.companyEmail}
-                    </a>
-                  </div>
-                  <div>
                     <p className="text-gray-500 text-xs">Manager Email</p>
                     <a href={`mailto:${contactInfo.managerEmail}`}
                        className="text-white hover:text-sky-400 transition-colors duration-300 text-sm">
@@ -281,13 +269,6 @@ function Footer({ onPageChange }) {
                 </div>
                 <div className="space-y-2 pl-6">
                   <div>
-                    <p className="text-gray-500 text-xs">CEO Phone</p>
-                    <a href={`tel:${contactInfo.companyPhone}`}
-                       className="text-white hover:text-sky-400 transition-colors duration-300 text-sm">
-                      {contactInfo.companyPhone}
-                    </a>
-                  </div>
-                  <div>
                     <p className="text-gray-500 text-xs">Manager Phone</p>
                     <a href={`tel:${contactInfo.managerPhone}`}
                        className="text-white hover:text-sky-400 transition-colors duration-300 text-sm">
@@ -298,19 +279,11 @@ function Footer({ onPageChange }) {
               </div>
             </div>
 
-            <button
-              onClick={() => handlePageChange('contact')}
-              className="w-full sm:w-auto mt-4 sm:mt-6 bg-sky-400 hover:bg-sky-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg text-sm sm:text-base"
-            >
-              Start Your Project
-            </button>
           </div>
         </div>
-
-        {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-8 sm:mt-12 pt-6 sm:pt-8 text-center animate-fade-in">
           <p className="text-gray-400 text-sm sm:text-base">
-            © 2024 DropTechify. All rights reserved. | 25+ Projects Completed | 20+ Happy Clients | Designed with ❤️ for your digital success.
+            © 2025 DropTechify. All rights reserved. | 25+ Projects Completed | 20+ Happy Clients | Designed with ❤️ for your digital success.
           </p>
         </div>
       </div>
