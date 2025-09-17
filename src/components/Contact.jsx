@@ -18,11 +18,8 @@ function Contact() {
 
   // Admin-managed contact information
   const [contactInfo, setContactInfo] = useState({
-    companyEmail: 'droptechify@gmail.com',
     managerEmail: 'manager@droptechify.com',
-    companyPhone: '+92 303 0273718',
     managerPhone: '+92 317 2664119',
-    whatsappCompany: '923030273718',
     whatsappManager: '923172664119'
   });
 
