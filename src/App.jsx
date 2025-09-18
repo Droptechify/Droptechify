@@ -4,6 +4,7 @@ import {
   Routes,
   Route,
   useNavigate,
+  useParams
 } from 'react-router-dom';
 
 // Components
@@ -16,21 +17,24 @@ import Contact from './components/Contact';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsConditions from './components/TermsConditions';
 import CaseStudies from './components/CaseStudies';
-import ServiceDetailPage from './components/ServiceDetailPage';
 
 // Lazy Loaded Components
 const Admin = React.lazy(() => import('./components/Admin'));
 const AdminLogin = React.lazy(() => import('./components/AdminLogin'));
+import ServiceDetailPage from './components/ServiceDetailPage';
+
+function ServiceDetailWrapper() {
+  const { id } = useParams();
+  return <ServiceDetailPage service={id} />;
+}
 
 function AppContent() {
-  // ✅ States
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(
     () => sessionStorage.getItem('admin_authenticated') === 'true'
   );
-  const [currentService, setCurrentService] = useState('');
   const navigate = useNavigate();
 
-  // ✅ Admin Login Handling
+  // Admin Login Handler
   const handleAdminLogin = (success) => {
     if (success) {
       setIsAdminAuthenticated(true);
@@ -44,11 +48,10 @@ function AppContent() {
     }
   };
 
-  // ✅ Favicon & Title
+  // Favicon & Title
   useEffect(() => {
     document.title =
       'DropTechify - Leading Software Development Company | Web & App Development';
-
     const favicon =
       document.querySelector("link[rel*='icon']") || document.createElement('link');
     favicon.type = 'image/x-icon';
@@ -59,32 +62,24 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* ✅ Header with Router Links */}
+      {/* Header */}
       <Header />
 
-      {/* ✅ Routes */}
+      {/* Routes */}
       <main className="flex-1 animate-page-transition">
         <Routes>
           {/* Public Pages */}
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/services" element={<ServicesPage />} />
-          <Route
-            path="/service-detail/:id"
-            element={
-              <ServiceDetailPage
-                service={currentService}
-                onBack={() => navigate('/services')}
-              />
-            }
-          />
+          <Route path="/service-detail/:id" element={<ServiceDetailWrapper />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/portfolio" element={<AboutPage />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsConditions />} />
           <Route path="/case-studies" element={<CaseStudies />} />
 
-          {/* Admin Login Page */}
+          {/* Admin Pages */}
           <Route
             path="/admin-login"
             element={
@@ -99,8 +94,6 @@ function AppContent() {
               </Suspense>
             }
           />
-
-          {/* Admin Panel (Protected) */}
           <Route
             path="/admin"
             element={
@@ -120,12 +113,12 @@ function AppContent() {
             }
           />
 
-          {/* 404 Fallback → Home */}
+          {/* 404 / fallback */}
           <Route path="*" element={<HomePage />} />
         </Routes>
       </main>
 
-      {/* ✅ Footer */}
+      {/* Footer */}
       <Footer />
     </div>
   );
