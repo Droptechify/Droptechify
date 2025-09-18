@@ -8,7 +8,7 @@ import Contact from './components/Contact';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsConditions from './components/TermsConditions';
 import CaseStudies from './components/CaseStudies';
-// Lazy load admin components for better performance
+
 const Admin = React.lazy(() => import('./components/Admin'));
 import ServiceDetailPage from './components/ServiceDetailPage';
 const AdminLogin = React.lazy(() => import('./components/AdminLogin'));
@@ -17,7 +17,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [currentService, setCurrentService] = useState('');
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(() => {
-    // Check if admin is already authenticated from localStorage
+
     return localStorage.getItem('admin_authenticated') === 'true';
   });
 
@@ -27,14 +27,14 @@ function App() {
     }
     setCurrentPage(page);
 
-    // Update URL hash (but not for admin)
+
     if (page !== 'admin' && page !== 'admin-login' && page !== 'service-detail') {
-      window.history.pushState(null, null, `#${page}`);
+      window.history.pushState(null, null, `/${page === 'home' ? '' : page}`);
     } else if (page === 'service-detail') {
-      window.history.pushState(null, null, `#services/${serviceId}`);
+      window.history.pushState(null, null, `/services/${serviceId}`);
     }
 
-    // Scroll to top for new pages
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -42,10 +42,10 @@ function App() {
     if (success) {
       setIsAdminAuthenticated(true);
       setCurrentPage('admin');
-      // Set session storage to remember authentication
+
       sessionStorage.setItem('admin_authenticated', 'true');
-      // Update URL without causing a page reload
-      window.history.pushState(null, '', '/#admin');
+
+      window.history.pushState(null, '', '/admin');
     } else {
       setIsAdminAuthenticated(false);
       setCurrentPage('admin-login');
@@ -54,16 +54,16 @@ function App() {
     }
   };
 
-  // Check for admin access - require proper authentication
+
   const checkAdminAccess = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const adminParam = urlParams.get('admin');
     const isAdminPath = window.location.pathname.includes('admin');
-    const isAdminHash = window.location.hash === '#admin';
+
     const sessionAuth = sessionStorage.getItem('admin_authenticated');
 
-    if (adminParam === 'true' || isAdminPath || isAdminHash) {
-      // Check if already authenticated
+    if (adminParam === 'true' || isAdminPath) {
+
       if (sessionAuth === 'true') {
         setIsAdminAuthenticated(true);
         setCurrentPage('admin');
@@ -71,18 +71,18 @@ function App() {
         setCurrentPage('admin-login');
         setIsAdminAuthenticated(false);
       }
-      // Clear the admin param to prevent redirect loops
+
       if (adminParam === 'true') {
         const newUrl = new URL(window.location);
         newUrl.searchParams.delete('admin');
-        window.history.replaceState(null, '', newUrl.pathname + newUrl.hash);
+        window.history.replaceState(null, '', newUrl.pathname);
       }
-    } else if (window.location.pathname.includes('admin-login') || window.location.hash === '#admin-login') {
+    } else if (window.location.pathname.includes('admin-login')) {
       setCurrentPage('admin-login');
     }
   };
 
-  // Protect admin routes
+
   useEffect(() => {
     if (currentPage === 'admin' && !isAdminAuthenticated) {
       const sessionAuth = sessionStorage.getItem('admin_authenticated');
@@ -112,7 +112,7 @@ function App() {
       case 'contact':
         return <Contact />;
       case 'portfolio':
-        return <AboutPage />; // Temporary, you can create Portfolio component later
+        return <AboutPage />;
       case 'privacy':
         return <PrivacyPolicy onBack={() => handlePageChange('home')} />;
       case 'terms':
@@ -148,17 +148,17 @@ function App() {
     const favicon = document.querySelector("link[rel*='icon']") || document.createElement('link');
     favicon.type = 'image/x-icon';
     favicon.rel = 'shortcut icon';
-    favicon.href = '/attached_assets/favicon.png';
+    favicon.href = '/attached_assets/logo.png';
     document.getElementsByTagName('head')[0].appendChild(favicon);
 
-    const handleHashChange = () => {
-      const hash = window.location.hash.substring(1); // Remove the '#'
-      if (hash) {
-        if (hash.startsWith('service-detail-')) {
-          const serviceId = hash.replace('service-detail-', '');
+    const handleRouteChange = () => {
+      const path = window.location.pathname.substring(1); // Remove the leading '/'
+      if (path) {
+        if (path.startsWith('services/')) {
+          const serviceId = path.replace('services/', '');
           setCurrentPage('service-detail');
           setCurrentService(serviceId);
-        } else if (hash === 'admin') {
+        } else if (path === 'admin') {
           const sessionAuth = sessionStorage.getItem('admin_authenticated');
           if (sessionAuth === 'true') {
             setIsAdminAuthenticated(true);
@@ -166,21 +166,21 @@ function App() {
           } else {
             setCurrentPage('admin-login');
           }
-        } else if (hash === 'admin-login') {
+        } else if (path === 'admin-login') {
           setCurrentPage('admin-login');
-        } else if (['home', 'services', 'about', 'contact', 'portfolio', 'privacy', 'terms', 'case-studies'].includes(hash)) {
-          setCurrentPage(hash);
+        } else if (['services', 'about', 'contact', 'portfolio', 'privacy', 'terms', 'case-studies'].includes(path)) {
+          setCurrentPage(path);
         }
       }
     };
 
-    window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener('popstate', handleRouteChange);
 
-    handleHashChange(); // Check initial hash
+    handleRouteChange(); // Check initial route
     checkAdminAccess(); // Check for admin access
 
     return () => {
-      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('popstate', handleRouteChange);
     };
   }, [currentPage]); // Depend on currentPage to re-evaluate admin access if needed
 
