@@ -8,6 +8,7 @@ import Contact from './components/Contact';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsConditions from './components/TermsConditions';
 import CaseStudies from './components/CaseStudies';
+// Lazy load admin components for better performance
 const Admin = React.lazy(() => import('./components/Admin'));
 import ServiceDetailPage from './components/ServiceDetailPage';
 const AdminLogin = React.lazy(() => import('./components/AdminLogin'));
@@ -16,6 +17,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [currentService, setCurrentService] = useState('');
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(() => {
+    // Check if admin is already authenticated from localStorage
     return localStorage.getItem('admin_authenticated') === 'true';
   });
 
@@ -25,12 +27,14 @@ function App() {
     }
     setCurrentPage(page);
 
+    // Update URL hash (but not for admin)
     if (page !== 'admin' && page !== 'admin-login' && page !== 'service-detail') {
       window.history.pushState(null, null, `#${page}`);
     } else if (page === 'service-detail') {
-      window.history.pushState(null, null, `#service-detail-${serviceId}`);
+      window.history.pushState(null, null, `#services/${serviceId}`);
     }
 
+    // Scroll to top for new pages
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -38,7 +42,9 @@ function App() {
     if (success) {
       setIsAdminAuthenticated(true);
       setCurrentPage('admin');
+      // Set session storage to remember authentication
       sessionStorage.setItem('admin_authenticated', 'true');
+      // Update URL without causing a page reload
       window.history.pushState(null, '', '/#admin');
     } else {
       setIsAdminAuthenticated(false);
@@ -48,6 +54,7 @@ function App() {
     }
   };
 
+  // Check for admin access - require proper authentication
   const checkAdminAccess = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const adminParam = urlParams.get('admin');
@@ -56,6 +63,7 @@ function App() {
     const sessionAuth = sessionStorage.getItem('admin_authenticated');
 
     if (adminParam === 'true' || isAdminPath || isAdminHash) {
+      // Check if already authenticated
       if (sessionAuth === 'true') {
         setIsAdminAuthenticated(true);
         setCurrentPage('admin');
@@ -63,19 +71,18 @@ function App() {
         setCurrentPage('admin-login');
         setIsAdminAuthenticated(false);
       }
+      // Clear the admin param to prevent redirect loops
       if (adminParam === 'true') {
         const newUrl = new URL(window.location);
         newUrl.searchParams.delete('admin');
         window.history.replaceState(null, '', newUrl.pathname + newUrl.hash);
       }
-    } else if (
-      window.location.pathname.includes('admin-login') ||
-      window.location.hash === '#admin-login'
-    ) {
+    } else if (window.location.pathname.includes('admin-login') || window.location.hash === '#admin-login') {
       setCurrentPage('admin-login');
     }
   };
 
+  // Protect admin routes
   useEffect(() => {
     if (currentPage === 'admin' && !isAdminAuthenticated) {
       const sessionAuth = sessionStorage.getItem('admin_authenticated');
@@ -84,6 +91,7 @@ function App() {
       }
     }
   }, [currentPage, isAdminAuthenticated]);
+
 
   const renderPage = () => {
     switch (currentPage) {
@@ -104,7 +112,7 @@ function App() {
       case 'contact':
         return <Contact />;
       case 'portfolio':
-        return <AboutPage />;
+        return <AboutPage />; // Temporary, you can create Portfolio component later
       case 'privacy':
         return <PrivacyPolicy onBack={() => handlePageChange('home')} />;
       case 'terms':
@@ -113,35 +121,17 @@ function App() {
         return <CaseStudies onPageChange={handlePageChange} />;
       case 'admin-login':
         return (
-          <React.Suspense
-            fallback={
-              <div className="flex items-center justify-center min-h-screen">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div>
-              </div>
-            }
-          >
+          <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div></div>}>
             <AdminLogin onLogin={handleAdminLogin} />
           </React.Suspense>
         );
       case 'admin':
         return isAdminAuthenticated ? (
-          <React.Suspense
-            fallback={
-              <div className="flex items-center justify-center min-h-screen">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div>
-              </div>
-            }
-          >
+          <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div></div>}>
             <Admin />
           </React.Suspense>
         ) : (
-          <React.Suspense
-            fallback={
-              <div className="flex items-center justify-center min-h-screen">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div>
-              </div>
-            }
-          >
+          <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div></div>}>
             <AdminLogin onLogin={handleAdminLogin} />
           </React.Suspense>
         );
@@ -151,21 +141,19 @@ function App() {
   };
 
   useEffect(() => {
-    document.title =
-      'DropTechify - Leading Software Development Company | Web & App Development';
+    // Set page title and favicon
+    document.title = 'DropTechify - Leading Software Development Company | Web & App Development';
 
-    const favicon =
-      document.querySelector("link[rel*='icon']") || document.createElement('link');
+    // Ensure favicon is loaded
+    const favicon = document.querySelector("link[rel*='icon']") || document.createElement('link');
     favicon.type = 'image/x-icon';
     favicon.rel = 'shortcut icon';
     favicon.href = '/attached_assets/favicon.png';
     document.getElementsByTagName('head')[0].appendChild(favicon);
 
     const handleHashChange = () => {
-      const rawHash = window.location.hash;
-      const hash = rawHash ? rawHash.substring(1) : '';
-
-      if (hash && typeof hash === 'string') {
+      const hash = window.location.hash.substring(1); // Remove the '#'
+      if (hash) {
         if (hash.startsWith('service-detail-')) {
           const serviceId = hash.replace('service-detail-', '');
           setCurrentPage('service-detail');
@@ -180,9 +168,7 @@ function App() {
           }
         } else if (hash === 'admin-login') {
           setCurrentPage('admin-login');
-        } else if (
-          ['home', 'services', 'about', 'contact', 'portfolio', 'privacy', 'terms', 'case-studies'].includes(hash)
-        ) {
+        } else if (['home', 'services', 'about', 'contact', 'portfolio', 'privacy', 'terms', 'case-studies'].includes(hash)) {
           setCurrentPage(hash);
         }
       }
@@ -190,22 +176,29 @@ function App() {
 
     window.addEventListener('hashchange', handleHashChange);
 
-    handleHashChange();
-    checkAdminAccess();
+    handleHashChange(); // Check initial hash
+    checkAdminAccess(); // Check for admin access
 
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
     };
-  }, [currentPage]);
+  }, [currentPage]); // Depend on currentPage to re-evaluate admin access if needed
 
+  // Don't show header/footer for admin panel or admin login
   if (currentPage === 'admin' || currentPage === 'admin-login') {
-    return <div className="min-h-screen bg-gray-50">{renderPage()}</div>;
+    return (
+      <div className="min-h-screen bg-gray-50">
+        {renderPage()}
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      <Header currentPage={currentPage} onPageChange={handlePageChaange} />
-      <main className="flex-1 animate-page-transition">{renderPage()}</main>
+      <Header currentPage={currentPage} onPageChange={handlePageChange} />
+      <main className="flex-1 animate-page-transition">
+        {renderPage()}
+      </main>
       <Footer onPageChange={handlePageChange} />
     </div>
   );
