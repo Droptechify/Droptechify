@@ -53,11 +53,8 @@ const Admin = () => {
   });
 
   const [contactInfo, setContactInfo] = useState({
-    companyEmail: 'droptechify@gmail.com',
-    managerEmail: 'manager@droptechify.com',
-    companyPhone: '+92 303 0273718',
+    managerEmail: 'managerdroptechify@gmail.com',
     managerPhone: '+92 317 2664119',
-    whatsappCompany: '923030273718',
     whatsappManager: '923172664119'
   });
 
@@ -2175,18 +2172,6 @@ const Admin = () => {
                       placeholder="+92 XXX XXXXXXX"
                     />
                   </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">WhatsApp Company</label>
-                    <input
-                      type="tel"
-                      value={contactInfo.whatsappCompany}
-                      onChange={(e) => setContactInfo({...contactInfo, whatsappCompany: e.target.value})}
-                      className="w-full p-3 border border-gray-300 rounded-lg"
-                      placeholder="923030273718"
-                    />
-                  </div>
-
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">WhatsApp Manager</label>
                     <input
