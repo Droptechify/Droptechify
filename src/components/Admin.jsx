@@ -111,6 +111,10 @@ const Admin = () => {
     imageFile: null
   });
 
+  const [portalMessages, setPortalMessages] = useState([]);
+  const [portalVideoUrl, setPortalVideoUrl] = useState('');
+  const [showPortalVideoForm, setShowPortalVideoForm] = useState(false);
+
   const [analyticsData, setAnalyticsData] = useState({
     monthlyVisits: [420, 580, 890, 1230, 1560, 1890, 2100, 2400, 2800, 3200, 3600, 4000],
     projectsCompleted: [2, 4, 3, 6, 8, 5, 7, 9, 6, 8, 10, 12],
@@ -125,6 +129,7 @@ const Admin = () => {
     { id: 'images', name: 'Image Gallery', icon: <Eye size={20} /> },
     { id: 'about', name: 'About Page', icon: <FileText size={20} /> },
     { id: 'case-studies', name: 'Case Studies', icon: <Eye size={20} /> },
+    { id: 'portal', name: 'Portal Management', icon: <FileText size={20} /> },
     { id: 'contacts', name: 'Contacts', icon: <MessageSquare size={20} /> },
     { id: 'services', name: 'Services Content', icon: <Settings size={20} /> },
     { id: 'notifications', name: 'Notifications', icon: <Bell size={20} /> },
@@ -137,6 +142,11 @@ const Admin = () => {
     setupRealtimeListeners();
   }, []);
 
+  // Load portal messages on mount and when they change
+  useEffect(() => {
+    loadPortalMessages();
+  }, []);
+
   const initializeData = async () => {
     try {
       await Promise.all([
@@ -145,7 +155,9 @@ const Admin = () => {
         loadSocialLinks(),
         loadContactInfo(),
         loadCaseStudies(),
-        loadNotifications()
+        loadNotifications(),
+        loadPortalMessages(),
+        loadPortalVideo()
       ]);
     } catch (error) {
       console.error('Error initializing data:', error);
@@ -154,11 +166,33 @@ const Admin = () => {
   };
 
   const setupRealtimeListeners = () => {
-    if (!db) return;
+    // Listen for localStorage changes (for portal messages)
+    const handleStorageChange = (e) => {
+      console.log('Storage change detected:', e.key);
+      if (e.key === 'portalMessages' || e.type === 'storage') {
+        loadPortalMessages();
+      }
+    };
+    
+    // Also listen to custom storage events (for same-tab updates)
+    const handleCustomStorage = () => {
+      console.log('Custom storage event detected');
+      loadPortalMessages();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('localStorageUpdate', handleCustomStorage);
+    
+    if (!db) {
+      return () => {
+        window.removeEventListener('storage', handleStorageChange);
+        window.removeEventListener('localStorageUpdate', handleCustomStorage);
+      };
+    }
 
     try {
       // Listen for new contacts in real-time
-      const unsubscribe = onSnapshot(collection(db, 'contacts'), (snapshot) => {
+      const unsubContacts = onSnapshot(collection(db, 'contacts'), (snapshot) => {
         const contactsData = [];
         snapshot.forEach((doc) => {
           contactsData.push({ id: doc.id, ...doc.data() });
@@ -173,9 +207,31 @@ const Admin = () => {
         }
       });
 
-      return () => unsubscribe();
+      // Listen for new portal messages in real-time
+      const unsubPortal = onSnapshot(collection(db, 'portalMessages'), (snapshot) => {
+        const messagesData = [];
+        snapshot.forEach((doc) => {
+          messagesData.push({ id: doc.id, ...doc.data() });
+        });
+        setPortalMessages(messagesData);
+        
+        // Check for new portal messages and create notifications
+        if (messagesData.length > portalMessages.length) {
+          const newMessage = messagesData[messagesData.length - 1];
+          showNotification(`New portal request from ${newMessage.fullname} at ${newMessage.company}`, 'info');
+        }
+      });
+
+      return () => {
+        unsubContacts();
+        unsubPortal();
+        window.removeEventListener('storage', handleStorageChange);
+      };
     } catch (error) {
       console.error('Error setting up realtime listeners:', error);
+      return () => {
+        window.removeEventListener('storage', handleStorageChange);
+      };
     }
   };
 
@@ -298,6 +354,110 @@ const Admin = () => {
       setNotifications(localNotifications);
     } catch (error) {
       console.error('Error loading notifications:', error);
+    }
+  };
+
+  const loadPortalMessages = async () => {
+    try {
+      // Always load from localStorage first for immediate display
+      const localMessages = JSON.parse(localStorage.getItem('portalMessages') || '[]');
+      
+      if (!db) {
+        setPortalMessages(localMessages);
+        console.log('Loaded portal messages from localStorage:', localMessages.length);
+        return;
+      }
+
+      // Try to load from Firebase
+      const querySnapshot = await getDocs(collection(db, 'portalMessages'));
+      const messagesData = [];
+      querySnapshot.forEach((doc) => {
+        messagesData.push({ id: doc.id, ...doc.data() });
+      });
+      
+      // Merge Firebase and localStorage messages (remove duplicates by ID)
+      const allMessages = [...messagesData, ...localMessages];
+      const uniqueMessages = allMessages.reduce((acc, msg) => {
+        if (!acc.find(m => m.id === msg.id)) {
+          acc.push(msg);
+        }
+        return acc;
+      }, []);
+      
+      // Sort by timestamp (newest first)
+      uniqueMessages.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+      
+      setPortalMessages(uniqueMessages);
+      console.log('Loaded portal messages - Total:', uniqueMessages.length);
+    } catch (error) {
+      console.error('Error loading portal messages:', error);
+      const localMessages = JSON.parse(localStorage.getItem('portalMessages') || '[]');
+      setPortalMessages(localMessages);
+      console.log('Fallback to localStorage messages:', localMessages.length);
+    }
+  };
+
+  const loadPortalVideo = async () => {
+    try {
+      if (!db) {
+        const localVideo = localStorage.getItem('portalVideoUrl') || '';
+        setPortalVideoUrl(localVideo);
+        return;
+      }
+
+      const docRef = doc(db, 'portalSettings', 'main');
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setPortalVideoUrl(docSnap.data().videoUrl || '');
+      }
+    } catch (error) {
+      console.error('Error loading portal video:', error);
+    }
+  };
+
+  const savePortalVideo = async () => {
+    try {
+      setLoading(true);
+      
+      // Always save to localStorage first for immediate update
+      localStorage.setItem('portalVideoUrl', portalVideoUrl);
+      
+      if (db) {
+        await setDoc(doc(db, 'portalSettings', 'main'), { videoUrl: portalVideoUrl });
+        showNotification('Portal video URL updated successfully!', 'success');
+      } else {
+        showNotification('Portal video URL saved locally!', 'success');
+      }
+      
+      setShowPortalVideoForm(false);
+      
+      // Trigger a storage event manually for same-tab updates
+      window.dispatchEvent(new Event('storage'));
+    } catch (error) {
+      console.error('Error saving portal video:', error);
+      localStorage.setItem('portalVideoUrl', portalVideoUrl);
+      showNotification('Error saving video URL. Saved locally as backup.', 'warning');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deletePortalMessage = async (id) => {
+    if (confirm('Are you sure you want to delete this portal message?')) {
+      try {
+        if (db) {
+          await deleteDoc(doc(db, 'portalMessages', id));
+        } else {
+          const localMessages = portalMessages.filter(m => m.id !== id);
+          setPortalMessages(localMessages);
+          localStorage.setItem('portalMessages', JSON.stringify(localMessages));
+        }
+        showNotification('Portal message deleted successfully', 'success');
+        loadPortalMessages();
+      } catch (error) {
+        console.error('Error deleting portal message:', error);
+        showNotification('Error deleting portal message', 'error');
+      }
     }
   };
 
@@ -838,15 +998,15 @@ const Admin = () => {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl shadow-lg border border-yellow-200 hover:shadow-xl transition-shadow">
+        <div className="bg-white p-6 rounded-2xl shadow-lg border border-orange-200 hover:shadow-xl transition-shadow">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-gray-600 text-sm font-medium">Revenue</h3>
-              <p className="text-3xl font-bold text-gray-900">{stats.revenue}</p>
-              <p className="text-yellow-600 text-sm">Growth: {stats.growth}</p>
+              <h3 className="text-gray-600 text-sm font-medium">Portal Messages</h3>
+              <p className="text-3xl font-bold text-gray-900">{portalMessages.length}</p>
+              <p className="text-orange-500 text-sm">New requests</p>
             </div>
-            <div className="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center">
-              <DollarSign className="text-white" size={24} />
+            <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center">
+              <FileText className="text-white" size={24} />
             </div>
           </div>
         </div>
@@ -855,50 +1015,55 @@ const Admin = () => {
       {/* Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white p-6 rounded-2xl shadow-lg">
-          <h3 className="text-xl font-bold mb-4">Recent Projects</h3>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div>
-                <p className="font-semibold text-gray-900">E-commerce Platform</p>
-                <p className="text-sm text-gray-600">Client: TechCorp</p>
+          <h3 className="text-xl font-bold mb-4">Recent Contacts</h3>
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {contacts.length === 0 ? (
+              <div className="text-center py-8">
+                <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+                <p className="text-gray-500">No contact messages yet</p>
               </div>
-              <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                Completed
-              </span>
-            </div>
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div>
-                <p className="font-semibold text-gray-900">Mobile App Development</p>
-                <p className="text-sm text-gray-600">Client: StartupXYZ</p>
-              </div>
-              <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                In Progress
-              </span>
-            </div>
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div>
-                <p className="font-semibold text-gray-900">SaaS Dashboard</p>
-                <p className="text-sm text-gray-600">Client: DataFlow Inc</p>
-              </div>
-              <span className="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                Completed
-              </span>
-            </div>
+            ) : (
+              contacts.slice(0, 5).map((contact, index) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                  <div className="flex-1">
+                    <p className="font-semibold text-gray-900">{contact.name}</p>
+                    <p className="text-sm text-gray-600 truncate">{contact.email}</p>
+                    <p className="text-xs text-gray-500 mt-1 line-clamp-2">{contact.message}</p>
+                  </div>
+                  <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 ml-2">
+                    {contact.service}
+                  </span>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
         <div className="bg-white p-6 rounded-2xl shadow-lg">
-          <h3 className="text-xl font-bold mb-4">Recent Contacts</h3>
-          <div className="space-y-3">
-            {contacts.slice(0, 5).map((contact, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div>
-                  <p className="font-semibold text-gray-900">{contact.name}</p>
-                  <p className="text-sm text-gray-600">{contact.email}</p>
-                </div>
-                <p className="text-xs text-gray-500">{contact.service}</p>
+          <h3 className="text-xl font-bold mb-4">Recent Portal Messages</h3>
+          <div className="space-y-3 max-h-96 overflow-y-auto">
+            {portalMessages.length === 0 ? (
+              <div className="text-center py-8">
+                <FileText className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+                <p className="text-gray-500">No portal messages yet</p>
               </div>
-            ))}
+            ) : (
+              portalMessages.slice(0, 5).map((msg, index) => (
+                <div key={index} className="p-3 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors border border-orange-200">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <p className="font-semibold text-gray-900">{msg.fullname}</p>
+                      <p className="text-sm text-gray-600">{msg.company}</p>
+                      <p className="text-xs text-gray-500 mt-1">Contact: {msg.contact}</p>
+                      <p className="text-xs text-gray-600 mt-1 line-clamp-2">{msg.message}</p>
+                    </div>
+                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-orange-200 text-orange-900 ml-2">
+                      Portal
+                    </span>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>
@@ -948,6 +1113,95 @@ const Admin = () => {
               <span className="font-semibold text-yellow-600">{stats.growth}</span>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderPortal = () => (
+    <div className="space-y-6">
+      <h2 className="text-3xl font-bold text-gray-900">Portal Management</h2>
+
+      {/* Video URL Management */}
+      <div className="bg-white p-6 rounded-lg shadow border">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-semibold">Portal Video URL</h3>
+          <button
+            onClick={() => setShowPortalVideoForm(!showPortalVideoForm)}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold"
+          >
+            {showPortalVideoForm ? 'Cancel' : 'Update Video'}
+          </button>
+        </div>
+
+        {showPortalVideoForm ? (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">YouTube Video URL</label>
+              <input
+                type="text"
+                value={portalVideoUrl}
+                onChange={(e) => setPortalVideoUrl(e.target.value)}
+                className="w-full p-3 border border-gray-300 rounded-lg"
+                placeholder="https://www.youtube.com/embed/YOUR_VIDEO_ID"
+              />
+              <p className="text-sm text-gray-500 mt-2">Enter the full YouTube embed URL</p>
+            </div>
+            <button
+              onClick={savePortalVideo}
+              disabled={loading}
+              className="bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg font-semibold"
+            >
+              {loading ? 'Saving...' : 'Save Video URL'}
+            </button>
+          </div>
+        ) : (
+          <div className="p-4 bg-gray-50 rounded-lg">
+            <p className="text-gray-700">{portalVideoUrl || 'No video URL set'}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Portal Messages */}
+      <div className="bg-white p-6 rounded-lg shadow border">
+        <h3 className="text-xl font-semibold mb-4">Portal Contact Messages</h3>
+        <p className="text-gray-600 mb-4">Total Messages: {portalMessages.length}</p>
+
+        <div className="space-y-4">
+          {portalMessages.length === 0 ? (
+            <div className="text-center py-12">
+              <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-500 mb-2">No Portal Messages</h3>
+              <p className="text-gray-400">Portal submissions will appear here</p>
+            </div>
+          ) : (
+            portalMessages.map((message) => (
+              <div key={message.id} className="bg-gray-50 p-4 rounded-lg border">
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <h4 className="font-semibold text-gray-900">{message.fullname}</h4>
+                    <p className="text-sm text-gray-600">{message.company}</p>
+                  </div>
+                  <button
+                    onClick={() => deletePortalMessage(message.id)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    <Trash2 size={20} />
+                  </button>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <p><strong>Contact:</strong> {message.contact}</p>
+                  {message.email && <p><strong>Email:</strong> {message.email}</p>}
+                  <p><strong>Message:</strong> {message.message}</p>
+                  {message.date && (
+                    <p className="text-gray-500">
+                      <strong>Date:</strong> {new Date(message.date).toLocaleString()}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>
@@ -1685,6 +1939,7 @@ const Admin = () => {
           {activeTab === 'content' && renderContentManagement()}
           {activeTab === 'about' && renderAboutPage()}
           {activeTab === 'services' && renderServicesPage()}
+          {activeTab === 'portal' && renderPortal()}
           {activeTab === 'case-studies' && (
             <div className="space-y-6">
               <div className="flex justify-between items-center">
@@ -2147,7 +2402,7 @@ const Admin = () => {
                       value={contactInfo.managerEmail}
                       onChange={(e) => setContactInfo({...contactInfo, managerEmail: e.target.value})}
                       className="w-full p-3 border border-gray-300 rounded-lg"
-                      placeholder="manager@droptechify.com"
+                      placeholder="teamdroptechify@gmail.com"
                     />
                   </div>
 

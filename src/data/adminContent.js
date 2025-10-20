@@ -36,11 +36,7 @@ export const adminContent = {
   ],
 
   contact: {
-    managerEmail: 'managerdroptechify@gmail.com',
-    managerPhone: '+92 317 2664119',
-    whatsappManager: '923172664119',
     wechatId: 'wxid_jm4v6epbgzls22',
-    address: 'Pakistan',
     businessHours: '24/7 Available'
   },
 

@@ -13,14 +13,28 @@ function CaseStudies({ onPageChange }) {
 
   const loadCaseStudies = async () => {
     try {
+      if (!db) {
+        const localStudies = JSON.parse(localStorage.getItem('caseStudies') || '[]');
+        setCaseStudies(localStudies);
+        setLoading(false);
+        return;
+      }
+
       const querySnapshot = await getDocs(collection(db, 'caseStudies'));
       const studiesData = [];
       querySnapshot.forEach((doc) => {
         studiesData.push({ id: doc.id, ...doc.data() });
       });
+      
       setCaseStudies(studiesData);
+      
+      // Also save to localStorage as backup
+      localStorage.setItem('caseStudies', JSON.stringify(studiesData));
     } catch (error) {
       console.error('Error loading case studies:', error);
+      // Fallback to localStorage
+      const localStudies = JSON.parse(localStorage.getItem('caseStudies') || '[]');
+      setCaseStudies(localStudies);
     } finally {
       setLoading(false);
     }

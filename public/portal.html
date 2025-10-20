@@ -1,0 +1,303 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Droptechify Portal</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background: #f9fafb;
+        color: #333;
+        overflow-x: hidden;
+      }
+
+      /* ===== VIDEO SECTION ===== */
+      .video-section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        padding: 40px 0;
+        background: #fff;
+      }
+
+      .video-box {
+        position: relative;
+        width: 80%;
+        max-width: 900px;
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+        border-radius: 14px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        background: #e5e7eb;
+      }
+
+      .video-box iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+
+      .video-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: #6b7280;
+        padding: 20px;
+        text-align: center;
+      }
+
+      .video-placeholder svg {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 16px;
+        color: #9ca3af;
+      }
+
+      /* ===== FORM SECTION ===== */
+      .form-container {
+        width: 100%;
+        max-width: 750px;
+        background: #fff;
+        padding: 45px 35px;
+        margin: 40px auto 60px;
+        border-radius: 18px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 5;
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        font-weight: 600;
+        color: #1a1a1a;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      label {
+        font-weight: 500;
+        color: #444;
+      }
+
+      input,
+      textarea {
+        width: 100%;
+        padding: 12px 15px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        outline: none;
+        transition: all 0.3s ease;
+        font-size: 15px;
+      }
+
+      input:focus,
+      textarea:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      button {
+        background: #007bff;
+        color: #fff;
+        border: none;
+        padding: 14px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      button:hover {
+        background: #0056d6;
+      }
+
+      button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+
+      .footer-note {
+        text-align: center;
+        margin-bottom: 40px;
+        font-size: 14px;
+        color: #777;
+      }
+
+      .success-message {
+        background: #d1fae5;
+        color: #065f46;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        text-align: center;
+        display: none;
+      }
+
+      .success-message.show {
+        display: block;
+      }
+
+      @media (max-width: 768px) {
+        .video-box {
+          width: 95%;
+        }
+
+        .form-container {
+          padding: 30px 20px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- 🔹 Video Section -->
+    <div class="video-section">
+      <div class="video-box" id="videoContainer">
+        <div class="video-placeholder">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+          </svg>
+          <p style="font-weight: 500; font-size: 16px;">No video available</p>
+          <p style="color: #9ca3af; font-size: 14px; margin-top: 8px;">The admin will upload a video soon</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🔹 Form Section -->
+    <div class="form-container">
+      <div id="successMessage" class="success-message">
+        Thank you! Your message has been submitted successfully.
+      </div>
+
+      <h2>Request a Website / Project Information</h2>
+
+      <form id="contactForm">
+        <div>
+          <label>Full Name</label>
+          <input type="text" name="fullname" placeholder="Enter your full name" required />
+        </div>
+
+        <div>
+          <label>WhatsApp / WeChat Number</label>
+          <input
+            type="text"
+            name="contact"
+            placeholder="+12xxxxxxxxxx or your WeChat ID"
+            required
+          />
+        </div>
+
+        <div>
+          <label>Company Name</label>
+          <input type="text" name="company" placeholder="Enter your company name" required />
+        </div>
+
+        <div>
+          <label>Email Address (optional)</label>
+          <input type="email" name="email" placeholder="example@company.com" />
+        </div>
+
+        <div>
+          <label>Project Details</label>
+          <textarea
+            name="message"
+            placeholder="Write a few lines about your project or idea..."
+          ></textarea>
+        </div>
+
+        <button type="submit" id="submitBtn">Submit Information</button>
+      </form>
+    </div>
+
+    <p class="footer-note">Droptechify © 2025 — All Rights Reserved</p>
+
+    <script>
+      // Load video URL from localStorage
+      function loadVideo() {
+        const videoUrl = localStorage.getItem('portalVideoUrl');
+        const videoContainer = document.getElementById('videoContainer');
+        
+        if (videoUrl && (videoUrl.includes('youtube.com/embed') || videoUrl.includes('youtu.be'))) {
+          videoContainer.innerHTML = `
+            <iframe
+              src="${videoUrl}"
+              title="Website Overview"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+          `;
+        }
+      }
+
+      // Load video on page load
+      loadVideo();
+
+      // Listen for storage changes
+      window.addEventListener('storage', loadVideo);
+
+      // Handle form submission
+      document.getElementById('contactForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const data = {
+          fullname: formData.get('fullname'),
+          contact: formData.get('contact'),
+          company: formData.get('company'),
+          email: formData.get('email') || '',
+          message: formData.get('message') || '',
+          date: new Date().toISOString(),
+          timestamp: Date.now()
+        };
+
+        // Save to localStorage
+        const existingMessages = JSON.parse(localStorage.getItem('portalMessages') || '[]');
+        data.id = Date.now().toString();
+        existingMessages.push(data);
+        localStorage.setItem('portalMessages', JSON.stringify(existingMessages));
+
+        // Trigger custom storage event for admin dashboard to detect changes
+        window.dispatchEvent(new Event('localStorageUpdate'));
+        
+        // Also trigger standard storage event
+        window.dispatchEvent(new Event('storage'));
+
+        // Show success message
+        document.getElementById('successMessage').classList.add('show');
+        
+        // Reset form
+        e.target.reset();
+
+        // Hide success message after 5 seconds
+        setTimeout(() => {
+          document.getElementById('successMessage').classList.remove('show');
+        }, 5000);
+      });
+    </script>
+  </body>
+</html>

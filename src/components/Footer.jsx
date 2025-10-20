@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin, ArrowRight, MessageCircle, ExternalLink, Github, Play } from 'lucide-react';
 import { db } from '../firebase';
@@ -17,9 +16,7 @@ function Footer({ onPageChange }) {
   });
 
   const [contactInfo, setContactInfo] = useState({
-    managerEmail: 'manager@droptechify.com',
-    managerPhone: '+92 317 2664119',
-    whatsappManager: '923172664119'
+    managerEmail: 'teamdroptechify@gmail.com',
   });
 
   const [iconVisibility, setIconVisibility] = useState({
@@ -144,49 +141,49 @@ function Footer({ onPageChange }) {
             <div className="flex flex-wrap gap-2 sm:gap-3">
               {socialLinks.facebook && iconVisibility.facebook && (
                 <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer"
-                   className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-all duration-300 hover:scale-110 shadow-lg">
+                   className="w-10 h-10 sm:w-12 sm:h-12 bg-sky-500 rounded-full flex items-center justify-center hover:bg-sky-600 transition-all duration-300 hover:scale-110 shadow-lg">
                   <Facebook size={18} className="sm:w-[20px] sm:h-[20px] text-white" />
                 </a>
               )}
               {socialLinks.twitter && iconVisibility.twitter && (
                 <a href={socialLinks.twitter} target="_blank" rel="noopener noreferrer"
-                   className="w-10 h-10 sm:w-12 sm:h-12 bg-sky-400 rounded-full flex items-center justify-center hover:bg-sky-500 transition-all duration-300 hover:scale-110 shadow-lg">
+                   className="w-10 h-10 sm:w-12 sm:h-12 bg-sky-500 rounded-full flex items-center justify-center hover:bg-sky-600 transition-all duration-300 hover:scale-110 shadow-lg">
                   <Twitter size={18} className="sm:w-[20px] sm:h-[20px] text-white" />
                 </a>
               )}
               {socialLinks.instagram && iconVisibility.instagram && (
                 <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer"
-                   className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center hover:from-purple-600 hover:to-pink-600 transition-all duration-300 hover:scale-110 shadow-lg">
+                   className="w-10 h-10 sm:w-12 sm:h-12 bg-sky-500 rounded-full flex items-center justify-center hover:bg-sky-600 transition-all duration-300 hover:scale-110 shadow-lg">
                   <Instagram size={18} className="sm:w-[20px] sm:h-[20px] text-white" />
                 </a>
               )}
               {iconVisibility.linkedin && (
                 <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer"
-                   className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-700 rounded-full flex items-center justify-center hover:bg-blue-800 transition-all duration-300 hover:scale-110 shadow-lg">
+                   className="w-10 h-10 sm:w-12 sm:h-12 bg-sky-500 rounded-full flex items-center justify-center hover:bg-sky-600 transition-all duration-300 hover:scale-110 shadow-lg">
                   <Linkedin size={18} className="sm:w-[20px] sm:h-[20px] text-white" />
                 </a>
               )}
               {socialLinks.github && iconVisibility.github && (
                 <a href={socialLinks.github} target="_blank" rel="noopener noreferrer"
-                   className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-700 rounded-full flex items-center justify-center hover:bg-gray-800 transition-all duration-300 hover:scale-110 shadow-lg">
+                   className="w-10 h-10 sm:w-12 sm:h-12 bg-sky-500 rounded-full flex items-center justify-center hover:bg-sky-600 transition-all duration-300 hover:scale-110 shadow-lg">
                   <Github size={18} className="sm:w-[20px] sm:h-[20px] text-white" />
                 </a>
               )}
               {socialLinks.youtube && iconVisibility.youtube && (
                 <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer"
-                   className="w-10 h-10 sm:w-12 sm:h-12 bg-red-600 rounded-full flex items-center justify-center hover:bg-red-700 transition-all duration-300 hover:scale-110 shadow-lg">
+                   className="w-10 h-10 sm:w-12 sm:h-12 bg-sky-500 rounded-full flex items-center justify-center hover:bg-sky-600 transition-all duration-300 hover:scale-110 shadow-lg">
                   <Play size={18} className="sm:w-[20px] sm:h-[20px] text-white fill-current" />
                 </a>
               )}
               {socialLinks.clutch && iconVisibility.clutch && (
                 <a href={socialLinks.clutch} target="_blank" rel="noopener noreferrer"
-                   className="w-10 h-10 sm:w-12 sm:h-12 bg-red-500 rounded-full flex items-center justify-center hover:bg-red-600 transition-all duration-300 hover:scale-110 shadow-lg">
+                   className="w-10 h-10 sm:w-12 sm:h-12 bg-sky-500 rounded-full flex items-center justify-center hover:bg-sky-600 transition-all duration-300 hover:scale-110 shadow-lg">
                   <CustomIcon type="clutch" size={18} />
                 </a>
               )}
               {socialLinks.upwork && iconVisibility.upwork && (
                 <a href={socialLinks.upwork} target="_blank" rel="noopener noreferrer"
-                   className="w-10 h-10 sm:w-12 sm:h-12 bg-green-500 rounded-full flex items-center justify-center hover:bg-green-600 transition-all duration-300 hover:scale-110 shadow-lg">
+                   className="w-10 h-10 sm:w-12 sm:h-12 bg-sky-500 rounded-full flex items-center justify-center hover:bg-sky-600 transition-all duration-300 hover:scale-110 shadow-lg">
                   <CustomIcon type="upwork" size={18} />
                 </a>
               )}
@@ -265,33 +262,13 @@ function Footer({ onPageChange }) {
               </div>
 
               <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <Phone className="w-4 h-4 text-sky-400" />
-                  <p className="text-gray-400 text-sm font-medium">Phone Contacts</p>
-                </div>
-                <div className="space-y-2 pl-6">
-                  <div>
-                    <p className="text-gray-500 text-xs">Manager Phone</p>
-                    <a href={`tel:${contactInfo.managerPhone}`}
-                       className="text-white hover:text-sky-400 transition-colors duration-300 text-sm">
-                      {contactInfo.managerPhone}
-                    </a>
-                  </div>
-                </div>
               </div>
             </div>
-
-            <button
-              onClick={() => handlePageChange('contact')}
-              className="w-full sm:w-auto mt-4 sm:mt-6 bg-sky-400 hover:bg-sky-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg text-sm sm:text-base"
-            >
-              Start Your Project
-            </button>
           </div>
         </div>
         <div className="border-t border-gray-800 mt-8 sm:mt-12 pt-6 sm:pt-8 text-center animate-fade-in">
           <p className="text-gray-400 text-sm sm:text-base">
-            © 2025 DropTechify. All rights reserved. | 500+ Projects Completed | 500+ Happy Clients | Designed with ❤️ for your digital success.
+            © 2025 DropTechify. All rights reserved. | 500+ Projects Completed | 500+ Happy Clients | Designed with for your digital success.
           </p>
         </div>
       </div>

@@ -8,6 +8,7 @@ import Contact from './components/Contact';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsConditions from './components/TermsConditions';
 import CaseStudies from './components/CaseStudies';
+import Portal from './components/Portal';
 
 const Admin = React.lazy(() => import('./components/Admin'));
 import ServiceDetailPage from './components/ServiceDetailPage';
@@ -119,6 +120,8 @@ function App() {
         return <TermsConditions onBack={() => handlePageChange('home')} />;
       case 'case-studies':
         return <CaseStudies onPageChange={handlePageChange} />;
+      case 'portal':
+        return <Portal onPageChange={handlePageChange} />;
       case 'admin-login':
         return (
           <React.Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div></div>}>
@@ -168,7 +171,7 @@ function App() {
           }
         } else if (path === 'admin-login') {
           setCurrentPage('admin-login');
-        } else if (['services', 'about', 'contact', 'portfolio', 'privacy', 'terms', 'case-studies'].includes(path)) {
+        } else if (['services', 'about', 'contact', 'portfolio', 'privacy', 'terms', 'case-studies', 'portal'].includes(path)) {
           setCurrentPage(path);
         }
       }
