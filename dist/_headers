@@ -1,2 +1,2 @@
 /*
-  Content-Security-Policy: script-src 'self' 'unsafe-eval' https://www.gstatic.com https://www.googleapis.com https://www.youtube.com https://www.youtube-nocookie.com https://cdnjs.cloudflare.com;
+  Content-Security-Policy: script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.gstatic.com https://www.googleapis.com https://www.youtube.com https://www.youtube-nocookie.com https://cdnjs.cloudflare.com; object-src 'none';
