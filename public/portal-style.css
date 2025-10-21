@@ -149,6 +149,18 @@
       .success-message.show {
         display: block;
       }
+      .video-title {
+  font-weight: 500;
+  font-size: 16px;
+  color: #6b7280;
+}
+
+.video-subtitle {
+  color: #9ca3af;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
 
       @media (max-width: 768px) {
         .video-box {
