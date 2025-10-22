@@ -12,11 +12,11 @@ function Portal({ onPageChange }) {
     message: ''
   });
   const [submitting, setSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     loadVideoUrl();
 
-    // Listen for storage changes (from admin panel)
     const handleStorageChange = () => {
       loadVideoUrl();
     };
@@ -42,12 +42,10 @@ function Portal({ onPageChange }) {
       if (docSnap.exists()) {
         const url = docSnap.data().videoUrl || '';
         setVideoUrl(url);
-        // Also save to localStorage as backup
         localStorage.setItem('portalVideoUrl', url);
         console.log('Loaded video URL from Firebase:', url);
       } else {
         console.log('No video URL document found in Firebase');
-        // Try localStorage as fallback
         const localVideo = localStorage.getItem('portalVideoUrl') || '';
         setVideoUrl(localVideo);
       }
@@ -56,6 +54,13 @@ function Portal({ onPageChange }) {
       const localVideo = localStorage.getItem('portalVideoUrl') || '';
       setVideoUrl(localVideo);
     }
+  };
+
+  const showSuccessPopup = () => {
+    setShowSuccess(true);
+    setTimeout(() => {
+      setShowSuccess(false);
+    }, 4000);
   };
 
   const handleSubmit = async (e) => {
@@ -75,7 +80,6 @@ function Portal({ onPageChange }) {
 
       console.log('Submitting portal message:', messageData);
 
-      // Always save to localStorage first
       const existingMessages = JSON.parse(localStorage.getItem('portalMessages') || '[]');
       messageData.id = Date.now().toString();
       existingMessages.push(messageData);
@@ -85,20 +89,17 @@ function Portal({ onPageChange }) {
         try {
           const docRef = await addDoc(collection(db, 'portalMessages'), messageData);
           console.log('Portal message added with ID:', docRef.id);
-          alert('Thank you! Your message has been submitted successfully.');
+          showSuccessPopup();
         } catch (error) {
           console.log('Firebase save failed, message saved locally:', error);
-          alert('Thank you! Your message has been submitted successfully.');
+          showSuccessPopup();
         }
       } else {
         console.log('Saved to localStorage:', messageData);
-        alert('Thank you! Your message has been submitted successfully.');
+        showSuccessPopup();
       }
 
-      // Trigger custom storage event for same-tab updates
       window.dispatchEvent(new Event('localStorageUpdate'));
-
-      // Also trigger standard storage event
       window.dispatchEvent(new Event('storage'));
 
       setFormData({
@@ -111,7 +112,6 @@ function Portal({ onPageChange }) {
     } catch (error) {
       console.error('Error submitting form:', error);
 
-      // Fallback to localStorage
       const messageData = {
         fullname: formData.fullname,
         contact: formData.contact,
@@ -126,7 +126,7 @@ function Portal({ onPageChange }) {
       const existingMessages = JSON.parse(localStorage.getItem('portalMessages') || '[]');
       existingMessages.push(messageData);
       localStorage.setItem('portalMessages', JSON.stringify(existingMessages));
-      alert('Message saved! We will contact you soon.');
+      showSuccessPopup();
     } finally {
       setSubmitting(false);
     }
@@ -134,6 +134,134 @@ function Portal({ onPageChange }) {
 
   return (
     <div className="pt-20 min-h-screen" style={{ backgroundColor: '#f9fafb' }}>
+      {/* Success Popup Modal */}
+      {showSuccess && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            animation: 'fadeIn 0.3s ease-in-out'
+          }}
+          onClick={() => setShowSuccess(false)}
+        >
+          <div
+            style={{
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              borderRadius: '20px',
+              padding: '40px',
+              maxWidth: '450px',
+              width: '90%',
+              textAlign: 'center',
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+              animation: 'slideUp 0.4s ease-out',
+              position: 'relative'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Success Icon */}
+            <div
+              style={{
+                width: '80px',
+                height: '80px',
+                background: '#fff',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 20px',
+                animation: 'scaleUp 0.5s ease-out',
+                boxShadow: '0 10px 30px rgba(255, 255, 255, 0.3)'
+              }}
+            >
+              <svg
+                style={{
+                  width: '50px',
+                  height: '50px',
+                  color: '#10b981'
+                }}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={3}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </div>
+
+            {/* Success Text */}
+            <h2
+              style={{
+                fontSize: '28px',
+                fontWeight: '700',
+                color: '#fff',
+                marginBottom: '12px',
+                textShadow: '0 2px 10px rgba(0, 0, 0, 0.2)'
+              }}
+            >
+              Success!
+            </h2>
+            <p
+              style={{
+                fontSize: '16px',
+                color: 'rgba(255, 255, 255, 0.95)',
+                lineHeight: '1.6',
+                marginBottom: '8px'
+              }}
+            >
+              Thank you for reaching out!
+            </p>
+            <p
+              style={{
+                fontSize: '14px',
+                color: 'rgba(255, 255, 255, 0.8)',
+                lineHeight: '1.5'
+              }}
+            >
+Your request has been received successfully. Our team will contact you shortly to discuss your website requirements            </p>
+
+            {/* Close Button */}
+            <button
+              onClick={() => setShowSuccess(false)}
+              style={{
+                marginTop: '24px',
+                background: 'rgba(255, 255, 255, 0.2)',
+                border: '2px solid rgba(255, 255, 255, 0.3)',
+                color: '#fff',
+                padding: '12px 32px',
+                borderRadius: '50px',
+                fontSize: '15px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                backdropFilter: 'blur(10px)'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.background = 'rgba(255, 255, 255, 0.3)';
+                e.target.style.transform = 'scale(1.05)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.background = 'rgba(255, 255, 255, 0.2)';
+                e.target.style.transform = 'scale(1)';
+              }}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Video Section */}
       <div style={{ background: '#fff', padding: '40px 0', width: '100%' }}>
         <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 20px' }}>
@@ -237,7 +365,7 @@ function Portal({ onPageChange }) {
                   outline: 'none',
                   fontSize: '15px'
                 }}
-                placeholder="+92xxxxxxxxxx or your WeChat ID"
+                placeholder="+1xxxxxxxxxx or your WeChat ID"
               />
             </div>
 
@@ -323,9 +451,41 @@ function Portal({ onPageChange }) {
         </div>
       </div>
 
-      <p style={{ textAlign: 'center', marginBottom: '40px', fontSize: '14px', color: '#777' }}>
-        Droptechify © 2025 — All Rights Reserved
-      </p>
+      <style>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+
+        @keyframes scaleUp {
+          0% {
+            transform: scale(0);
+            opacity: 0;
+          }
+          50% {
+            transform: scale(1.1);
+          }
+          100% {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+      `}</style>
     </div>
   );
 }
