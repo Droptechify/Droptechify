@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { collection, addDoc, doc, getDoc } from 'firebase/firestore';
@@ -16,14 +15,14 @@ function Portal({ onPageChange }) {
 
   useEffect(() => {
     loadVideoUrl();
-    
+
     // Listen for storage changes (from admin panel)
     const handleStorageChange = () => {
       loadVideoUrl();
     };
-    
+
     window.addEventListener('storage', handleStorageChange);
-    
+
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
@@ -81,7 +80,7 @@ function Portal({ onPageChange }) {
       messageData.id = Date.now().toString();
       existingMessages.push(messageData);
       localStorage.setItem('portalMessages', JSON.stringify(existingMessages));
-      
+
       if (db) {
         try {
           const docRef = await addDoc(collection(db, 'portalMessages'), messageData);
@@ -95,10 +94,10 @@ function Portal({ onPageChange }) {
         console.log('Saved to localStorage:', messageData);
         alert('Thank you! Your message has been submitted successfully.');
       }
-      
+
       // Trigger custom storage event for same-tab updates
       window.dispatchEvent(new Event('localStorageUpdate'));
-      
+
       // Also trigger standard storage event
       window.dispatchEvent(new Event('storage'));
 
@@ -111,7 +110,7 @@ function Portal({ onPageChange }) {
       });
     } catch (error) {
       console.error('Error submitting form:', error);
-      
+
       // Fallback to localStorage
       const messageData = {
         fullname: formData.fullname,
@@ -123,7 +122,7 @@ function Portal({ onPageChange }) {
         timestamp: Date.now(),
         id: Date.now().toString()
       };
-      
+
       const existingMessages = JSON.parse(localStorage.getItem('portalMessages') || '[]');
       existingMessages.push(messageData);
       localStorage.setItem('portalMessages', JSON.stringify(existingMessages));
