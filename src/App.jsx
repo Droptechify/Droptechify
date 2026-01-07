@@ -9,7 +9,7 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsConditions from './components/TermsConditions';
 import CaseStudies from './components/CaseStudies';
 import Portal from './components/Portal';
-
+import TawkToWidget from './components/TawkToWidget';
 const Admin = React.lazy(() => import('./components/Admin'));
 import ServiceDetailPage from './components/ServiceDetailPage';
 const AdminLogin = React.lazy(() => import('./components/AdminLogin'));
@@ -203,6 +203,7 @@ function App() {
         {renderPage()}
       </main>
       <Footer onPageChange={handlePageChange} />
+{currentPage !== 'admin' && currentPage !== 'admin-login' && <TawkToWidget />}
     </div>
   );
 }
